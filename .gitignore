@@ -38,7 +38,17 @@ yarn-error.log*
 
 # Database & outputs
 *.db-journal
-outputs/cache/
+outputs/uploads/*
+!outputs/uploads/.gitkeep
+outputs/generated/*
+!outputs/generated/.gitkeep
+outputs/heatmaps/*
+!outputs/heatmaps/.gitkeep
+outputs/reports/*
+!outputs/reports/.gitkeep
+outputs/*.jpg
+outputs/*.png
+outputs/*.json
 
 # OS / IDE
 .DS_Store
