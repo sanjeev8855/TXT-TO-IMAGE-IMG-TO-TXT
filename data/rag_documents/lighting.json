@@ -1,0 +1,44 @@
+[
+  {
+    "id": "light_001",
+    "category": "lighting",
+    "title": "Golden Hour Ambient Sunlight",
+    "description": "Low-angle warm directional sunlight occurring shortly after sunrise or before sunset, characterized by soft diffused highlights, elongated dramatic shadows, and golden chromatic warmth.",
+    "keywords": ["golden hour", "warm sunlight", "sunset", "sunrise", "soft glow", "amber light", "low sun"]
+  },
+  {
+    "id": "light_002",
+    "category": "lighting",
+    "title": "Chiaroscuro and Rembrant Lighting",
+    "description": "High-contrast chiaroscuro with bold transitions between bright highlights and deep tenebrous shadows. Rembrandt lighting features a characteristic illuminated triangle under the cheek on the shadow side.",
+    "keywords": ["chiaroscuro", "rembrandt lighting", "high contrast", "dramatic shadows", "moody lighting", "tenebrous"]
+  },
+  {
+    "id": "light_003",
+    "category": "lighting",
+    "title": "Volumetric God Rays and Atmospheric Light",
+    "description": "Visible light shafts scattering through mist, fog, haze, or particulate air (crepuscular rays/Tyndall effect), creating three-dimensional spatial depth and atmospheric luminescence.",
+    "keywords": ["volumetric lighting", "god rays", "crepuscular rays", "misty light", "atmospheric haze", "light shafts"]
+  },
+  {
+    "id": "light_004",
+    "category": "lighting",
+    "title": "Rim Light and Edge Separation",
+    "description": "Backlighting positioned behind the subject creating a luminous outline rim along edges and hair, cleanly separating the foreground silhouette or subject from dark backgrounds.",
+    "keywords": ["rim light", "backlit", "edge lighting", "hair light", "silhouette separation", "kicker light"]
+  },
+  {
+    "id": "light_005",
+    "category": "lighting",
+    "title": "Studio Softbox and Diffused Fill",
+    "description": "Evenly dispersed, soft-edged wraparound illumination from large parabolic octaboxes or diffusers, eliminating harsh specular reflections and producing flattering portraits.",
+    "keywords": ["softbox", "diffused light", "studio lighting", "soft fill", "even illumination", "flattering light"]
+  },
+  {
+    "id": "light_006",
+    "category": "lighting",
+    "title": "Cyberpunk Neon and Dual-Tone Light",
+    "description": "Vibrant chromatic contrast utilizing complementary neon tones (such as cyan and magenta, or amber and teal) reflecting across wet asphalt and reflective metallic surfaces.",
+    "keywords": ["neon", "cyberpunk lighting", "cyan and magenta", "dual-tone", "ambient glow", "night city"]
+  }
+]

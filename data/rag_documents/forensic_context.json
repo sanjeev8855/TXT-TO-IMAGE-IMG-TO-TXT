@@ -1,0 +1,23 @@
+[
+  {
+    "id": "forensic_001",
+    "category": "forensic_context",
+    "title": "Diffusion High-Frequency Spectral Artifacts",
+    "description": "Latent diffusion generators decode through convolutional upsampling blocks that often leave characteristic high-frequency spectral grid spikes in the 2D Fourier power spectrum, absent in physical sensor Bayer patterns.",
+    "keywords": ["fourier spectrum", "spectral artifact", "high frequency", "upsampling artifact", "grid spikes", "diffusion footprint"]
+  },
+  {
+    "id": "forensic_002",
+    "category": "forensic_context",
+    "title": "Spatial Noise Residual and PRNU Inconsistencies",
+    "description": "Physical camera sensors exhibit fixed photo-response non-uniformity (PRNU) noise residuals. Synthetic AI images exhibit uncorrelated spatial noise distributions, local variance smoothing, and artificial residual gradients.",
+    "keywords": ["noise residual", "PRNU", "sensor noise", "spatial noise", "laplacian residual", "noise variance"]
+  },
+  {
+    "id": "forensic_003",
+    "category": "forensic_context",
+    "title": "Local Texture Coherence and Boundary Anomalies",
+    "description": "Denoising UNets frequently display micro-scale semantic incoherence along fine boundaries, such as hair strands fusing into backgrounds, asymmetric pupils, irregular iris borders, and inconsistent textile tessellations.",
+    "keywords": ["texture coherence", "boundary anomaly", "hair fusion", "pupil asymmetry", "semantic inconsistency"]
+  }
+]

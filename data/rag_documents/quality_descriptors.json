@@ -1,0 +1,30 @@
+[
+  {
+    "id": "qual_001",
+    "category": "quality_descriptors",
+    "title": "Subsurface Scattering & Organic Translucency",
+    "description": "Accurate biological light penetration through epidermis, ear cartilage, foliage, or marble, giving natural translucent vitality rather than plastic or wax appearance.",
+    "keywords": ["subsurface scattering", "skin translucency", "organic vitality", "realistic skin", "epidermal depth"]
+  },
+  {
+    "id": "qual_002",
+    "category": "quality_descriptors",
+    "title": "Micro-Texture and High-Frequency Fidelity",
+    "description": "Preservation of microscopic surface details: textile weave, weathered wood grain, polished metallic brushed striations, and delicate facial eyelashes without smoothing artifacts.",
+    "keywords": ["micro-texture", "high-frequency fidelity", "textile weave", "surface details", "pore detail", "crisp texture"]
+  },
+  {
+    "id": "qual_003",
+    "category": "quality_descriptors",
+    "title": "Optical Aberrations and Real-World Imperfections",
+    "description": "Subtle natural lens characteristics including gentle peripheral chromatic aberration, natural vignetting, optical diffraction, and sensor noise floor to prevent synthetic artificial sterility.",
+    "keywords": ["optical aberrations", "natural vignetting", "chromatic aberration", "sensor noise", "organic imperfections"]
+  },
+  {
+    "id": "qual_004",
+    "category": "quality_descriptors",
+    "title": "Global Illumination & Radiosity",
+    "description": "Physically coherent multi-bounce light transport, color bleeding between adjacent surfaces, accurate soft ambient occlusion in crevices, and consistent shadow directionality.",
+    "keywords": ["global illumination", "radiosity", "color bleeding", "ambient occlusion", "physically based lighting"]
+  }
+]

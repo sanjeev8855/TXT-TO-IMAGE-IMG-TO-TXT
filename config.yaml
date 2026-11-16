@@ -1,0 +1,45 @@
+# Academic Research Prototype Configuration
+# Multimodal Image-to-Text, RAG-Enhanced Text-to-Image Generation and Explainable AI Image Forensics
+
+# 1. Model Configuration
+models:
+  vlm_model: "gemini-2.5-flash"  # Options: gemini-2.5-flash, gemini-1.5-flash, local-heuristic
+  embedding_model: "all-MiniLM-L6-v2" # Dense semantic or TF-IDF cosine vector model
+  llm_model: "gemini-2.5-flash"  # Options: gemini-2.5-flash, gemini-1.5-pro, local-rule-synthesizer
+  image_generation_model: "imagen-3.0-generate-002" # Options: imagen-3.0-generate-002, local-latent-synthesizer
+  forensic_model: "spatial-frequency-patch-detector-v1" # Multi-stream forensic artifact detector
+
+# 2. RAG Retrieval Parameters
+rag:
+  top_k: 5
+  similarity_threshold: 0.25
+  knowledge_base_path: "data/rag_documents"
+
+# 3. Prompt Boundary and Validation
+prompt_boundary:
+  max_length: 1000
+  strict_validation: true
+  forbidden_patterns:
+    - "(?i)(api[_-]?key|secret|password|bearer)"
+    - "(?i)(exec\\(|eval\\(|system\\(|os\\.|sh\\b|bash\\b|cmd\\.exe|powershell)"
+    - "(?i)(<script|javascript:|SELECT .* FROM|INSERT INTO|DROP TABLE)"
+    - "(?i)(ignore previous instructions|disregard all rules)"
+
+# 4. Forensic Patch Analysis Parameters
+forensics:
+  patch_size: 64
+  stride: 32
+  top_percentile: 0.15 # Top 15% anomaly percentile for global aggregation
+  anomaly_threshold_low: 0.35
+  anomaly_threshold_high: 0.65
+  heatmap_colormap: "jet" # Infrared / pseudo-thermal colormap
+  heatmap_alpha: 0.45
+  include_frequency_stream: true
+  include_noise_residual_stream: true
+
+# 5. Reproducibility & Environment
+reproducibility:
+  random_seed: 42
+  default_resolution: [512, 512]
+  generation_steps: 30
+  guidance_scale: 7.5

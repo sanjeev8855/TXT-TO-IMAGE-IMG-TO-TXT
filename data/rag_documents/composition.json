@@ -1,0 +1,37 @@
+[
+  {
+    "id": "comp_001",
+    "category": "composition",
+    "title": "Rule of Thirds and Asymmetric Balance",
+    "description": "Positioning primary focal anchors along horizontal and vertical dividing thirds or their grid intersections, yielding natural visual dynamism and comfortable visual flow.",
+    "keywords": ["rule of thirds", "grid intersection", "asymmetric balance", "off-center", "visual flow"]
+  },
+  {
+    "id": "comp_002",
+    "category": "composition",
+    "title": "Central Geometric Symmetry",
+    "description": "Direct central alignment with bilateral symmetry, creating a powerful, monumental, formal, and authoritative presence often seen in architectural photography and Stanley Kubrick cinema.",
+    "keywords": ["symmetry", "centered composition", "bilateral symmetry", "architectural alignment", "kubrickian"]
+  },
+  {
+    "id": "comp_003",
+    "category": "composition",
+    "title": "Leading Lines and S-Curves",
+    "description": "Utilizing architectural corridors, roads, rivers, railings, or ridgelines as linear guides drawing the viewer's gaze from the foreground into the deep focal horizon.",
+    "keywords": ["leading lines", "s-curve", "vanishing point", "depth lines", "perspective lines", "visual corridor"]
+  },
+  {
+    "id": "comp_004",
+    "category": "composition",
+    "title": "Framing within a Frame (Sub-framing)",
+    "description": "Framing the primary subject within natural or architectural apertures such as archways, windows, foliage, doorways, or shadow silhouettes to intensify contextual intimacy.",
+    "keywords": ["frame within a frame", "subframing", "archway", "doorway", "foliage border", "vignetted context"]
+  },
+  {
+    "id": "comp_005",
+    "category": "composition",
+    "title": "Dutch Angle and Dynamic Slanted Horizon",
+    "description": "Intentionally canting the camera horizon by 15-45 degrees to invoke psychological tension, unease, disorientation, or kinetic momentum in dramatic narrative scenes.",
+    "keywords": ["dutch angle", "tilted frame", "slanted horizon", "canted angle", "kinetic tension"]
+  }
+]

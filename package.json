@@ -1,0 +1,21 @@
+{
+  "name": "multimodal-image-text-forensics",
+  "version": "1.0.0",
+  "description": "Multimodal Image-Text Generation with RAG and Explainable AI Image Forensics",
+  "scripts": {
+    "dev": "python backend/main.py",
+    "start": "python backend/main.py",
+    "test": "python -m unittest discover -s tests -p \"test_*.py\"",
+    "test:routing": "python -m unittest tests/test_model_routing.py"
+  },
+  "keywords": [
+    "multimodal",
+    "rag",
+    "forensics",
+    "gemini",
+    "llama",
+    "kimi"
+  ],
+  "author": "",
+  "license": "ISC"
+}

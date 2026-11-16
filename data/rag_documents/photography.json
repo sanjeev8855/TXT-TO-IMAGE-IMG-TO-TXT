@@ -1,0 +1,37 @@
+[
+  {
+    "id": "photo_001",
+    "category": "photography",
+    "title": "Shallow Depth of Field and Bokeh",
+    "description": "Utilizing wide apertures such as f/1.4 to f/2.8 isolates the subject sharply against a creamy, blurred background bokeh. Ideal for portraits and subject focus.",
+    "keywords": ["shallow depth of field", "bokeh", "aperture", "f/1.4", "f/1.8", "portrait", "background separation"]
+  },
+  {
+    "id": "photo_002",
+    "category": "photography",
+    "title": "Deep Depth of Field and Hyperfocal Distance",
+    "description": "Narrow apertures from f/8 to f/16 preserve crisp front-to-back sharpness across the entire landscape or architectural scene, keeping foreground and horizon in sharp focus.",
+    "keywords": ["deep depth of field", "hyperfocal", "f/8", "f/11", "sharp throughout", "landscape", "architecture"]
+  },
+  {
+    "id": "photo_003",
+    "category": "photography",
+    "title": "Motion Blur vs High Shutter Freeze",
+    "description": "Fast shutter speeds (1/1000s or faster) freeze dynamic action, droplets, and kinetic motion, while long exposure (1/2s to multiple seconds) creates smooth water trails and light streaks.",
+    "keywords": ["shutter speed", "motion blur", "freeze motion", "action shot", "long exposure", "light trails"]
+  },
+  {
+    "id": "photo_004",
+    "category": "photography",
+    "title": "Macro Photography Optics",
+    "description": "1:1 or 2:1 magnification macro optics highlighting micro-textures, intricate surface details, dew drops, insect morphology, and fine fiber patterns with acute focal plane.",
+    "keywords": ["macro", "close-up", "micro-texture", "magnification", "intricate details", "extreme close up"]
+  },
+  {
+    "id": "photo_005",
+    "category": "photography",
+    "title": "ISO and Film Grain Characteristics",
+    "description": "Low ISO (100) produces clean, noise-free, high-dynamic-range imagery; higher ISO introduces fine organic silver halide film grain texture for vintage photographic aesthetic.",
+    "keywords": ["ISO 100", "clean image", "film grain", "analog texture", "35mm film", "vintage film"]
+  }
+]

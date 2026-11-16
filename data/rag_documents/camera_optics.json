@@ -1,0 +1,37 @@
+[
+  {
+    "id": "cam_001",
+    "category": "camera_optics",
+    "title": "35mm Prime Lens (Human Eye Perspective)",
+    "description": "Standard 35mm focal length providing an intimate, honest, documentarian perspective that closely mimics normal human environmental vision with minimal barrel distortion.",
+    "keywords": ["35mm lens", "documentary", "street photography", "natural perspective", "environmental portrait"]
+  },
+  {
+    "id": "cam_002",
+    "category": "camera_optics",
+    "title": "85mm Telephoto Portrait Lens",
+    "description": "Classic 85mm portrait optic offering subtle facial feature compression, flattering perspective rendering without nasal exaggeration, and dramatic background blur separation.",
+    "keywords": ["85mm lens", "portrait lens", "compression", "flattering optics", "headshot", "tight portrait"]
+  },
+  {
+    "id": "cam_003",
+    "category": "camera_optics",
+    "title": "Anamorphic Cinematic Optics",
+    "description": "Anamorphic glass producing widescreen 2.39:1 aspect ratio, oval bokeh highlights, horizontal blue flare streaks, and characteristic dimensional cinematic depth.",
+    "keywords": ["anamorphic", "cinematic widescreen", "oval bokeh", "horizontal lens flare", "cinematography"]
+  },
+  {
+    "id": "cam_004",
+    "category": "camera_optics",
+    "title": "Medium Format Camera System (Hasselblad / Fujifilm GFX)",
+    "description": "Large sensor medium format imaging exhibiting immense micro-contrast, vast dynamic range, smooth tonal gradation in skin tones, and extreme rendering fidelity.",
+    "keywords": ["medium format", "hasselblad", "fujifilm gfx", "microcontrast", "tonal gradation", "commercial shoot"]
+  },
+  {
+    "id": "cam_005",
+    "category": "camera_optics",
+    "title": "Ultra-Wide Angle Lens (14-24mm)",
+    "description": "Exaggerated perspective with expansive field of view, pulling nearby foreground elements into prominence while pushing background horizons into vast epic scale.",
+    "keywords": ["ultra-wide angle", "14mm", "24mm", "expansive view", "architectural interior", "epic landscape"]
+  }
+]

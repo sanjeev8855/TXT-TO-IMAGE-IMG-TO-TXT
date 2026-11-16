@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual AI Studio</title>
+  <script>
+    (function() {
+      const saved = localStorage.getItem('research_lab_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            surface: {
+              DEFAULT: 'var(--surface)',
+              muted: 'var(--surface-muted)',
+              subtle: 'var(--surface-subtle)'
+            },
+            app: {
+              bg: 'var(--background)',
+              border: 'var(--border)',
+              text: 'var(--text)',
+              muted: 'var(--text-secondary)'
+            },
+            accent: {
+              DEFAULT: 'var(--accent)',
+              hover: 'var(--accent-hover)',
+              light: 'var(--accent-light)',
+              border: 'var(--accent-border)'
+            },
+            state: {
+              success: 'var(--success)',
+              warning: 'var(--warning)',
+              error: 'var(--error)'
+            }
+          },
+          fontFamily: {
+            sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'sans-serif'],
+            mono: ['ui-monospace', '"SF Mono"', 'Menlo', 'Consolas', '"Liberation Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --background: #F8F8F6;
+      --surface: #FFFFFF;
+      --surface-muted: #F5F5F3;
+      --surface-subtle: #FAFAF8;
+      --text: #1C1D1F;
+      --text-secondary: #5A5D64;
+      --border: #E4E4E0;
+      --accent: #1E3A8A;
+      --accent-hover: #172554;
+      --accent-light: #EFF6FF;
+      --accent-border: #BFDBFE;
+      --success: #15803D;
+      --warning: #B45309;
+      --error: #B91C1C;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+    }
+
+    html.dark {
+      --background: #111317;
+      --surface: #181B20;
+      --surface-muted: #20242B;
+      --surface-subtle: #1C2027;
+      --text: #E5E7EB;
+      --text-secondary: #9CA3AF;
+      --border: #2D323C;
+      --accent: #3B82F6;
+      --accent-hover: #60A5FA;
+      --accent-light: #1E293B;
+      --accent-border: #3B82F6;
+      --success: #22C55E;
+      --warning: #F59E0B;
+      --error: #EF4444;
+    }
+
+    html {
+      overflow-y: scroll !important;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      height: auto;
+      min-height: 100%;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      overflow-y: visible !important;
+      overflow-x: hidden;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 100vh;
+    }
+
+    /* Universal unrestricted scroll propagation across all components */
+    * {
+      overscroll-behavior: auto !important;
+    }
+
+    /* Clean, visible custom scrollbar for the webpage and all scrollable areas */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surface-muted);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--border);
+      border-radius: 9999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--text-secondary);
+    }
+
+    .smooth-scroll {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: auto !important;
+    }
+
+    /* Scientific thermal gradient (preserved actual research colormap) */
+    .thermal-gradient {
+      background: linear-gradient(90deg, #0000a0 0%, #00bfff 25%, #28dc28 50%, #ffc800 75%, #ff1414 100%);
+    }
+
+    /* ========================================================================== */
+    /* 3D AURORA MESH & GLOW EFFECTS                                              */
+    /* ========================================================================== */
+    .aurora-mesh {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .aurora-orb {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(85px);
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    html.dark .aurora-orb {
+      opacity: 0.18;
+    }
+    html.dark .aurora-orb-1 {
+      width: 550px;
+      height: 550px;
+      top: -120px;
+      left: 10%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.45) 55%, transparent 100%);
+      animation: floatOrb1 22s ease-in-out infinite alternate;
+    }
+    html.dark .aurora-orb-2 {
+      width: 600px;
+      height: 600px;
+      top: 30%;
+      right: 5%;
+      background: radial-gradient(circle, rgba(147, 51, 234, 0.7) 0%, rgba(59, 130, 246, 0.35) 60%, transparent 100%);
+      animation: floatOrb2 26s ease-in-out infinite alternate;
+    }
+    html.dark .aurora-orb-3 {
+      width: 480px;
+      height: 480px;
+      bottom: -100px;
+      left: 20%;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.65) 0%, rgba(37, 99, 235, 0.3) 60%, transparent 100%);
+      animation: floatOrb3 20s ease-in-out infinite alternate;
+    }
+
+    html:not(.dark) .aurora-orb {
+      opacity: 0.10;
+    }
+    html:not(.dark) .aurora-orb-1 {
+      width: 500px;
+      height: 500px;
+      top: -100px;
+      left: 15%;
+      background: radial-gradient(circle, #3b82f6 0%, #6366f1 60%, transparent 100%);
+      animation: floatOrb1 20s ease-in-out infinite alternate;
+    }
+    html:not(.dark) .aurora-orb-2 {
+      width: 520px;
+      height: 520px;
+      top: 35%;
+      right: 10%;
+      background: radial-gradient(circle, #8b5cf6 0%, #3b82f6 60%, transparent 100%);
+      animation: floatOrb2 24s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatOrb1 {
+      0% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(50px, 35px) scale(1.08); }
+      100% { transform: translate(-35px, 60px) scale(0.95); }
+    }
+    @keyframes floatOrb2 {
+      0% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(-60px, -40px) scale(1.12); }
+      100% { transform: translate(30px, 35px) scale(0.92); }
+    }
+    @keyframes floatOrb3 {
+      0% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(40px, -35px) scale(1.05); }
+      100% { transform: translate(-40px, 20px) scale(0.98); }
+    }
+
+    /* 3D Glassmorphic panels with smooth elevation and micro-depth */
+    .res-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+      position: relative;
+    }
+
+    html.dark .res-card {
+      background-color: rgba(24, 27, 32, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    html.dark .res-card:hover {
+      border-color: rgba(96, 165, 250, 0.45);
+      box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.55), 0 0 20px rgba(59, 130, 246, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    html:not(.dark) .res-card {
+      background-color: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    html:not(.dark) .res-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 10px 25px -4px rgba(30, 58, 138, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Primary glowing action buttons */
+    #btn-run-pipeline, button[onclick="executeTextToImage()"], button[onclick="analyzeActiveImage()"] {
+      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    #btn-run-pipeline:hover, button[onclick="executeTextToImage()"]:hover, button[onclick="analyzeActiveImage()"]:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5), 0 0 12px rgba(59, 130, 246, 0.4);
+      filter: brightness(1.08);
+    }
+
+    #btn-run-pipeline:active, button[onclick="executeTextToImage()"]:active, button[onclick="analyzeActiveImage()"]:active {
+      transform: translateY(0.5px) scale(0.99);
+    }
+
+    /* Shimmer light sweep across buttons on hover */
+    #btn-run-pipeline::after, button[onclick="executeTextToImage()"]::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+      transform: rotate(25deg);
+      transition: left 0.75s ease;
+      pointer-events: none;
+    }
+
+    #btn-run-pipeline:hover::after, button[onclick="executeTextToImage()"]:hover::after {
+      left: 130%;
+    }
+
+    /* Enhanced 3D drop zone with dynamic hover pulse */
+    #drop-zone {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    #drop-zone:hover {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.04);
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.12);
+      transform: scale(1.008);
+    }
+
+    /* Accessible focus state */
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased relative" oncontextmenu="return false;">
+
+  <!-- 3D Interactive Spatial Mesh Background & Ambient Aurora Orbs -->
+  <canvas id="bg-3d-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+  <div class="aurora-mesh" aria-hidden="true">
+    <div class="aurora-orb aurora-orb-1"></div>
+    <div class="aurora-orb aurora-orb-2"></div>
+    <div class="aurora-orb aurora-orb-3"></div>
+  </div>
+
+  <!-- Header & Navigation Shell (Clean, Modern Frosted Single-Row Bar) -->
+  <header class="bg-surface/90 backdrop-blur-md border-b border-app-border sticky top-0 z-40 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="py-1.5 flex flex-wrap items-center justify-between gap-2.5">
+        <!-- Main Navigation Tabs -->
+        <nav class="flex space-x-1 overflow-x-auto text-xs py-0.5 scrollbar-none" aria-label="Primary Navigation">
+          <button onclick="switchTab('image-to-text')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-accent text-accent" data-tab="image-to-text">
+            Image → Text
+          </button>
+          <button onclick="switchTab('text-to-image')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="text-to-image">
+            Text → Image
+          </button>
+          <button onclick="switchTab('bidirectional')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="bidirectional">
+            Bidirectional
+          </button>
+          <button onclick="switchTab('forensics')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="forensics">
+            Forensics
+          </button>
+          <button onclick="switchTab('rag-knowledge')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="rag-knowledge">
+            RAG Knowledge
+          </button>
+          <button onclick="switchTab('experiments')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="experiments">
+            Research Log
+          </button>
+          <button onclick="switchTab('reports')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="reports">
+            Reports
+          </button>
+          <button onclick="switchTab('pipeline')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="pipeline">
+            Architecture
+          </button>
+        </nav>
+
+        <!-- Theme Toggle -->
+        <div class="flex items-center space-x-2 text-xs font-mono">
+          <button id="theme-toggle-btn" onclick="toggleTheme()" class="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-surface-muted border border-app-border text-app-text hover:bg-surface transition font-mono text-[11px] cursor-pointer select-none" title="Toggle Dark / Light Theme" aria-label="Toggle theme">
+            <!-- Sun Icon (shown in dark mode) -->
+            <svg id="theme-icon-sun" class="h-3.5 w-3.5 hidden text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <!-- Moon Icon (shown in light mode) -->
+            <svg id="theme-icon-moon" class="h-3.5 w-3.5 text-app-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <span id="theme-text">Dark</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-2.5 relative z-10">
+
+    <!-- ============================================================== -->
+    <!-- TAB 1: IMAGE → TEXT (Primary Screen)                          -->
+    <!-- ============================================================== -->
+    <div id="tab-image-to-text" class="tab-content space-y-2.5">
+      <div class="border-b border-app-border pb-1.5 flex items-center justify-between">
+        <h2 class="text-sm font-semibold tracking-tight inline-block bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">Image → Text Visual Analysis</h2>
+      </div>
+
+      <!-- Main Two-Column Workspace -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+        
+        <!-- LEFT COLUMN: Input Image & Controls (lg:col-span-5) -->
+        <section class="lg:col-span-5 space-y-2.5" aria-labelledby="input-image-heading">
+          <div class="res-card p-3 space-y-2">
+            <div class="flex items-center justify-between border-b border-app-border pb-1.5">
+              <h3 id="input-image-heading" class="text-xs font-semibold text-app-text uppercase tracking-wider">Input Image</h3>
+              <div class="flex items-center space-x-2">
+                <span class="text-[11px] font-mono text-app-muted">PNG / JPG / WEBP</span>
+                <button id="btn-clear-image-hdr" onclick="clearInputImage()" class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 transition cursor-pointer" title="Clear input image">
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <!-- Upload Dropzone -->
+            <div id="drop-zone" class="border-2 border-dashed border-app-border hover:border-accent rounded p-4 text-center cursor-pointer transition bg-surface-subtle flex flex-col items-center justify-center min-h-[140px]" tabindex="0" role="button" aria-label="Upload an image for analysis">
+              <input type="file" id="file-input" class="hidden" accept="image/png,image/jpeg,image/webp,image/bmp">
+              <div class="space-y-1">
+                <svg class="mx-auto h-6 w-6 text-app-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <div class="text-xs text-app-text">
+                  <span class="text-accent font-semibold">Select image</span> or drag and drop
+                </div>
+                <p class="text-[11px] text-app-muted">Up to 20MB. EXIF sanitized on upload.</p>
+              </div>
+            </div>
+
+            <!-- Preview & Image Metadata -->
+            <div id="upload-preview-container" class="hidden space-y-2 pt-0.5">
+              <div class="border border-app-border rounded overflow-hidden bg-surface-muted flex items-center justify-center p-1.5 min-h-48 max-h-60">
+                <img id="upload-preview-img" class="max-h-56 w-auto object-contain rounded" src="" alt="Input image preview">
+              </div>
+
+              <!-- Metadata Details -->
+              <div id="upload-meta" class="text-[11px] font-mono p-2 rounded bg-surface-muted border border-app-border text-app-muted space-y-1">
+                <!-- Populated by JS -->
+              </div>
+
+              <!-- Fallback Simulation Checkbox (Disabled/Hidden) -->
+              <input type="checkbox" id="test-fallback-checkbox" class="hidden" style="display:none !important;">
+
+              <!-- Action Buttons -->
+              <div class="flex gap-2 pt-0.5">
+                <button onclick="document.getElementById('file-input').click()" class="px-3 py-1.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-medium transition">
+                  Replace Image
+                </button>
+                <button onclick="clearInputImage()" class="px-3 py-1.5 bg-surface hover:bg-surface-muted text-app-muted hover:text-red-500 border border-app-border rounded text-xs font-medium transition cursor-pointer" title="Clear image">
+                  Clear
+                </button>
+                <button id="btn-run-pipeline" onclick="executeImageToTextPipeline()" class="flex-1 py-1.5 bg-accent hover:bg-accent-hover text-white rounded text-xs font-semibold shadow-sm transition flex items-center justify-center space-x-2">
+                  <span>Analyze Image</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT COLUMN: Analysis & Structured Results (lg:col-span-7) -->
+        <section class="lg:col-span-7 space-y-2.5" aria-labelledby="analysis-results-heading">
+          <div class="res-card p-3 space-y-2">
+            <div class="flex items-center justify-between border-b border-app-border pb-1.5">
+              <div class="flex items-center space-x-2">
+                <h3 id="analysis-results-heading" class="text-xs font-semibold text-app-text uppercase tracking-wider">Analysis Results</h3>
+                <span id="vlm-model-badge" class="hidden"></span>
+              </div>
+            </div>
+
+            <!-- Empty Placeholder -->
+            <div id="vlm-placeholder" class="py-6 text-center text-app-muted text-xs font-mono min-h-[140px] flex items-center justify-center">
+              Upload an image and click "Analyze Image" to view the multimodal description.
+            </div>
+
+            <!-- Structured Results Section (Fluid Full-Height Layout, Free Scrolling) -->
+            <div id="vlm-results" class="hidden space-y-4">
+              
+              <!-- Color Analysis Section with Middle Pie Chart -->
+              <div class="p-3.5 sm:p-4 rounded-lg border border-app-border bg-surface-subtle space-y-3.5">
+                <div class="flex items-center justify-between pb-1 border-b border-app-border">
+                  <div class="flex items-center space-x-2">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-pink-500 via-indigo-500 to-cyan-400"></span>
+                    <span class="text-xs font-semibold text-app-text uppercase tracking-wider font-mono">Dominant Color Distribution</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-[11px] font-mono text-app-muted">Measured directly from pixels</span>
+                    <button id="btn-clear-colors" onclick="clearColorDistribution()" class="text-[10px] font-mono px-2 py-0.5 rounded bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 transition cursor-pointer" title="Clear dominant color chart">
+                      Clear
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Continuous Spectrum Ribbon Bar -->
+                <div id="vlm-color-bars" class="h-3 rounded-full overflow-hidden flex w-full border border-app-border shadow-inner">
+                  <!-- Rendered by JS -->
+                </div>
+
+                <!-- Middle Pie Chart + High-Contrast Color Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center pt-1">
+                  <!-- Interactive Middle Donut / Pie Chart -->
+                  <div class="md:col-span-5 flex flex-col items-center justify-center p-3 rounded-lg bg-surface border border-app-border">
+                    <div id="vlm-pie-container" class="relative w-44 h-44 flex items-center justify-center">
+                      <!-- Rendered by JS -->
+                    </div>
+                    <div class="text-[10px] font-mono text-app-muted mt-2 text-center flex items-center gap-1">
+                      <svg class="w-3 h-3 text-accent shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                      </svg>
+                      <span>Hover slices or cards to inspect</span>
+                    </div>
+                  </div>
+
+                  <!-- High-Contrast Color Cards -->
+                  <div class="md:col-span-7">
+                    <div id="vlm-color-chips" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                      <!-- Rendered by JS -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Detected Objects Table -->
+              <div class="space-y-2">
+                <span class="text-xs font-semibold text-app-text uppercase tracking-wider font-mono">Identified Objects</span>
+                <div class="overflow-x-auto border border-app-border rounded">
+                  <table class="w-full text-left text-xs">
+                    <thead class="bg-surface-muted text-app-muted font-mono border-b border-app-border">
+                      <tr>
+                        <th class="p-2.5">Object</th>
+                        <th class="p-2.5">Location</th>
+                        <th class="p-2.5">Size</th>
+                        <th class="p-2.5">Dominant Color</th>
+                        <th class="p-2.5">Confidence</th>
+                      </tr>
+                    </thead>
+                    <tbody id="vlm-objects-table-body" class="divide-y divide-app-border font-mono text-app-text">
+                      <!-- Rendered by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Structured Scene Metadata Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="p-3 rounded border border-app-border bg-surface">
+                  <span class="text-app-muted font-mono text-[10px] uppercase block">Scene & Environment</span>
+                  <span id="vlm-scene" class="text-app-text font-medium mt-0.5 block"></span>
+                </div>
+                <div class="p-3 rounded border border-app-border bg-surface">
+                  <span class="text-app-muted font-mono text-[10px] uppercase block">Lighting</span>
+                  <span id="vlm-lighting" class="text-app-text font-medium mt-0.5 block"></span>
+                </div>
+                <div class="p-3 rounded border border-app-border bg-surface">
+                  <span class="text-app-muted font-mono text-[10px] uppercase block">Composition & Framing</span>
+                  <span id="vlm-composition" class="text-app-text font-medium mt-0.5 block"></span>
+                </div>
+                <div class="p-3 rounded border border-app-border bg-surface">
+                  <span class="text-app-muted font-mono text-[10px] uppercase block">Atmosphere & Style</span>
+                  <span id="vlm-atmosphere" class="text-app-text font-medium mt-0.5 block"></span>
+                </div>
+                <div class="p-3 rounded border border-app-border bg-surface">
+                  <span class="text-app-muted font-mono text-[10px] uppercase block">Foreground & Background</span>
+                  <span id="vlm-fore-back" class="text-app-text font-medium mt-0.5 block"></span>
+                </div>
+                <div class="p-3 rounded border border-app-border bg-surface">
+                  <span class="text-app-muted font-mono text-[10px] uppercase block">Optical / Camera Characteristics</span>
+                  <span id="vlm-camera" class="text-app-text font-medium mt-0.5 block"></span>
+                </div>
+              </div>
+
+              <!-- Observations vs Inferences -->
+              <div class="p-3 rounded border border-app-border bg-surface-muted text-xs space-y-1.5">
+                <span class="text-[10px] font-mono uppercase font-semibold text-accent block">Research Protocol: Observations vs. Contextual Inferences</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                  <div>
+                    <strong class="text-app-muted block">Direct Visual Observations:</strong>
+                    <p id="vlm-obs" class="text-app-text mt-0.5"></p>
+                  </div>
+                  <div>
+                    <strong class="text-app-muted block">Contextual Inferences:</strong>
+                    <p id="vlm-assump" class="text-app-muted italic mt-0.5"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Summary & Generation Prompt -->
+              <div class="p-3 rounded border border-app-border bg-surface text-xs space-y-2">
+                <span class="text-app-muted font-mono text-[10px] uppercase block">Detailed Semantic Description</span>
+                <p id="vlm-summary" class="text-app-text leading-relaxed"></p>
+                <div class="pt-2 border-t border-app-border">
+                  <span class="text-app-muted font-mono text-[10px] uppercase block">Generation Prompt</span>
+                  <p id="vlm-prompt" class="text-app-text font-mono text-[11px] mt-1 bg-surface-muted p-2 rounded border border-app-border break-words"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RAG & Prompt Validation Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <!-- RAG Retrieved Context -->
+            <div class="res-card p-2.5 space-y-1.5">
+              <div class="flex items-center justify-between border-b border-app-border pb-1">
+                <h4 class="text-xs font-semibold text-app-text uppercase tracking-wider">Retrieved RAG Context</h4>
+                <span id="rag-status-badge" class="text-[11px] font-mono text-app-muted">Vector Search</span>
+              </div>
+              <div id="rag-results-container" class="space-y-1.5">
+                <div class="py-2.5 text-center text-app-muted text-xs font-mono">
+                  Context documents will appear here after analysis.
+                </div>
+              </div>
+            </div>
+
+            <!-- Final Validated Prompt -->
+            <div class="res-card p-2.5 space-y-1.5">
+              <div class="flex items-center justify-between border-b border-app-border pb-1">
+                <h4 class="text-xs font-semibold text-app-text uppercase tracking-wider">Prompt Boundary Layer</h4>
+                <div class="flex items-center space-x-1.5">
+                  <span id="boundary-status-badge" class="hidden"></span>
+                  <button id="btn-clear-prompt" onclick="clearPromptBoundary()" class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 transition cursor-pointer" title="Clear prompt boundary layer">
+                    Clear
+                  </button>
+                </div>
+              </div>
+              <div id="prompt-builder-container" class="space-y-1.5 text-xs">
+                <div class="py-2.5 text-center text-app-muted text-xs font-mono">
+                  Sanitized prompt will appear here.
+                </div>
+              </div>
+              <div id="gen-button-container" class="hidden pt-0.5">
+                <button onclick="synthesizeFromCurrentPrompt()" class="w-full py-1.5 bg-accent hover:bg-accent-hover text-white rounded text-xs font-semibold shadow-sm transition">
+                  Send to Image Generator →
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 2: TEXT → IMAGE (Iterative Latent Synthesis)              -->
+    <!-- ============================================================== -->
+    <div id="tab-text-to-image" class="tab-content hidden space-y-3">
+      <div class="border-b border-app-border pb-2">
+        <h2 class="text-base font-semibold text-app-text tracking-tight">Text → Image Latent Synthesis</h2>
+        <p class="text-xs text-app-muted">Reconstruct the scene from its extracted visual information using latent diffusion.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+        <!-- Controls Column (lg:col-span-5) -->
+        <div class="lg:col-span-5 res-card p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between border-b border-app-border pb-2">
+            <h3 class="text-xs font-semibold text-app-text uppercase tracking-wider">Prompt & Latent Parameters</h3>
+            <button id="btn-clear-t2i-prompt" onclick="clearT2IPrompt()" class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 transition cursor-pointer" title="Clear prompt and parameters">
+              Clear
+            </button>
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="t2i-prompt" class="text-xs font-medium text-app-text block">Input Prompt:</label>
+            <textarea id="t2i-prompt" rows="5" class="w-full text-xs p-2.5 rounded bg-surface border border-app-border text-app-text focus:border-accent" placeholder="Enter prompt or inherit from Image → Text tab..."></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <label for="t2i-seed" class="text-app-muted block mb-1">Random Seed:</label>
+              <input type="number" id="t2i-seed" value="42" class="w-full px-2.5 py-1.5 rounded bg-surface border border-app-border text-app-text focus:border-accent">
+            </div>
+            <div>
+              <label for="t2i-steps" class="text-app-muted block mb-1">Denoising Steps:</label>
+              <input type="number" id="t2i-steps" value="30" class="w-full px-2.5 py-1.5 rounded bg-surface border border-app-border text-app-text focus:border-accent">
+            </div>
+          </div>
+
+          <div class="flex gap-2 pt-1">
+            <button onclick="enhancePromptWithRAG()" class="flex-1 py-2 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-medium transition">
+              Enrich with RAG
+            </button>
+            <button onclick="executeTextToImage()" class="flex-1 py-2 bg-accent hover:bg-accent-hover text-white rounded text-xs font-semibold shadow-sm transition">
+              Generate Image
+            </button>
+          </div>
+
+          <!-- Step Indicators -->
+          <div id="t2i-progress-card" class="hidden p-3 rounded bg-surface-muted border border-app-border space-y-2 text-xs font-mono">
+            <span class="text-app-muted text-[10px] block font-semibold uppercase">Execution Telemetry</span>
+            <div id="t2i-steps-list" class="space-y-1 text-[11px]">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Generated Image Column (lg:col-span-7) -->
+        <div class="lg:col-span-7 res-card p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between border-b border-app-border pb-2">
+            <h3 class="text-xs font-semibold text-app-text uppercase tracking-wider">Synthesized Image Output</h3>
+            <div class="flex items-center space-x-2">
+              <span id="t2i-provider-badge" class="hidden"></span>
+              <button id="btn-clear-t2i-output" onclick="clearT2IOutput()" class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 transition cursor-pointer" title="Clear synthesized image">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div id="t2i-output-container" class="min-h-[250px] rounded border border-app-border bg-surface-muted flex flex-col items-center justify-center p-3">
+            <div id="t2i-placeholder" class="text-center text-app-muted text-xs font-mono">
+              Synthesized image will render here.
+            </div>
+            <img id="t2i-result-img" class="hidden max-h-80 max-w-full w-auto rounded-lg object-contain shadow-md border border-app-border" src="" alt="Synthesized Image">
+          </div>
+
+          <div id="t2i-actions" class="hidden flex flex-wrap gap-2 pt-1">
+            <button onclick="sendGeneratedToForensics()" class="px-3 py-1.5 bg-accent hover:bg-accent-hover text-white rounded text-xs font-semibold transition">
+              Send to Forensic Detector →
+            </button>
+            <button onclick="sendToBidirectional()" class="px-3 py-1.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-medium transition">
+              Compare in Bidirectional
+            </button>
+            <a id="t2i-download-btn" href="#" download="generated_image.png" class="px-3 py-1.5 bg-surface hover:bg-surface-muted text-app-muted border border-app-border rounded text-xs font-medium transition">
+              Download Asset
+            </a>
+          </div>
+
+          <!-- Technical Details -->
+          <details id="t2i-tech-details" class="p-2.5 rounded bg-surface-muted border border-app-border text-xs font-mono">
+            <summary class="cursor-pointer text-app-muted font-medium hover:text-app-text">
+              Technical Latent Diffusion Specifications
+            </summary>
+            <div id="t2i-tech-content" class="mt-2 space-y-1 text-app-muted text-[11px] border-t border-app-border pt-1.5">
+              <!-- Filled by JS -->
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 3: BIDIRECTIONAL (Comparative Analysis)                   -->
+    <!-- ============================================================== -->
+    <div id="tab-bidirectional" class="tab-content hidden space-y-3">
+      <div class="border-b border-app-border pb-2 flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <h2 class="text-base font-semibold text-app-text tracking-tight">Bidirectional Comparative Analysis</h2>
+          <p class="text-xs text-app-muted">Evaluate reconstruction fidelity between original uploaded input and synthesized generative output.</p>
+        </div>
+        <button onclick="runBidirectionalComparison()" class="px-3 py-1 bg-accent hover:bg-accent-hover text-white rounded text-xs font-medium transition">
+          Recalculate Parity
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div id="bidirectional-empty" class="res-card p-6 text-center text-app-muted text-xs font-mono">
+        Please complete an Image → Text analysis and generate a synthesized image to view the bidirectional comparison.
+      </div>
+
+      <!-- Main Comparison View -->
+      <div id="bidirectional-container" class="hidden space-y-3">
+        
+        <!-- Side-by-side Images (Equal prominence) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div class="res-card p-3 space-y-2">
+            <div class="flex items-center justify-between border-b border-app-border pb-1.5">
+              <span class="text-xs font-semibold text-app-text uppercase font-mono">1. Original Image</span>
+              <span id="bi-orig-meta" class="text-[11px] font-mono text-app-muted"></span>
+            </div>
+            <div class="bg-surface-muted rounded border border-app-border aspect-square flex items-center justify-center p-2">
+              <img id="bi-orig-img" class="object-contain max-h-80 w-auto rounded" src="" alt="Original Image">
+            </div>
+            <div class="p-3 rounded bg-surface-muted border border-app-border text-xs">
+              <span class="text-app-muted font-mono text-[10px] uppercase block">Original Extracted Description:</span>
+              <p id="bi-orig-desc" class="text-app-text mt-1 text-[11px] leading-relaxed"></p>
+            </div>
+          </div>
+
+          <div class="res-card p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-app-border pb-2">
+              <span class="text-xs font-semibold text-app-text uppercase font-mono">2. Generated Image</span>
+              <span id="bi-gen-meta" class="text-[11px] font-mono text-app-muted"></span>
+            </div>
+            <div class="bg-surface-muted rounded border border-app-border aspect-square flex items-center justify-center p-2">
+              <img id="bi-gen-img" class="object-contain max-h-80 w-auto rounded" src="" alt="Generated Image">
+            </div>
+            <div class="p-3 rounded bg-surface-muted border border-app-border text-xs">
+              <span class="text-app-muted font-mono text-[10px] uppercase block">Synthesis Prompt:</span>
+              <p id="bi-gen-prompt" class="text-app-text mt-1 text-[11px] leading-relaxed font-mono"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Semantic & Visual Comparison Metrics -->
+        <div class="res-card p-4 space-y-4">
+          <div class="border-b border-app-border pb-2">
+            <h3 class="text-xs font-semibold text-app-text uppercase tracking-wider">Semantic & Visual Parity Evaluation</h3>
+            <p class="text-[11px] text-app-muted">Calculated via OpenCV HSV histogram correlation and dense embedding cosine distance.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div class="p-3 rounded bg-surface-muted border border-app-border space-y-1">
+              <span class="text-[10px] font-mono text-app-muted uppercase">Color Correlation</span>
+              <div id="bi-color-metric" class="text-2xl font-bold text-app-text">--%</div>
+              <div class="w-full bg-app-border rounded-full h-1 mt-2">
+                <div id="bi-color-bar" class="bg-accent h-1 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded bg-surface-muted border border-app-border space-y-1">
+              <span class="text-[10px] font-mono text-app-muted uppercase">Semantic Similarity</span>
+              <div id="bi-semantic-metric" class="text-2xl font-bold text-app-text">--%</div>
+              <div class="w-full bg-app-border rounded-full h-1 mt-2">
+                <div id="bi-semantic-bar" class="bg-accent h-1 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded bg-surface-muted border border-app-border space-y-1">
+              <span class="text-[10px] font-mono text-app-muted uppercase">Aspect Parity</span>
+              <div id="bi-aspect-metric" class="text-2xl font-bold text-app-text">--%</div>
+              <div class="w-full bg-app-border rounded-full h-1 mt-2">
+                <div id="bi-aspect-bar" class="bg-accent h-1 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded bg-surface-muted border border-app-border space-y-1">
+              <span class="text-[10px] font-mono text-app-muted uppercase">Overall Parity</span>
+              <div id="bi-overall-metric" class="text-2xl font-bold text-state-success">--%</div>
+              <div class="w-full bg-app-border rounded-full h-1 mt-2">
+                <div id="bi-overall-bar" class="bg-state-success h-1 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 4: FORENSIC ANALYSIS                                      -->
+    <!-- ============================================================== -->
+    <div id="tab-forensics" class="tab-content hidden space-y-3">
+      <div class="border-b border-app-border pb-2 flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <h2 class="text-base font-semibold text-app-text tracking-tight">Explainable AI Image Forensics</h2>
+          <p class="text-xs text-app-muted">Localized forensic anomaly responses via multi-stream patch analysis.</p>
+        </div>
+        <div class="flex items-center space-x-3 text-xs">
+          <label for="forensic-alpha" class="text-app-muted">Heatmap Alpha:</label>
+          <input type="range" id="forensic-alpha" min="0.1" max="0.9" step="0.05" value="0.45" class="w-24 accent-accent" oninput="updateAlphaLabel(this.value)">
+          <span id="alpha-val" class="font-mono text-app-text">0.45</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="res-card p-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center space-x-2">
+          <input type="file" id="forensic-file-input" class="hidden" accept="image/*">
+          <button onclick="document.getElementById('forensic-file-input').click()" class="px-3.5 py-1.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-medium transition">
+            Upload External Suspect Image
+          </button>
+          <span class="text-xs text-app-muted">or</span>
+          <button id="btn-analyze-active" onclick="analyzeActiveImage()" class="px-3.5 py-1.5 bg-accent hover:bg-accent-hover text-white rounded text-xs font-semibold shadow-sm transition">
+            Analyze Active System Image
+          </button>
+        </div>
+        <div class="flex items-center space-x-2 text-xs font-mono text-app-muted">
+          <span>Target: <span id="current-target-name" class="text-accent font-semibold">None selected</span></span>
+          <button id="btn-clear-forensics" onclick="clearForensicAnalysis()" class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 transition cursor-pointer" title="Clear target image and forensic analysis">
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Metric Overview Cards -->
+      <div id="forensic-metric-cards" class="hidden grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div class="res-card p-3 space-y-1">
+          <span class="text-[10px] font-mono text-app-muted uppercase">AI-Generated Likelihood</span>
+          <div class="flex items-baseline space-x-1.5">
+            <span id="metric-ai-score" class="text-2xl font-bold text-app-text">0%</span>
+            <span class="text-xs text-app-muted font-mono">model score</span>
+          </div>
+          <div class="w-full bg-app-border rounded-full h-1 mt-1.5">
+            <div id="ai-progress-bar" class="bg-state-error h-1 rounded-full" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="res-card p-3 space-y-1">
+          <span class="text-[10px] font-mono text-app-muted uppercase">Real-Image Likelihood</span>
+          <div class="flex items-baseline space-x-1.5">
+            <span id="metric-real-score" class="text-2xl font-bold text-app-text">0%</span>
+            <span class="text-xs text-app-muted font-mono">camera sensor</span>
+          </div>
+          <div class="w-full bg-app-border rounded-full h-1 mt-1.5">
+            <div id="real-progress-bar" class="bg-accent h-1 rounded-full" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="res-card p-3 space-y-1">
+          <span class="text-[10px] font-mono text-app-muted uppercase">Anomaly Level</span>
+          <div id="metric-anomaly-level" class="text-xl font-bold text-accent">
+            --
+          </div>
+          <p class="text-[11px] text-app-muted font-mono">Top-15% percentile mean</p>
+        </div>
+
+        <div class="res-card p-3 space-y-1">
+          <span class="text-[10px] font-mono text-app-muted uppercase">Patches Analyzed</span>
+          <div id="metric-patch-count" class="text-xl font-bold text-app-text">
+            0
+          </div>
+          <p class="text-[11px] text-app-muted font-mono">64×64 px (stride 32)</p>
+        </div>
+      </div>
+
+      <!-- Triptych Comparison Panel -->
+      <div class="res-card p-3 space-y-3">
+        <div class="flex items-center justify-between border-b border-app-border pb-2">
+          <h3 class="text-xs font-semibold text-app-text uppercase tracking-wider">Triptych Comparison: Input • Forensic Heatmap • Overlay</h3>
+          <span class="text-xs font-mono text-app-muted">Bicubic Continuous Interpolation</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- View 1: Original Image -->
+          <div class="space-y-2">
+            <div class="text-xs font-mono text-app-muted flex justify-between">
+              <span>1. Original Image</span>
+              <span id="orig-dims"></span>
+            </div>
+            <div class="bg-surface-muted rounded border border-app-border aspect-square flex items-center justify-center p-2 relative overflow-hidden">
+              <div id="vis-orig-placeholder" class="text-center p-4 text-app-muted text-xs font-mono space-y-2">
+                <svg class="mx-auto h-8 w-8 text-app-muted opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Upload suspect image</span>
+              </div>
+              <img id="vis-orig-img" class="object-contain w-full h-full rounded hidden" src="" alt="Analyzed Target">
+            </div>
+          </div>
+
+          <!-- View 2: Forensic Heatmap -->
+          <div class="space-y-2">
+            <div class="text-xs font-mono text-app-muted flex justify-between">
+              <span>2. Forensic Heatmap</span>
+              <span>Pseudo-Thermal</span>
+            </div>
+            <div class="bg-surface-muted rounded border border-app-border aspect-square flex items-center justify-center p-2 relative overflow-hidden">
+              <div id="vis-heatmap-placeholder" class="text-center p-4 text-app-muted text-xs font-mono space-y-2">
+                <svg class="mx-auto h-8 w-8 text-app-muted opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span>Heatmap computed on analysis</span>
+              </div>
+              <img id="vis-heatmap-img" class="object-contain w-full h-full rounded hidden" src="" alt="Forensic Heatmap">
+            </div>
+          </div>
+
+          <!-- View 3: Heatmap Overlay -->
+          <div class="space-y-2">
+            <div class="text-xs font-mono text-app-muted flex justify-between">
+              <span>3. Heatmap Overlay</span>
+              <span>Alpha Blended</span>
+            </div>
+            <div class="bg-surface-muted rounded border border-app-border aspect-square flex items-center justify-center p-2 relative overflow-hidden">
+              <div id="vis-overlay-placeholder" class="text-center p-4 text-app-muted text-xs font-mono space-y-2">
+                <svg class="mx-auto h-8 w-8 text-app-muted opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>Overlay blended on analysis</span>
+              </div>
+              <img id="vis-overlay-img" class="object-contain w-full h-full rounded hidden" src="" alt="Heatmap Overlay">
+            </div>
+          </div>
+        </div>
+
+        <!-- Colormap Legend -->
+        <div class="pt-3 border-t border-app-border space-y-1.5">
+          <div class="flex justify-between text-[11px] font-mono text-app-muted">
+            <span>Low Anomaly (0.0)</span>
+            <span>Moderate (0.5)</span>
+            <span>High Anomaly (1.0)</span>
+          </div>
+          <div class="thermal-gradient h-2.5 rounded-full w-full"></div>
+          <div class="flex justify-between text-[10px] font-mono text-app-muted">
+            <span>Blue (Natural sensor baseline)</span>
+            <span>Green / Yellow (Intermediate)</span>
+            <span>Red / White (Detected artifact divergence)</span>
+          </div>
+          <p class="text-[10px] text-app-muted text-center pt-1 font-mono">
+            Pseudo-thermal forensic anomaly heatmap
+          </p>
+        </div>
+      </div>
+
+      <!-- Formal Forensic Report -->
+      <div id="forensic-report-card" class="hidden res-card p-4 space-y-4">
+        <div class="flex items-center justify-between border-b border-app-border pb-2.5">
+          <h3 class="text-xs font-semibold text-app-text uppercase tracking-wider">Formal Forensic Evaluation Report</h3>
+          <span id="report-id-badge" class="font-mono text-xs px-2.5 py-0.5 rounded bg-surface-muted text-accent border border-app-border">REP-000000</span>
+        </div>
+
+        <div class="space-y-1.5">
+          <span class="text-xs font-mono text-app-muted uppercase font-semibold block">Forensic Explanation:</span>
+          <p id="report-explanation" class="text-xs text-app-text leading-relaxed p-3.5 rounded bg-surface-muted border border-app-border"></p>
+        </div>
+
+        <!-- Protocol Disclaimer -->
+        <div class="p-3.5 rounded bg-surface-muted border border-app-border text-[11px] text-app-muted space-y-1">
+          <strong class="text-accent font-mono block">Forensic Protocol & Explainability:</strong>
+          <p id="report-disclaimer"></p>
+        </div>
+
+        <!-- Multi-Stream Evidence Accordion -->
+        <details class="p-3 rounded bg-surface border border-app-border text-xs font-mono">
+          <summary class="cursor-pointer text-app-muted font-medium hover:text-app-text">
+            Multi-Stream Forensic Evidence (2D FFT Power Spectrum & Spatial Noise Residual)
+          </summary>
+          <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-app-border">
+            <div class="space-y-1">
+              <span class="text-[11px] text-app-text block font-semibold">2D Fourier Power Spectrum</span>
+              <div class="bg-surface-muted rounded border border-app-border aspect-square flex items-center justify-center p-2">
+                <img id="vis-fft-img" class="object-contain max-h-56 rounded hidden" src="" alt="2D FFT Spectrum">
+              </div>
+              <p class="text-[10px] text-app-muted">Examines high-frequency periodic grid spikes characteristic of generative upsampling.</p>
+            </div>
+            <div class="space-y-1">
+              <span class="text-[11px] text-app-text block font-semibold">Spatial Noise Residual (Laplacian)</span>
+              <div class="bg-surface-muted rounded border border-app-border aspect-square flex items-center justify-center p-2">
+                <img id="vis-residual-img" class="object-contain max-h-56 rounded hidden" src="" alt="Spatial Noise Residual">
+              </div>
+              <p class="text-[10px] text-app-muted">Quantifies localized noise variance departures from physical Poisson-Gaussian sensor models.</p>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 5: RAG KNOWLEDGE BASE                                     -->
+    <!-- ============================================================== -->
+    <div id="tab-rag-knowledge" class="tab-content hidden space-y-6">
+      <div class="border-b border-app-border pb-3 flex flex-wrap items-baseline justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-app-text tracking-tight">RAG Domain Knowledge Base</h2>
+          <p class="text-xs text-app-muted">Domain corpora covering optics, lighting, composition, styles, and forensic artifacts.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="kb-search" placeholder="Search knowledge base..." class="text-xs px-3 py-1.5 rounded bg-surface border border-app-border text-app-text w-64 focus:border-accent" oninput="filterKnowledgeBase(this.value)">
+        </div>
+      </div>
+
+      <div id="kb-documents-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 6: RESEARCH LOG (Experiment History)                      -->
+    <!-- ============================================================== -->
+    <div id="tab-experiments" class="tab-content hidden space-y-6">
+      <div class="border-b border-app-border pb-3 flex justify-between items-baseline gap-2">
+        <div>
+          <h2 class="text-lg font-semibold text-app-text tracking-tight">Research Audit Log & Experiments</h2>
+          <p class="text-xs text-app-muted">Persistent SQLite metadata records of runs, prompts, parameters, and forensic scores.</p>
+        </div>
+        <button onclick="loadExperimentLogs()" class="px-3 py-1.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-mono transition">
+          Refresh Log
+        </button>
+      </div>
+
+      <div class="res-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-surface-muted text-app-muted border-b border-app-border">
+              <tr>
+                <th class="p-3">Experiment ID</th>
+                <th class="p-3">Timestamp</th>
+                <th class="p-3">Type</th>
+                <th class="p-3">Resolution</th>
+                <th class="p-3">AI Likelihood</th>
+                <th class="p-3">Anomaly</th>
+                <th class="p-3">Report ID</th>
+              </tr>
+            </thead>
+            <tbody id="experiments-table-body" class="divide-y divide-app-border text-app-text">
+              <tr><td colspan="7" class="p-4 text-center text-app-muted">Loading experiment records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 7: REPORTS (Document View)                                -->
+    <!-- ============================================================== -->
+    <div id="tab-reports" class="tab-content hidden space-y-6">
+      <div class="border-b border-app-border pb-3 flex justify-between items-baseline gap-2">
+        <div>
+          <h2 class="text-lg font-semibold text-app-text tracking-tight">Generated Forensic Reports</h2>
+          <p class="text-xs text-app-muted">Audit records and formal forensic evaluations stored in research output directory.</p>
+        </div>
+        <button onclick="loadReportsList()" class="px-3 py-1.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-mono transition">
+          Refresh Reports
+        </button>
+      </div>
+
+      <div class="res-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-surface-muted text-app-muted border-b border-app-border">
+              <tr>
+                <th class="p-3">Report ID</th>
+                <th class="p-3">Target Asset</th>
+                <th class="p-3">AI Likelihood</th>
+                <th class="p-3">Anomaly Level</th>
+                <th class="p-3">Global Score</th>
+                <th class="p-3">Forensic Model</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reports-table-body" class="divide-y divide-app-border text-app-text">
+              <tr><td colspan="7" class="p-4 text-center text-app-muted">Loading reports...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 8: TECHNICAL ARCHITECTURE                                 -->
+    <!-- ============================================================== -->
+    <div id="tab-pipeline" class="tab-content hidden space-y-6">
+      <div class="border-b border-app-border pb-3">
+        <h2 class="text-lg font-semibold text-app-text tracking-tight">Technical Pipeline Specifications</h2>
+        <p class="text-xs text-app-muted">Sequential research architecture defining inputs, models, operations, and explainability protocols.</p>
+      </div>
+
+      <div class="space-y-3" id="pipeline-stages-container">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 9: OVERVIEW / INTRO                                        -->
+    <!-- ============================================================== -->
+    <div id="tab-home" class="tab-content hidden space-y-6">
+      <div class="res-card p-6 sm:p-8 space-y-4">
+        <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded bg-surface-muted border border-app-border text-app-muted text-xs font-mono">
+          <span>Visual AI Studio</span>
+        </div>
+        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-app-text">
+          Explainable AI Forensic Verification & RAG-Guided Multimodal Synthesis
+        </h2>
+        <p class="text-app-muted text-xs sm:text-sm leading-relaxed max-w-3xl">
+          This system provides a reproducible research workbench uniting two bidirectional multimodal capabilities: 
+          <strong>Visual Understanding (Image-to-Text via VLM)</strong> and 
+          <strong>Grounded Latent Synthesis (RAG-Enhanced Text-to-Image via Diffusion)</strong>, 
+          strictly coupled with an <strong>independent Explainable AI (XAI) Forensic Detection Module</strong>.
+        </p>
+        <div class="flex flex-wrap gap-2 pt-2">
+          <button onclick="switchTab('image-to-text')" class="px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded text-xs font-semibold shadow-sm transition">
+            Start Image → Text Pipeline →
+          </button>
+          <button onclick="switchTab('forensics')" class="px-4 py-2 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-medium transition">
+            Run Forensic Analyzer Directly
+          </button>
+          <button onclick="switchTab('pipeline')" class="px-4 py-2 bg-surface hover:bg-surface-muted text-app-muted border border-app-border rounded text-xs font-medium transition">
+            View Architectural Blueprint
+          </button>
+        </div>
+      </div>
+
+      <!-- 3 Core Pillars -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="res-card p-4 space-y-2">
+          <span class="text-xs font-mono font-semibold text-accent block">01 / Visual Understanding</span>
+          <h3 class="text-sm font-semibold text-app-text">Multi-Model Vision & Pixel Analysis</h3>
+          <p class="text-xs text-app-muted leading-relaxed">
+            Extracts structured visual descriptors (subjects, lighting, composition, pixel color clustering) using Gemini Vision, Llama 3.2 90B Vision, and Kimi K3 fallback.
+          </p>
+        </div>
+
+        <div class="res-card p-4 space-y-2">
+          <span class="text-xs font-mono font-semibold text-accent block">02 / RAG & Latent Synthesis</span>
+          <h3 class="text-sm font-semibold text-app-text">Optical Knowledge & Diffusion</h3>
+          <p class="text-xs text-app-muted leading-relaxed">
+            Retrieves optical and aesthetic parameters from an indexed corpus. Sanitizes prompts against injection before rendering via iterative latent diffusion.
+          </p>
+        </div>
+
+        <div class="res-card p-4 space-y-2">
+          <span class="text-xs font-mono font-semibold text-accent block">03 / Independent Forensics</span>
+          <h3 class="text-sm font-semibold text-app-text">Decoupled Patch-Level Detection</h3>
+          <p class="text-xs text-app-muted leading-relaxed">
+            Evaluates 64×64 overlapping patches using multi-stream spatial noise residuals and 2D Fourier (FFT) grid analysis into pseudo-thermal heatmaps.
+          </p>
+        </div>
+      </div>
+
+      <!-- Disclaimer Banner -->
+      <div class="p-3.5 rounded bg-surface-muted border border-app-border text-xs text-app-muted space-y-1">
+        <strong class="font-mono text-app-text block">Research Protocol & Forensic Interpretation:</strong>
+        <p>
+          Forensic anomaly scores quantify statistical artifact discrepancies and model confidence. They do not claim mathematical certainty or absolute legal proof of synthetic or authentic origin. The pseudo-thermal heatmaps localize statistical artifact divergence for human-in-the-loop explainability.
+        </p>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 10: LEGAL - TERMS OF USE                                   -->
+    <!-- ============================================================== -->
+    <div id="tab-terms" class="tab-content hidden space-y-6">
+      <div class="res-card p-6 space-y-4 max-w-4xl mx-auto">
+        <div class="flex items-center justify-between border-b border-app-border pb-3">
+          <h2 class="text-base font-semibold text-app-text">Terms of Use</h2>
+          <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-state-warning border border-amber-200">DRAFT FOR REVIEW</span>
+        </div>
+        <div class="text-xs text-app-muted space-y-3 leading-relaxed">
+          <p><strong>1. Prototype Scope:</strong> This application is provided for demonstration of multimodal machine learning and computer-vision forensics.</p>
+          <p><strong>2. No Legal or Forensic Certifications:</strong> Results produced by the forensic anomaly detector, likelihood scores, and heatmap visualizations represent statistical inferences. They do not constitute certified legal testimony or conclusive proof of image authenticity.</p>
+          <p><strong>3. User Content & Uploads:</strong> Users retain ownership of images uploaded to the laboratory. EXIF metadata is automatically stripped upon ingest to protect privacy. Local server storage is maintained temporarily for the duration of experiment sessions.</p>
+          <p><strong>4. Responsible AI Usage:</strong> Users agree not to utilize this prototype to construct malicious prompts or attempt bypasses of safety boundary layers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 11: LEGAL - PRIVACY POLICY                                 -->
+    <!-- ============================================================== -->
+    <div id="tab-privacy" class="tab-content hidden space-y-6">
+      <div class="res-card p-6 space-y-4 max-w-4xl mx-auto">
+        <div class="flex items-center justify-between border-b border-app-border pb-3">
+          <h2 class="text-base font-semibold text-app-text">Privacy Policy</h2>
+          <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-50 text-state-warning border border-amber-200">DRAFT FOR REVIEW</span>
+        </div>
+        <div class="text-xs text-app-muted space-y-3 leading-relaxed">
+          <p><strong>1. Image Data Handling:</strong> Uploaded images are sanitized locally; embedded EXIF location, device serial, and timestamp tags are removed before model ingestion.</p>
+          <p><strong>2. Telemetry and Metadata:</strong> Experiment records (resolution, prompt text, model version, anomaly scores) are recorded in a local SQLite database for scientific reproducibility. API keys and personal credentials are never stored in database logs.</p>
+          <p><strong>3. Third-Party Model Providers:</strong> When configured, API requests to Google Gemini, Llama, or Kimi APIs are governed by their respective academic or standard developer service agreements.</p>
+          <p><strong>4. Inquiries & Audit:</strong> For questions regarding local experimental data retention, please refer to the project repository configuration.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-20 opacity-0 px-4 py-2.5 rounded text-xs font-mono shadow-md flex items-center space-x-2 border">
+    <span id="toast-msg">Notification</span>
+  </div>
+
+  <!-- Detailed Report Modal -->
+  <div id="report-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-surface border border-app-border rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col shadow-lg">
+      <div class="p-4 border-b border-app-border flex items-center justify-between">
+        <h3 id="modal-report-title" class="text-sm font-semibold text-app-text font-mono">Forensic Report Details</h3>
+        <button onclick="closeReportModal()" class="text-app-muted hover:text-app-text font-mono text-sm px-2">✕</button>
+      </div>
+      <div id="modal-report-body" class="p-4 overflow-y-auto space-y-3 text-xs font-mono text-app-text">
+        <!-- Filled by JS -->
+      </div>
+      <div class="p-3 border-t border-app-border bg-surface-muted flex justify-end space-x-2">
+        <a id="modal-download-link" href="#" download="forensic_report.json" class="px-3 py-1.5 bg-accent text-white rounded text-xs font-medium">Download JSON</a>
+        <button onclick="closeReportModal()" class="px-3 py-1.5 bg-surface border border-app-border text-app-text rounded text-xs font-medium">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=3.3"></script>
+</body>
+</html>

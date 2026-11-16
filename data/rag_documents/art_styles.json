@@ -1,0 +1,37 @@
+[
+  {
+    "id": "style_001",
+    "category": "art_styles",
+    "title": "Hyper-Realistic Editorial Photography",
+    "description": "Crisp editorial fashion and documentary photography styling with genuine biological pore textures, cloth micro-weave, uncompressed tonal dynamics, and authentic color balance.",
+    "keywords": ["hyper-realistic", "editorial photography", "vogue editorial", "biological texture", "natural skin", "authentic color"]
+  },
+  {
+    "id": "style_002",
+    "category": "art_styles",
+    "title": "Cinematic 35mm Film Still (Kodak Portra)",
+    "description": "Cinema motion picture still characterized by soft highlight rolloff, warm amber skin tones, subtle organic halation around bright light sources, and delicate film grain.",
+    "keywords": ["cinematic film still", "kodak portra 400", "film halation", "warm tones", "movie screenshot", "35mm grain"]
+  },
+  {
+    "id": "style_003",
+    "category": "art_styles",
+    "title": "Classical Oil Painting (Impasto & Chiaroscuro)",
+    "description": "Baroque and Renaissance oil painting traditions with visible brushstroke impasto textures, varnished oil sheen, rich earthy pigments, and deep theatrical illumination.",
+    "keywords": ["oil painting", "impasto", "canvas texture", "brushstrokes", "baroque", "renaissance", "varnished"]
+  },
+  {
+    "id": "style_004",
+    "category": "art_styles",
+    "title": "Futuristic Sci-Fi Concept Art",
+    "description": "Sleek industrial design, hard-surface matte polycarbonates, glowing luminescent telemetry panels, holographic displays, and atmospheric planetary vistas.",
+    "keywords": ["sci-fi", "concept art", "hard surface", "futuristic", "industrial design", "holographic", "cybernetic"]
+  },
+  {
+    "id": "style_005",
+    "category": "art_styles",
+    "title": "Minimalist Fine Art Photography",
+    "description": "Sparse visual geometry, expansive negative space, monochromatic or restrained palette, high graphic clarity, and serene contemplative subject arrangement.",
+    "keywords": ["minimalist", "fine art", "negative space", "monochrome", "restrained palette", "zen aesthetic"]
+  }
+]
