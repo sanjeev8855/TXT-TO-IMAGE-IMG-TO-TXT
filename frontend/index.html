@@ -359,9 +359,6 @@
           <button onclick="switchTab('forensics')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="forensics">
             Forensics
           </button>
-          <button onclick="switchTab('rag-knowledge')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="rag-knowledge">
-            RAG Knowledge
-          </button>
           <button onclick="switchTab('experiments')" class="nav-tab px-3 py-1.5 font-medium border-b-2 transition border-transparent text-app-muted hover:text-app-text" data-tab="experiments">
             Research Log
           </button>
@@ -1037,24 +1034,6 @@
       </div>
     </div>
 
-    <!-- ============================================================== -->
-    <!-- TAB 5: RAG KNOWLEDGE BASE                                     -->
-    <!-- ============================================================== -->
-    <div id="tab-rag-knowledge" class="tab-content hidden space-y-6">
-      <div class="border-b border-app-border pb-3 flex flex-wrap items-baseline justify-between gap-4">
-        <div>
-          <h2 class="text-lg font-semibold text-app-text tracking-tight">RAG Domain Knowledge Base</h2>
-          <p class="text-xs text-app-muted">Domain corpora covering optics, lighting, composition, styles, and forensic artifacts.</p>
-        </div>
-        <div class="flex items-center space-x-2">
-          <input type="text" id="kb-search" placeholder="Search knowledge base..." class="text-xs px-3 py-1.5 rounded bg-surface border border-app-border text-app-text w-64 focus:border-accent" oninput="filterKnowledgeBase(this.value)">
-        </div>
-      </div>
-
-      <div id="kb-documents-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
 
     <!-- ============================================================== -->
     <!-- TAB 6: RESEARCH LOG (Experiment History)                      -->
@@ -1268,6 +1247,6 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=3.3"></script>
+  <script src="/static/app.js?v=3.4"></script>
 </body>
 </html>
