@@ -311,90 +311,49 @@
       border-color: var(--acid);
     }
 
-    /* Hero Section with Iridescent 3D Morphing Orb */
+    /* ========================================================================== */
+    /* HERO SECTION & COMPLETELY UNCLIPPED 3D EARTH GLOBE                         */
+    /* ========================================================================== */
     .hero-banner {
       position: relative;
-      min-height: 290px;
-      padding: 95px 0 35px;
+      min-height: 520px;
+      padding: 120px 0 60px;
       display: flex;
       align-items: center;
-      overflow: hidden;
-      border-bottom: 1px solid var(--line);
+      overflow: visible !important;
+      border-bottom: 0 !important;
       margin-bottom: 24px;
+      background: radial-gradient(circle at 76% 50%, rgba(14, 165, 233, 0.22) 0%, rgba(29, 78, 216, 0.08) 38%, transparent 72%);
     }
+
     .orb-scene {
       position: absolute;
-      inset: 0;
-      perspective: 1000px;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .hero-banner {
-      position: relative;
-      min-height: 320px;
-      padding: 95px 0 35px;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 24px;
-    }
-    .orb-scene {
-      position: absolute;
-      inset: 0;
-      perspective: 1000px;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-    /* 3D Earth Globe - Deep Blue Space Gravity */
-    .hero-banner {
-      position: relative;
-      min-height: 330px;
-      padding: 105px 0 35px;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 24px;
-    }
-    /* Deep space cosmic blue nebula aura near Earth globe */
-    .hero-banner:after {
-      content: "";
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 600px;
-      background: radial-gradient(circle at 70% 50%, rgba(14, 165, 233, 0.24) 0%, rgba(29, 78, 216, 0.12) 42%, transparent 74%);
+      right: 2%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: min(44vw, 440px);
+      height: min(44vw, 440px);
+      perspective: 1200px;
+      overflow: visible !important;
       pointer-events: none;
       z-index: 1;
     }
-    .orb-scene {
-      position: absolute;
-      inset: 0;
-      perspective: 1000px;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
+
+    /* 3D Earth Globe - Completely unclipped & whole sphere */
     .orb {
-      position: absolute;
-      width: min(44vw, 430px);
-      height: min(44vw, 430px);
+      position: relative;
+      width: 100%;
+      height: 100%;
       aspect-ratio: 1 / 1;
-      right: 3%;
-      top: 54%;
-      transform: translateY(-50%);
       border-radius: 50% !important;
-      box-shadow: 0 0 95px rgba(14, 165, 233, 0.4), 0 0 45px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 0 110px rgba(14, 165, 233, 0.45), 0 0 50px rgba(56, 189, 248, 0.35);
       transform-style: preserve-3d;
       opacity: 0.98;
       transition: margin 0.15s ease-out;
       will-change: transform;
-      overflow: visible;
+      overflow: visible !important;
     }
+
     .earth-sphere-img {
       position: absolute;
       inset: 0;
@@ -406,31 +365,35 @@
       filter: contrast(1.06) brightness(1.03);
       animation: earthFloat 9s ease-in-out infinite alternate;
     }
+
     @keyframes earthFloat {
       0% { transform: scale(1) translateY(0); }
       100% { transform: scale(1.02) translateY(-6px); }
     }
+
     html:not(.dark) .orb {
-      background: radial-gradient(circle at 30% 28%, #ffffff 0%, #60a5fa 20%, #2563eb 45%, #1e3a8a 70%, #0f172a 92%);
-      box-shadow: inset -22px -22px 55px rgba(0, 0, 0, 0.55), inset 12px 12px 35px rgba(255, 255, 255, 0.9), 0 0 75px rgba(56, 189, 248, 0.25);
+      box-shadow: 0 0 80px rgba(14, 165, 233, 0.35), 0 0 40px rgba(56, 189, 248, 0.25);
     }
+
     /* Concentric Tilted Orbital Rings in Celestial Cyan Space */
     .orb:before, .orb:after {
       content: "";
       position: absolute;
       inset: -14%;
       border-radius: 50%;
-      border: 1.5px solid rgba(56, 189, 248, 0.35);
+      border: 1.5px solid rgba(56, 189, 248, 0.4);
       transform: rotateX(68deg) rotateZ(22deg);
-      box-shadow: 0 0 40px rgba(56, 189, 248, 0.22);
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.25);
       pointer-events: none;
     }
+
     .orb:after {
       inset: -25%;
-      border-color: rgba(96, 165, 250, 0.22);
+      border-color: rgba(96, 165, 250, 0.25);
       border-style: dashed;
       transform: rotateY(65deg) rotateZ(-25deg);
     }
+
     #globe-canvas {
       position: absolute;
       inset: 0;
@@ -636,18 +599,28 @@
     </nav>
   </div>
 
-  <!-- Studio Hero Banner with WOWWW Morphing 3D Orb -->
-  <header class="hero-banner">
-    <div class="orb-scene"><div class="orb" id="orb"><img id="earth-img-asset" class="earth-sphere-img" src="/static/earth_3d_globe.png" alt="3D Earth Globe"><canvas id="globe-canvas" width="500" height="500"></canvas></div></div>
+    <!-- Studio Hero Banner with Unclipped 3D Earth Globe -->
+  <header class="hero-banner" id="hero-section">
+    <div class="orb-scene">
+      <div class="orb globe-wrapper" id="orb">
+        <img id="earth-img-asset" class="earth-sphere-img" src="/static/earth_3d_globe.png" alt="3D Earth Globe">
+        <canvas id="globe-canvas" width="500" height="500"></canvas>
+      </div>
+    </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-      <div class="max-w-3xl">
+      <div class="max-w-2xl">
         <div class="eyebrow">Multimodal Vision & Latent Synthesis Studio · Est. 2026</div>
         <h1 class="hero-title">Multimodal vision that makes you <em>look.</em></h1>
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mt-2">
-          <p class="text-app-muted text-xs sm:text-sm leading-relaxed max-w-xl">
-            Dual-direction image understanding, latent diffusion synthesis, and patch-level explainable AI forensics. Built with intention and pixel precision.
-          </p>
-
+        <p class="text-app-muted text-xs sm:text-sm leading-relaxed max-w-lg mt-2">
+          Dual-direction image understanding, latent diffusion synthesis, and patch-level explainable AI forensics. Built with intention and pixel precision.
+        </p>
+        <div class="flex flex-wrap items-center gap-3 pt-5">
+          <button onclick="switchTab('image-to-text')" class="btn-acid">
+            Launch Studio ↗
+          </button>
+          <button onclick="document.getElementById('home-capabilities')?.scrollIntoView({behavior: 'smooth'})" class="px-4 py-2.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded-full text-xs font-mono transition cursor-pointer">
+            Explore Capabilities ↓
+          </button>
         </div>
       </div>
     </div>
@@ -1439,61 +1412,170 @@
     <!-- ============================================================== -->
     <!-- TAB 9: OVERVIEW / INTRO                                        -->
     <!-- ============================================================== -->
-    <div id="tab-home" class="tab-content space-y-6">
-      <div class="res-card p-6 sm:p-8 space-y-4">
-        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-muted border border-app-border text-accent text-xs font-mono">
-          <span>VISUAL AI RESEARCH STUDIO</span>
+    <div id="tab-home" class="tab-content space-y-8">
+      
+      <!-- Section 01: Core Studio Capabilities (Bento Showcase) -->
+      <section id="home-capabilities" class="space-y-4">
+        <div class="border-b border-app-border pb-2.5 flex items-center justify-between">
+          <div>
+            <span class="kicker">01 / Selected Capabilities</span>
+            <h2 class="text-base sm:text-lg font-semibold text-app-text tracking-tight mt-0.5">Four Integrated Multimodal Research Modules</h2>
+          </div>
+          <span class="tag">ACTIVE SYSTEM</span>
         </div>
-        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-app-text">
-          Explainable AI Forensic Verification & RAG-Guided Multimodal Synthesis
-        </h2>
-        <p class="text-app-muted text-xs sm:text-sm leading-relaxed max-w-3xl">
-          This system provides a reproducible research workbench uniting two bidirectional multimodal capabilities: 
-          <strong>Visual Understanding (Image-to-Text via VLM)</strong> and 
-          <strong>Grounded Latent Synthesis (RAG-Enhanced Text-to-Image via Diffusion)</strong>, 
-          strictly coupled with an <strong>independent Explainable AI (XAI) Forensic Detection Module</strong>.
-        </p>
-        <div class="flex flex-wrap gap-2 pt-2">
-          <button onclick="switchTab('image-to-text')" class="btn-acid">
-            Start Image → Text Pipeline ↗
-          </button>
-          <button onclick="switchTab('forensics')" class="px-4 py-2 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded-full text-xs font-mono transition">
-            Run Forensic Analyzer Directly
-          </button>
-          <button onclick="switchTab('pipeline')" class="px-4 py-2 bg-surface hover:bg-surface-muted text-app-muted border border-app-border rounded-full text-xs font-mono transition">
-            View Architectural Blueprint
-          </button>
-        </div>
-      </div>
 
-      <!-- 3 Core Pillars -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="res-card p-5 space-y-2">
-          <span class="text-xs font-mono font-semibold text-accent block">01 / Visual Understanding</span>
-          <h3 class="text-sm font-semibold text-app-text">Multi-Model Vision & Pixel Analysis</h3>
-          <p class="text-xs text-app-muted leading-relaxed">
-            Extracts structured visual descriptors (subjects, lighting, composition, pixel color clustering) using Gemini Vision, Llama 3.2 90B Vision, and Kimi K3 fallback.
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1: Visual Understanding -->
+          <div class="res-card p-5 flex flex-col justify-between space-y-3">
+            <div class="space-y-2">
+              <span class="text-xs font-mono font-semibold text-accent block">01 / Visual Extraction</span>
+              <h3 class="text-sm font-semibold text-app-text">Image → Text Visual Analysis</h3>
+              <p class="text-xs text-app-muted leading-relaxed">
+                Extracts dominant color distributions, detected objects, scene semantics, lighting, and camera optics via multimodal VLM.
+              </p>
+            </div>
+            <button onclick="switchTab('image-to-text')" class="btn-acid text-xs py-2 w-full mt-2">
+              Launch Module ↗
+            </button>
+          </div>
+
+          <!-- Card 2: Latent Synthesis -->
+          <div class="res-card p-5 flex flex-col justify-between space-y-3">
+            <div class="space-y-2">
+              <span class="text-xs font-mono font-semibold text-accent block">02 / Latent Synthesis</span>
+              <h3 class="text-sm font-semibold text-app-text">Text → Image Generation</h3>
+              <p class="text-xs text-app-muted leading-relaxed">
+                Reconstructs high-fidelity visual representations from extracted prompts enriched by RAG domain knowledge through latent diffusion.
+              </p>
+            </div>
+            <button onclick="switchTab('text-to-image')" class="px-3.5 py-2 bg-surface hover:bg-surface-muted text-app-text border border-app-border hover:border-accent rounded-full text-xs font-mono transition w-full mt-2 cursor-pointer">
+              Open Latent Studio →
+            </button>
+          </div>
+
+          <!-- Card 3: Decoupled Forensics -->
+          <div class="res-card p-5 flex flex-col justify-between space-y-3">
+            <div class="space-y-2">
+              <span class="text-xs font-mono font-semibold text-accent block">03 / AI Forensics</span>
+              <h3 class="text-sm font-semibold text-app-text">Explainable Image Forensics</h3>
+              <p class="text-xs text-app-muted leading-relaxed">
+                Evaluates 64×64 pixel patches using multi-stream spatial noise residuals and 2D Fourier (FFT) grid analysis into pseudo-thermal heatmaps.
+              </p>
+            </div>
+            <button onclick="switchTab('forensics')" class="px-3.5 py-2 bg-surface hover:bg-surface-muted text-app-text border border-app-border hover:border-accent rounded-full text-xs font-mono transition w-full mt-2 cursor-pointer">
+              Run Forensic Analyzer →
+            </button>
+          </div>
+
+          <!-- Card 4: Bidirectional Parity -->
+          <div class="res-card p-5 flex flex-col justify-between space-y-3">
+            <div class="space-y-2">
+              <span class="text-xs font-mono font-semibold text-accent block">04 / Parity Evaluation</span>
+              <h3 class="text-sm font-semibold text-app-text">Bidirectional Comparison</h3>
+              <p class="text-xs text-app-muted leading-relaxed">
+                Evaluates color correlation, aspect ratio fidelity, and semantic cosine similarity between original input and synthesized image.
+              </p>
+            </div>
+            <button onclick="switchTab('bidirectional')" class="px-3.5 py-2 bg-surface hover:bg-surface-muted text-app-text border border-app-border hover:border-accent rounded-full text-xs font-mono transition w-full mt-2 cursor-pointer">
+              Compare Parity →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 02: Quick Upload / Live Drag & Drop Gateway -->
+      <section class="res-card p-6 sm:p-7 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-app-border pb-3">
+          <div>
+            <span class="kicker">Quick Ingest Gateway</span>
+            <h3 class="text-base font-semibold text-app-text mt-0.5">Start Instant Analysis from Home</h3>
+          </div>
+          <span class="text-xs font-mono text-app-muted">PNG / JPG / WEBP • Up to 20MB</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          <div class="md:col-span-8">
+            <div onclick="switchTab('image-to-text'); setTimeout(() => document.getElementById('file-input')?.click(), 100);" class="border-2 border-dashed border-app-border hover:border-accent rounded-2xl p-6 text-center cursor-pointer transition bg-surface-subtle flex flex-col items-center justify-center min-h-[140px]">
+              <svg class="mx-auto h-8 w-8 text-accent mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <div class="text-xs text-app-text font-medium">
+                <span class="text-accent font-semibold">Click to select an image</span> or switch to Image → Text
+              </div>
+              <p class="text-[11px] font-mono text-app-muted mt-1">Automatic EXIF privacy sanitation & local processing</p>
+            </div>
+          </div>
+          <div class="md:col-span-4 space-y-2 text-xs font-mono text-app-muted bg-surface-muted p-4 rounded-xl border border-app-border">
+            <span class="text-app-text font-semibold uppercase text-[11px] block">Live Telemetry Status</span>
+            <div class="flex justify-between py-1 border-b border-app-border"><span>VLM Model:</span><span class="text-accent">Gemini / Llama 3.2</span></div>
+            <div class="flex justify-between py-1 border-b border-app-border"><span>Synthesis:</span><span class="text-accent">FLUX.1 Latent</span></div>
+            <div class="flex justify-between py-1 border-b border-app-border"><span>Forensics:</span><span class="text-accent">Multi-Stream Patch</span></div>
+            <div class="flex justify-between py-1"><span>RAG Corpus:</span><span class="text-accent">33 Docs Indexed</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 03: Architectural Pipeline Blueprint -->
+      <section class="space-y-4">
+        <div class="border-b border-app-border pb-2.5 flex items-center justify-between">
+          <div>
+            <span class="kicker">02 / Architecture & Science</span>
+            <h2 class="text-base sm:text-lg font-semibold text-app-text tracking-tight mt-0.5">Pipeline Blueprint & Research Protocol</h2>
+          </div>
+          <button onclick="switchTab('pipeline')" class="btn-clear-pill">
+            View Full Specifications →
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-xs font-mono">
+          <div class="res-card p-3.5 space-y-1.5">
+            <span class="text-accent text-[10px] uppercase font-bold block">01 • Ingest</span>
+            <h4 class="text-app-text font-semibold">EXIF Sanitization</h4>
+            <p class="text-[11px] text-app-muted font-sans">Strips GPS and serial tags before memory buffering.</p>
+          </div>
+          <div class="res-card p-3.5 space-y-1.5">
+            <span class="text-accent text-[10px] uppercase font-bold block">02 • Extraction</span>
+            <h4 class="text-app-text font-semibold">VLM Deconstruction</h4>
+            <p class="text-[11px] text-app-muted font-sans">Multi-model scene, lighting, and object localization.</p>
+          </div>
+          <div class="res-card p-3.5 space-y-1.5">
+            <span class="text-accent text-[10px] uppercase font-bold block">03 • Knowledge</span>
+            <h4 class="text-app-text font-semibold">RAG Enrichment</h4>
+            <p class="text-[11px] text-app-muted font-sans">Retrieves optical physics and photographic knowledge.</p>
+          </div>
+          <div class="res-card p-3.5 space-y-1.5">
+            <span class="text-accent text-[10px] uppercase font-bold block">04 • Diffusion</span>
+            <h4 class="text-app-text font-semibold">Latent Synthesis</h4>
+            <p class="text-[11px] text-app-muted font-sans">Iterative reverse denoising with safety boundaries.</p>
+          </div>
+          <div class="res-card p-3.5 space-y-1.5">
+            <span class="text-accent text-[10px] uppercase font-bold block">05 • Forensics</span>
+            <h4 class="text-app-text font-semibold">XAI Verification</h4>
+            <p class="text-[11px] text-app-muted font-sans">Laplacian noise residual & 2D FFT spectral heatmap.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 04: Grand Action Banner -->
+      <section class="res-card p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-l-4 border-l-accent bg-surface">
+        <div class="space-y-1.5 max-w-2xl">
+          <span class="kicker">Next Step</span>
+          <h3 class="text-lg sm:text-xl font-semibold text-app-text">Ready to analyze or generate imagery?</h3>
+          <p class="text-xs sm:text-sm text-app-muted font-mono leading-relaxed">
+            Proceed to the dedicated Image → Text visual analysis studio or run forensics directly on any suspect media.
           </p>
         </div>
-
-        <div class="res-card p-5 space-y-2">
-          <span class="text-xs font-mono font-semibold text-accent block">02 / RAG & Latent Synthesis</span>
-          <h3 class="text-sm font-semibold text-app-text">Optical Knowledge & Diffusion</h3>
-          <p class="text-xs text-app-muted leading-relaxed">
-            Retrieves optical and aesthetic parameters from an indexed corpus. Sanitizes prompts against injection before rendering via iterative latent diffusion.
-          </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="switchTab('image-to-text')" class="btn-acid whitespace-nowrap text-xs px-5 py-2.5">
+            Launch Image → Text Studio ↗
+          </button>
+          <button onclick="switchTab('forensics')" class="btn-clear-pill text-xs py-2 px-4">
+            Forensics Module →
+          </button>
         </div>
+      </section>
 
-        <div class="res-card p-5 space-y-2">
-          <span class="text-xs font-mono font-semibold text-accent block">03 / Independent Forensics</span>
-          <h3 class="text-sm font-semibold text-app-text">Decoupled Patch-Level Detection</h3>
-          <p class="text-xs text-app-muted leading-relaxed">
-            Evaluates 64×64 overlapping patches using multi-stream spatial noise residuals and 2D Fourier (FFT) grid analysis into pseudo-thermal heatmaps.
-          </p>
-        </div>
-      </div>
-
-      <!-- Disclaimer Banner -->
+      <!-- Protocol Disclaimer Banner -->
       <div class="p-4 rounded-xl bg-surface-muted border border-app-border text-xs text-app-muted space-y-1">
         <strong class="font-mono text-accent block">Research Protocol & Forensic Interpretation:</strong>
         <p>
@@ -1501,19 +1583,7 @@
         </p>
       </div>
 
-      <!-- Side Swipe / Next Page Banner to Image -> Text -->
-      <div class="res-card p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-l-4 border-l-accent">
-        <div class="space-y-1">
-          <span class="kicker">Next Pipeline Stage</span>
-          <h3 class="text-base font-semibold text-app-text">Explore Image → Text Visual Analysis</h3>
-          <p class="text-xs text-app-muted font-mono">Extract dominant color distributions, objects, optical framing, and boundary-checked generation prompts.</p>
-        </div>
-        <button onclick="switchTab('image-to-text')" class="btn-acid whitespace-nowrap">
-          Proceed to Image → Text ↗
-        </button>
-      </div>
     </div>
-
     <!-- ============================================================== -->
     <!-- TAB 10: LEGAL - TERMS OF USE                                   -->
     <!-- ============================================================== -->
