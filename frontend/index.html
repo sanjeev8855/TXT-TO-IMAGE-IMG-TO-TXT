@@ -327,44 +327,70 @@
       pointer-events: none;
       z-index: 0;
     }
+    .hero-banner {
+      position: relative;
+      min-height: 320px;
+      padding: 95px 0 35px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .orb-scene {
+      position: absolute;
+      inset: 0;
+      perspective: 1000px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* 3D Celestial Globe Architecture */
     .orb {
       position: absolute;
-      width: min(48vw, 480px);
-      aspect-ratio: 1;
-      right: 2%;
-      top: -15%;
-      border-radius: 45% 55% 58% 42% / 48% 42% 58% 52%;
-      background: radial-gradient(circle at 32% 28%, #f3ff9a 0, #caff42 12%, #80a81d 26%, #35421b 46%, #151a12 66%, #101010 76%);
-      filter: drop-shadow(0 0 90px rgba(183, 255, 37, 0.28));
-      animation: morphOrb 14s ease-in-out infinite alternate;
+      width: min(42vw, 420px);
+      height: min(42vw, 420px);
+      aspect-ratio: 1 / 1;
+      right: 4%;
+      top: 50%;
+      transform: translateY(-50%);
+      border-radius: 50% !important;
+      background: radial-gradient(circle at 30% 28%, #faffc7 0%, #d8ff3e 14%, #79a815 30%, #293f08 54%, #101903 76%, #050a01 96%);
+      box-shadow: inset -28px -28px 65px rgba(0, 0, 0, 0.95), inset 14px 14px 38px rgba(255, 255, 255, 0.35), 0 0 90px rgba(216, 255, 62, 0.3);
+      filter: drop-shadow(0 0 65px rgba(183, 255, 37, 0.28));
       transform-style: preserve-3d;
-      opacity: 0.92;
+      opacity: 0.95;
       transition: margin 0.15s ease-out;
-      will-change: transform, border-radius;
+      will-change: transform;
     }
+    html:not(.dark) .orb {
+      background: radial-gradient(circle at 30% 28%, #ffffff 0%, #d8ff3e 20%, #9fcb0f 42%, #4d6905 68%, #212e02 92%);
+      box-shadow: inset -22px -22px 55px rgba(0, 0, 0, 0.52), inset 12px 12px 32px rgba(255, 255, 255, 0.85), 0 0 65px rgba(183, 255, 37, 0.2);
+    }
+    /* Concentric Tilted Orbital Rings */
     .orb:before, .orb:after {
       content: "";
       position: absolute;
-      inset: 9%;
-      border-radius: inherit;
-      border: 1px solid rgba(234, 255, 154, 0.35);
-      transform: rotateX(65deg) rotateZ(20deg) scale(1.2);
-      box-shadow: inset 0 0 80px rgba(216, 255, 62, 0.15), 0 0 60px rgba(216, 255, 62, 0.12);
+      inset: -14%;
+      border-radius: 50%;
+      border: 1.5px solid rgba(216, 255, 62, 0.32);
+      transform: rotateX(68deg) rotateZ(22deg);
+      box-shadow: 0 0 35px rgba(216, 255, 62, 0.15);
+      pointer-events: none;
     }
     .orb:after {
-      inset: 22%;
-      transform: rotateY(65deg) rotateZ(-25deg) scale(1.4);
-      border-color: rgba(234, 255, 154, 0.2);
+      inset: -25%;
+      border-color: rgba(216, 255, 62, 0.18);
+      border-style: dashed;
+      transform: rotateY(65deg) rotateZ(-25deg);
     }
-    @keyframes morphOrb {
-      0% {
-        border-radius: 45% 55% 58% 42% / 48% 42% 58% 52%;
-        transform: rotate(-18deg) translate3d(0, 0, 0);
-      }
-      100% {
-        border-radius: 58% 42% 43% 57% / 40% 58% 42% 60%;
-        transform: rotate(18deg) translate3d(-20px, 16px, 60px);
-      }
+    #globe-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      pointer-events: none;
     }
 
     .eyebrow {
@@ -561,7 +587,7 @@
 
   <!-- Studio Hero Banner with WOWWW Morphing 3D Orb -->
   <header class="hero-banner">
-    <div class="orb-scene"><div class="orb" id="orb"></div></div>
+    <div class="orb-scene"><div class="orb" id="orb"><canvas id="globe-canvas" width="500" height="500"></canvas></div></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
       <div class="max-w-3xl">
         <div class="eyebrow">Multimodal Vision & Latent Synthesis Studio · Est. 2026</div>
@@ -1496,8 +1522,130 @@
 
   <!-- Interactive Parallax and Mobile Menu Enhancements -->
   <script>
-    // 3D Pointer parallax on the morphing iridescent hero orb
+    // 3D Interactive Rotating Wireframe Globe Engine
     const heroOrb = document.getElementById('orb');
+    const globeCanvas = document.getElementById('globe-canvas');
+
+    if (globeCanvas) {
+      const gCtx = globeCanvas.getContext('2d');
+      const size = 500;
+      const R = 238;
+      const CX = size / 2;
+      const CY = size / 2;
+      let rotY = 0;
+      let tiltX = 0.38; // ~22 degrees axial tilt
+      let targetTiltX = 0.38;
+
+      // Surface coordinate nodes (pulsing network matrix across the globe)
+      const globeNodes = [];
+      for (let i = 0; i < 56; i++) {
+        globeNodes.push({
+          lat: (Math.random() - 0.5) * 140,
+          lon: Math.random() * 360,
+          size: Math.random() * 2.2 + 1.2,
+          pulse: Math.random() * Math.PI * 2,
+          pulseSpeed: 0.03 + Math.random() * 0.04
+        });
+      }
+
+      function project3D(latDeg, lonDeg, rot, tilt) {
+        const lat = latDeg * Math.PI / 180;
+        const lon = lonDeg * Math.PI / 180 + rot;
+        
+        const x = R * Math.cos(lat) * Math.sin(lon);
+        const y = R * Math.sin(lat);
+        const z = R * Math.cos(lat) * Math.cos(lon);
+        
+        const y1 = y * Math.cos(tilt) - z * Math.sin(tilt);
+        const z1 = y * Math.sin(tilt) + z * Math.cos(tilt);
+        
+        return { x: CX + x, y: CY - y1, z: z1 };
+      }
+
+      function renderGlobe() {
+        gCtx.clearRect(0, 0, size, size);
+        rotY += 0.007; // Smooth continuous planetary rotation
+        tiltX += (targetTiltX - tiltX) * 0.06;
+
+        const isDark = document.documentElement.classList.contains('dark') || !localStorage.getItem('research_lab_theme');
+        const lime = isDark ? '216, 255, 62' : '139, 181, 0';
+
+        // 1. Draw Latitude Parallels (Equator, Tropics, Polar circles)
+        const latitudes = [-65, -45, -23.5, 0, 23.5, 45, 65];
+        for (const lat of latitudes) {
+          gCtx.beginPath();
+          let first = true;
+          const isEquator = lat === 0;
+          gCtx.strokeStyle = isEquator ? `rgba(${lime}, 0.55)` : `rgba(${lime}, 0.18)`;
+          gCtx.lineWidth = isEquator ? 1.6 : 0.85;
+          if (isEquator) gCtx.setLineDash([5, 4]); else gCtx.setLineDash([]);
+
+          for (let lon = 0; lon <= 360; lon += 5) {
+            const pt = project3D(lat, lon, rotY, tiltX);
+            if (first) { gCtx.moveTo(pt.x, pt.y); first = false; }
+            else { gCtx.lineTo(pt.x, pt.y); }
+          }
+          gCtx.stroke();
+        }
+        gCtx.setLineDash([]);
+
+        // 2. Draw Longitude Meridians (Dual-pass depth culling)
+        const meridians = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5];
+        for (const m of meridians) {
+          for (let pass = 0; pass < 2; pass++) {
+            gCtx.beginPath();
+            let started = false;
+            gCtx.lineWidth = pass === 1 ? 1.25 : 0.65;
+            gCtx.strokeStyle = pass === 1 ? `rgba(${lime}, 0.42)` : `rgba(${lime}, 0.12)`;
+
+            for (let lat = -90; lat <= 90; lat += 4) {
+              const lon = pass === 0 ? m + 180 : m;
+              const pt = project3D(lat, lon, rotY, tiltX);
+              if (pass === 1 && pt.z < -20) continue; // Front hemisphere only
+              if (!started) { gCtx.moveTo(pt.x, pt.y); started = true; }
+              else { gCtx.lineTo(pt.x, pt.y); }
+            }
+            gCtx.stroke();
+          }
+        }
+
+        // 3. Draw Rotating Surface Coordinate Nodes
+        for (const node of globeNodes) {
+          node.pulse += node.pulseSpeed;
+          const pt = project3D(node.lat, node.lon, rotY, tiltX);
+          if (pt.z > -15) { // Visible on front half of globe
+            const alpha = 0.35 + 0.65 * Math.abs(Math.sin(node.pulse));
+            gCtx.fillStyle = `rgba(${lime}, ${alpha})`;
+            gCtx.beginPath();
+            gCtx.arc(pt.x, pt.y, node.size, 0, Math.PI * 2);
+            gCtx.fill();
+
+            // Specular core on prominent nodes
+            if (node.size > 2.0 && pt.z > 80) {
+              gCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+              gCtx.beginPath();
+              gCtx.arc(pt.x, pt.y, node.size * 0.45, 0, Math.PI * 2);
+              gCtx.fill();
+            }
+          }
+        }
+
+        // 4. Subtle Atmospheric Rim Glow (Fresnel perimeter halo)
+        const rimGrad = gCtx.createRadialGradient(CX, CY, R * 0.88, CX, CY, R);
+        rimGrad.addColorStop(0, `rgba(${lime}, 0)`);
+        rimGrad.addColorStop(1, `rgba(${lime}, 0.28)`);
+        gCtx.fillStyle = rimGrad;
+        gCtx.beginPath();
+        gCtx.arc(CX, CY, R, 0, Math.PI * 2);
+        gCtx.fill();
+
+        requestAnimationFrame(renderGlobe);
+      }
+
+      renderGlobe();
+    }
+
+    // Interactive pointer parallax tracking
     if (heroOrb) {
       window.addEventListener('pointermove', event => {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -1505,6 +1653,7 @@
         const y = (event.clientY / window.innerHeight - 0.5) * 16;
         heroOrb.style.marginLeft = `${x}px`;
         heroOrb.style.marginTop = `${y}px`;
+        targetTiltX = 0.38 + (event.clientY / window.innerHeight - 0.5) * 0.3;
       }, { passive: true });
     }
 
