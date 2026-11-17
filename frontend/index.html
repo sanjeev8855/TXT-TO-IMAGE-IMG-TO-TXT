@@ -70,7 +70,7 @@
       --blue-accent: #0284c7;
       --blue-glow: rgba(56, 189, 248, 0.35);
       --radius: 20px;
-      --max: 1320px;
+      --max: 1280px;
     }
 
     html:not(.dark) {
@@ -159,24 +159,24 @@
     }
     .nav {
       pointer-events: auto;
-      width: min(var(--max), 100%);
+      width: min(var(--max), calc(100% - 32px));
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 8px 14px 8px 20px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 7px 12px 7px 18px;
+      border: 1px solid rgba(56, 189, 248, 0.22);
       border-radius: 100px;
-      background: rgba(22, 24, 26, 0.88);
+      background: rgba(13, 18, 28, 0.88);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       transition: background 0.3s ease, border-color 0.3s ease;
     }
     html:not(.dark) .nav {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(2, 132, 199, 0.2);
+      box-shadow: 0 12px 35px rgba(2, 132, 199, 0.08);
     }
 
     .logo {
@@ -210,28 +210,28 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--muted);
-      padding: 7px 13px;
+      padding: 6px 13px;
       border-radius: 100px;
       border: 1px solid transparent;
       background: transparent;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
     .nav-tab:hover {
       color: var(--ink);
-      border-color: rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(56, 189, 248, 0.25);
+      background: rgba(56, 189, 248, 0.06);
     }
     .nav-tab.active-tab {
       color: #ffffff !important;
       background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
       border-color: #38bdf8 !important;
       font-weight: 600;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.45);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.45);
     }
     html:not(.dark) .nav-tab.active-tab {
       color: #ffffff !important;
@@ -333,46 +333,43 @@
     }
 
     /* ========================================================================== */
-    /* HERO SECTION & COMPLETELY UNCLIPPED 3D EARTH GLOBE                         */
+    /* HERO SECTION & BALANCED 3D EARTH GLOBE                                     */
     /* ========================================================================== */
     .hero-banner {
       position: relative;
-      min-height: 520px;
-      padding: 120px 0 60px;
+      min-height: 480px;
+      padding: 105px 0 45px;
       display: flex;
       align-items: center;
-      overflow: visible !important;
-      border-bottom: 0 !important;
-      margin-bottom: 24px;
-      background: radial-gradient(circle at 76% 50%, rgba(14, 165, 233, 0.22) 0%, rgba(29, 78, 216, 0.08) 38%, transparent 72%);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 32px;
+      background: radial-gradient(circle at 74% 50%, rgba(14, 165, 233, 0.18) 0%, rgba(29, 78, 216, 0.06) 40%, transparent 72%);
     }
 
     .orb-scene {
-      position: absolute;
-      right: 2%;
-      top: 50%;
-      transform: translateY(-50%);
-      width: min(44vw, 440px);
-      height: min(44vw, 440px);
+      position: relative;
+      width: min(390px, 86vw);
+      height: min(390px, 86vw);
       perspective: 1200px;
-      overflow: visible !important;
       pointer-events: none;
       z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* 3D Earth Globe - Completely unclipped & whole sphere */
+    /* 3D Earth Globe - Perfectly proportioned sphere */
     .orb {
       position: relative;
       width: 100%;
       height: 100%;
       aspect-ratio: 1 / 1;
       border-radius: 50% !important;
-      box-shadow: 0 0 110px rgba(14, 165, 233, 0.45), 0 0 50px rgba(56, 189, 248, 0.35);
+      box-shadow: 0 0 85px rgba(14, 165, 233, 0.45), 0 0 35px rgba(56, 189, 248, 0.35);
       transform-style: preserve-3d;
       opacity: 0.98;
       transition: margin 0.15s ease-out;
       will-change: transform;
-      overflow: visible !important;
     }
 
     .earth-sphere-img {
@@ -393,23 +390,23 @@
     }
 
     html:not(.dark) .orb {
-      box-shadow: 0 0 80px rgba(14, 165, 233, 0.35), 0 0 40px rgba(56, 189, 248, 0.25);
+      box-shadow: 0 0 70px rgba(14, 165, 233, 0.3), 0 0 30px rgba(56, 189, 248, 0.2);
     }
 
-    /* Concentric Tilted Orbital Rings in Celestial Cyan Space */
+    /* Concentric Tilted Orbital Rings hugging the Earth Atmosphere */
     .orb:before, .orb:after {
       content: "";
       position: absolute;
-      inset: -14%;
+      inset: -6%;
       border-radius: 50%;
       border: 1.5px solid rgba(56, 189, 248, 0.4);
       transform: rotateX(68deg) rotateZ(22deg);
-      box-shadow: 0 0 40px rgba(56, 189, 248, 0.25);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
       pointer-events: none;
     }
 
     .orb:after {
-      inset: -25%;
+      inset: -12%;
       border-color: rgba(96, 165, 250, 0.25);
       border-style: dashed;
       transform: rotateY(65deg) rotateZ(-25deg);
@@ -617,28 +614,35 @@
     </nav>
   </div>
 
-    <!-- Studio Hero Banner with Unclipped 3D Earth Globe -->
+    <!-- Studio Hero Banner with Balanced 3D Earth Globe -->
   <header class="hero-banner" id="hero-section">
-    <div class="orb-scene">
-      <div class="orb globe-wrapper" id="orb">
-        <img id="earth-img-asset" class="earth-sphere-img" src="/static/earth_3d_globe.png" alt="3D Earth Globe">
-        <canvas id="globe-canvas" width="500" height="500"></canvas>
-      </div>
-    </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-      <div class="max-w-2xl">
-        <div class="eyebrow">Multimodal Vision & Latent Synthesis Studio · Est. 2026</div>
-        <h1 class="hero-title">Multimodal vision that makes you <em>look.</em></h1>
-        <p class="text-app-muted text-xs sm:text-sm leading-relaxed max-w-lg mt-2">
-          Dual-direction image understanding, latent diffusion synthesis, and patch-level explainable AI forensics. Built with intention and pixel precision.
-        </p>
-        <div class="flex flex-wrap items-center gap-3 pt-5">
-          <button onclick="switchTab('image-to-text')" class="btn-acid">
-            Launch Studio ↗
-          </button>
-          <button onclick="document.getElementById('home-capabilities')?.scrollIntoView({behavior: 'smooth'})" class="px-4 py-2.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded-full text-xs font-mono transition cursor-pointer">
-            Explore Capabilities ↓
-          </button>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- Hero Text Content (7 cols) -->
+        <div class="lg:col-span-7 space-y-2">
+          <div class="eyebrow">Multimodal Vision & Latent Synthesis Studio · Est. 2026</div>
+          <h1 class="hero-title">Multimodal vision that makes you <em>look.</em></h1>
+          <p class="text-app-muted text-xs sm:text-sm leading-relaxed max-w-lg mt-2">
+            Dual-direction image understanding, latent diffusion synthesis, and patch-level explainable AI forensics. Built with intention and pixel precision.
+          </p>
+          <div class="flex flex-wrap items-center gap-3 pt-4">
+            <button onclick="switchTab('image-to-text')" class="btn-acid">
+              Launch Studio ↗
+            </button>
+            <button onclick="document.getElementById('home-capabilities')?.scrollIntoView({behavior: 'smooth'})" class="px-4 py-2.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded-full text-xs font-mono transition cursor-pointer">
+              Explore Capabilities ↓
+            </button>
+          </div>
+        </div>
+
+        <!-- 3D Earth Globe Visual (5 cols) -->
+        <div class="lg:col-span-5 flex justify-center lg:justify-end relative">
+          <div class="orb-scene">
+            <div class="orb globe-wrapper" id="orb">
+              <img id="earth-img-asset" class="earth-sphere-img" src="/static/earth_3d_globe.png" alt="3D Earth Globe">
+              <canvas id="globe-canvas" width="500" height="500"></canvas>
+            </div>
+          </div>
         </div>
       </div>
     </div>
