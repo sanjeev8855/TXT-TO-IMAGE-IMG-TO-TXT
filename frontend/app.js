@@ -1843,67 +1843,150 @@ function renderPipelineStages() {
   `).join("");
 }
 
-// Load Experiment Logs
-async function loadExperimentLogs() {
+// Safe timestamp formatting for audit logs
+function formatAuditTimestamp(ts) {
+  if (!ts) return "—";
   try {
-    const res = await fetch("/api/experiments?limit=25");
-    if (!res.ok) return;
+    const dt = new Date(ts);
+    if (isNaN(dt.getTime())) {
+      return String(ts).replace("T", " ").slice(0, 19);
+    }
+    const dStr = dt.toLocaleDateString([], { month: "short", day: "numeric" });
+    const tStr = dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    return `${dStr}, ${tStr}`;
+  } catch {
+    return String(ts).slice(0, 19);
+  }
+}
+
+// Load Experiment Logs
+async function loadExperimentLogs(isManual = false) {
+  const btn = document.getElementById("btn-refresh-experiments");
+  const icon = btn?.querySelector(".refresh-icon");
+  const label = btn?.querySelector(".refresh-label");
+
+  if (btn) {
+    btn.disabled = true;
+    if (icon) icon.classList.add("animate-spin");
+    if (label) label.textContent = "Refreshing...";
+  }
+
+  try {
+    const res = await fetch("/api/experiments?limit=50");
+    if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch logs`);
     const exps = await res.json();
     const tbody = document.getElementById("experiments-table-body");
     if (!tbody) return;
 
-    if (exps.length === 0) {
+    if (!Array.isArray(exps) || exps.length === 0) {
       tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-app-muted">No experiments logged yet. Execute the pipeline to record audit metadata.</td></tr>`;
-      return;
+    } else {
+      tbody.innerHTML = exps.map(e => {
+        const likelihood = Number(e.ai_generated_likelihood ?? 0);
+        const likelihoodColor = likelihood > 60 ? "text-state-error" : "text-accent";
+        const anomaly = e.anomaly_level || "LOW";
+        const anomalyBadge = anomaly === "HIGH"
+          ? "bg-rose-50 text-state-error border border-rose-200"
+          : "bg-surface-muted text-app-muted border border-app-border";
+
+        return `
+          <tr class="hover:bg-surface-subtle transition">
+            <td class="p-3 text-accent font-semibold font-mono text-xs">${e.experiment_id || "—"}</td>
+            <td class="p-3 text-app-muted font-mono text-[11px]">${formatAuditTimestamp(e.timestamp)}</td>
+            <td class="p-3 text-app-text">${e.experiment_type || "pipeline_run"}</td>
+            <td class="p-3 text-app-muted font-mono text-[11px]">${e.image_width || 512}×${e.image_height || 512}</td>
+            <td class="p-3 font-semibold ${likelihoodColor}">${likelihood.toFixed(1)}%</td>
+            <td class="p-3"><span class="px-1.5 py-0.5 rounded text-[10px] ${anomalyBadge}">${anomaly}</span></td>
+            <td class="p-3 text-app-muted font-mono text-[11px]">${e.report_id || "—"}</td>
+          </tr>
+        `;
+      }).join("");
     }
 
-    tbody.innerHTML = exps.map(e => `
-      <tr class="hover:bg-surface-subtle transition">
-        <td class="p-3 text-accent font-semibold">${e.experiment_id}</td>
-        <td class="p-3 text-app-muted">${new Date(e.timestamp).toLocaleTimeString()}</td>
-        <td class="p-3 text-app-text">${e.experiment_type}</td>
-        <td class="p-3 text-app-muted">${e.image_width}×${e.image_height}</td>
-        <td class="p-3 font-semibold ${e.ai_generated_likelihood > 60 ? 'text-state-error' : 'text-accent'}">${e.ai_generated_likelihood}%</td>
-        <td class="p-3"><span class="px-1.5 py-0.5 rounded text-[10px] ${e.anomaly_level === 'HIGH' ? 'bg-rose-50 text-state-error border border-rose-200' : 'bg-surface-muted text-app-muted border border-app-border'}">${e.anomaly_level}</span></td>
-        <td class="p-3 text-app-muted">${e.report_id}</td>
-      </tr>
-    `).join("");
+    if (isManual && typeof showToast === "function") {
+      showToast(`Experiment logs refreshed (${Array.isArray(exps) ? exps.length : 0} records).`, "success");
+    }
   } catch (err) {
     console.warn("Failed to load experiments:", err);
+    if (isManual && typeof showToast === "function") {
+      showToast("Error refreshing logs: " + err.message, "error");
+    }
+  } finally {
+    if (btn) {
+      setTimeout(() => {
+        btn.disabled = false;
+        if (icon) icon.classList.remove("animate-spin");
+        if (label) label.textContent = "Refresh Log";
+      }, 350);
+    }
   }
 }
 
 // Load Reports List
-async function loadReportsList() {
+async function loadReportsList(isManual = false) {
+  const btn = document.getElementById("btn-refresh-reports");
+  const icon = btn?.querySelector(".refresh-icon");
+  const label = btn?.querySelector(".refresh-label");
+
+  if (btn) {
+    btn.disabled = true;
+    if (icon) icon.classList.add("animate-spin");
+    if (label) label.textContent = "Refreshing...";
+  }
+
   try {
     const res = await fetch("/api/reports");
-    if (!res.ok) return;
+    if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch reports`);
     const reports = await res.json();
     state.reportsList = reports;
     const tbody = document.getElementById("reports-table-body");
     if (!tbody) return;
 
-    if (reports.length === 0) {
+    if (!Array.isArray(reports) || reports.length === 0) {
       tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-app-muted">No forensic reports generated yet. Execute a forensic analysis to produce reports.</td></tr>`;
-      return;
+    } else {
+      tbody.innerHTML = reports.map(r => {
+        const likelihood = Number(r.ai_generated_likelihood ?? 0);
+        const likelihoodColor = likelihood > 60 ? "text-state-error" : "text-accent";
+        const anomaly = r.anomaly_level || "UNKNOWN";
+        const anomalyBadge = anomaly === "HIGH"
+          ? "bg-rose-50 text-state-error border border-rose-200"
+          : "bg-surface-muted text-app-muted border border-app-border";
+        const score = Number(r.global_anomaly_score ?? 0);
+
+        return `
+          <tr class="hover:bg-surface-subtle transition">
+            <td class="p-3 text-accent font-semibold font-mono text-xs">${r.report_id || "—"}</td>
+            <td class="p-3 text-app-text truncate max-w-xs font-mono text-[11px]">${r.filename || "Unknown"}</td>
+            <td class="p-3 font-semibold ${likelihoodColor}">${likelihood.toFixed(1)}%</td>
+            <td class="p-3"><span class="px-1.5 py-0.5 rounded text-[10px] ${anomalyBadge}">${anomaly}</span></td>
+            <td class="p-3 text-app-muted font-mono text-[11px]">${score.toFixed(4)}</td>
+            <td class="p-3 text-app-muted truncate text-[11px]">${r.forensic_model || "spatial-frequency-patch-detector"}</td>
+            <td class="p-3 text-right space-x-2">
+              <button onclick="viewReportModal('${r.report_id}')" class="px-2 py-1 bg-surface border border-app-border rounded hover:bg-surface-muted hover:border-accent text-app-text text-[11px] cursor-pointer transition">View</button>
+              <a href="${r.report_url}" download="${r.report_id}.json" class="px-2 py-1 bg-surface border border-app-border rounded hover:bg-surface-muted hover:border-accent text-accent text-[11px] cursor-pointer transition">Download</a>
+            </td>
+          </tr>
+        `;
+      }).join("");
     }
 
-    tbody.innerHTML = reports.map(r => `
-      <tr class="hover:bg-surface-subtle transition">
-        <td class="p-3 text-accent font-semibold">${r.report_id}</td>
-        <td class="p-3 text-app-text truncate max-w-xs">${r.filename}</td>
-        <td class="p-3 font-semibold ${r.ai_generated_likelihood > 60 ? 'text-state-error' : 'text-accent'}">${r.ai_generated_likelihood}%</td>
-        <td class="p-3"><span class="px-1.5 py-0.5 rounded text-[10px] ${r.anomaly_level === 'HIGH' ? 'bg-rose-50 text-state-error border border-rose-200' : 'bg-surface-muted text-app-muted border border-app-border'}">${r.anomaly_level}</span></td>
-        <td class="p-3 text-app-muted">${r.global_anomaly_score.toFixed(4)}</td>
-        <td class="p-3 text-app-muted truncate">${r.forensic_model}</td>
-        <td class="p-3 text-right space-x-2">
-          <button onclick="viewReportModal('${r.report_id}')" class="px-2 py-1 bg-surface border border-app-border rounded hover:bg-surface-muted text-app-text text-[11px]">View</button>
-          <a href="${r.report_url}" download="${r.report_id}.json" class="px-2 py-1 bg-surface border border-app-border rounded hover:bg-surface-muted text-accent text-[11px]">Download</a>
-        </td>
-      </tr>
-    `).join("");
+    if (isManual && typeof showToast === "function") {
+      showToast(`Forensic reports refreshed (${Array.isArray(reports) ? reports.length : 0} records).`, "success");
+    }
   } catch (err) {
     console.warn("Failed to load reports:", err);
+    if (isManual && typeof showToast === "function") {
+      showToast("Error refreshing reports: " + err.message, "error");
+    }
+  } finally {
+    if (btn) {
+      setTimeout(() => {
+        btn.disabled = false;
+        if (icon) icon.classList.remove("animate-spin");
+        if (label) label.textContent = "Refresh Reports";
+      }, 350);
+    }
   }
 }
 

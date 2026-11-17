@@ -1044,8 +1044,11 @@
           <h2 class="text-lg font-semibold text-app-text tracking-tight">Research Audit Log & Experiments</h2>
           <p class="text-xs text-app-muted">Persistent SQLite metadata records of runs, prompts, parameters, and forensic scores.</p>
         </div>
-        <button onclick="loadExperimentLogs()" class="px-3 py-1.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-mono transition">
-          Refresh Log
+        <button id="btn-refresh-experiments" onclick="loadExperimentLogs(true)" class="px-3 py-1.5 bg-surface hover:bg-surface-muted active:scale-95 text-app-text border border-app-border hover:border-accent rounded text-xs font-mono transition cursor-pointer select-none inline-flex items-center space-x-1.5" title="Refresh research audit logs">
+          <svg class="h-3.5 w-3.5 refresh-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span class="refresh-label">Refresh Log</span>
         </button>
       </div>
 
@@ -1080,8 +1083,11 @@
           <h2 class="text-lg font-semibold text-app-text tracking-tight">Generated Forensic Reports</h2>
           <p class="text-xs text-app-muted">Audit records and formal forensic evaluations stored in research output directory.</p>
         </div>
-        <button onclick="loadReportsList()" class="px-3 py-1.5 bg-surface hover:bg-surface-muted text-app-text border border-app-border rounded text-xs font-mono transition">
-          Refresh Reports
+        <button id="btn-refresh-reports" onclick="loadReportsList(true)" class="px-3 py-1.5 bg-surface hover:bg-surface-muted active:scale-95 text-app-text border border-app-border hover:border-accent rounded text-xs font-mono transition cursor-pointer select-none inline-flex items-center space-x-1.5" title="Refresh forensic reports">
+          <svg class="h-3.5 w-3.5 refresh-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span class="refresh-label">Refresh Reports</span>
         </button>
       </div>
 
@@ -1247,6 +1253,6 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=3.4"></script>
+  <script src="/static/app.js?v=3.5"></script>
 </body>
 </html>
