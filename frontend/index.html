@@ -18,6 +18,7 @@
       }
     })();
   </script>
+  <script src="/static/three.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -636,12 +637,23 @@
         </div>
 
         <!-- 3D Earth Globe Visual (5 cols) -->
-        <div class="lg:col-span-5 flex justify-center lg:justify-end relative">
+        <div class="lg:col-span-5 flex flex-col items-center lg:items-end justify-center relative">
           <div class="orb-scene">
             <div class="orb globe-wrapper" id="orb">
-              <img id="earth-img-asset" class="earth-sphere-img" src="/static/earth_3d_globe.png" alt="3D Earth Globe">
-              <canvas id="globe-canvas" width="500" height="500"></canvas>
+              <canvas id="globe-3d-canvas" width="420" height="420" class="w-full h-full rounded-full cursor-grab active:cursor-grabbing block"></canvas>
+              <img id="earth-img-asset" class="earth-sphere-img hidden" src="/static/earth_3d_globe.png" alt="3D Earth Globe">
             </div>
+          </div>
+          <!-- 3D Earth Interactive Controls -->
+          <div class="flex items-center gap-2 mt-3 z-10 font-mono text-[11px]">
+            <button id="btn-earth-rot-toggle" onclick="toggleEarthRotation()" class="btn-clear-pill text-[10px] py-1 px-3">
+              <span id="earth-rot-icon">Ⅱ</span>
+              <span id="earth-rot-label">Pause</span>
+            </button>
+            <button onclick="rotateToOtherSide()" class="btn-clear-pill text-[10px] py-1 px-3 text-accent" title="Rotate 180° to view the other side of the Earth">
+              ⇄ Other Side
+            </button>
+            <span class="text-[10px] text-app-muted hidden sm:inline">Drag to spin 360°</span>
           </div>
         </div>
       </div>
@@ -1764,108 +1776,172 @@
 
   <!-- Interactive Parallax and Mobile Menu Enhancements -->
   <script>
-    // 3D Interactive Earth Globe Engine (Blue Space Gravity)
+    // =========================================================================
+    // Photorealistic 360° Interactive 3D Earth Globe Engine (Three.js WebGL)
+    // Allows rotating 360° to view all continents and the other side of the Earth
+    // =========================================================================
     const heroOrb = document.getElementById('orb');
-    const globeCanvas = document.getElementById('globe-canvas');
+    const globeCanvas = document.getElementById('globe-3d-canvas');
+    const fallbackImg = document.getElementById('earth-img-asset');
 
-    if (globeCanvas) {
-      const gCtx = globeCanvas.getContext('2d');
-      const size = 500;
-      const R = 248;
-      const CX = size / 2;
-      const CY = size / 2;
-      let orbitAngle = 0;
-      let satAngle2 = Math.PI;
+    let autoRotate = true;
+    let targetY = -2.1;
+    let toggleEarthRotation = function() {};
+    let rotateToOtherSide = function() {};
 
-      // Telemetry beacon points over the Earth
-      const telemetryNodes = [
-        { angle: 0.2, radiusRatio: 0.94, size: 3.2, pulse: 0 },
-        { angle: 1.8, radiusRatio: 0.88, size: 2.8, pulse: 1.2 },
-        { angle: 3.4, radiusRatio: 0.92, size: 3.0, pulse: 2.4 },
-        { angle: 4.8, radiusRatio: 0.85, size: 2.6, pulse: 3.6 }
-      ];
+    if (globeCanvas && window.THREE) {
+      try {
+        const renderer = new THREE.WebGLRenderer({ canvas: globeCanvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.15;
 
-      function renderGlobeEffects() {
-        gCtx.clearRect(0, 0, size, size);
-        orbitAngle += 0.009;
-        satAngle2 += 0.006;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+        camera.position.set(0, 0, 7.2);
 
-        // 1. Soft atmospheric azure rim glow (Earth's blue atmosphere seen from orbit)
-        const rimGrad = gCtx.createRadialGradient(CX, CY, R * 0.84, CX, CY, R);
-        rimGrad.addColorStop(0, 'rgba(56, 189, 248, 0)');
-        rimGrad.addColorStop(0.65, 'rgba(56, 189, 248, 0.16)');
-        rimGrad.addColorStop(1, 'rgba(14, 165, 233, 0.52)');
-        gCtx.fillStyle = rimGrad;
-        gCtx.beginPath();
-        gCtx.arc(CX, CY, R, 0, Math.PI * 2);
-        gCtx.fill();
+        // Load 2048px textures with local priority and CDN fallback
+        const loader = new THREE.TextureLoader();
+        loader.setCrossOrigin('anonymous');
+        const loadTex = (file) => new Promise(res => {
+          loader.load(
+            '/static/' + file,
+            res,
+            undefined,
+            () => loader.load('https://threejs.org/examples/textures/planets/' + file, res)
+          );
+        });
 
-        // 2. Orbital Flight Path 1 (Equatorial / Tilted Ellipse)
-        gCtx.strokeStyle = 'rgba(56, 189, 248, 0.38)';
-        gCtx.lineWidth = 1.2;
-        gCtx.setLineDash([8, 8]);
-        gCtx.beginPath();
-        gCtx.ellipse(CX, CY, R * 0.96, R * 0.38, 0.38, 0, Math.PI * 2);
-        gCtx.stroke();
-        gCtx.setLineDash([]);
+        Promise.all([
+          loadTex('earth_atmos_2048.jpg'),
+          loadTex('earth_normal_2048.jpg'),
+          loadTex('earth_specular_2048.jpg'),
+          loadTex('earth_clouds_1024.png')
+        ]).then(([earthMap, normalMap, specularMap, cloudMap]) => {
+          earthMap.colorSpace = THREE.SRGBColorSpace;
+          cloudMap.colorSpace = THREE.SRGBColorSpace;
 
-        // Satellite 1 along orbit 1
-        const sat1X = CX + Math.cos(orbitAngle) * (R * 0.96) * Math.cos(0.38) - Math.sin(orbitAngle) * (R * 0.38) * Math.sin(0.38);
-        const sat1Y = CY + Math.cos(orbitAngle) * (R * 0.96) * Math.sin(0.38) + Math.sin(orbitAngle) * (R * 0.38) * Math.cos(0.38);
-        
-        gCtx.fillStyle = '#38bdf8';
-        gCtx.beginPath();
-        gCtx.arc(sat1X, sat1Y, 3.5, 0, Math.PI * 2);
-        gCtx.fill();
-        gCtx.fillStyle = '#ffffff';
-        gCtx.beginPath();
-        gCtx.arc(sat1X, sat1Y, 1.8, 0, Math.PI * 2);
-        gCtx.fill();
+          const planetGroup = new THREE.Group();
+          scene.add(planetGroup);
 
-        // 3. Orbital Flight Path 2 (Polar Orbit)
-        gCtx.strokeStyle = 'rgba(96, 165, 250, 0.22)';
-        gCtx.lineWidth = 1.0;
-        gCtx.setLineDash([4, 6]);
-        gCtx.beginPath();
-        gCtx.ellipse(CX, CY, R * 0.35, R * 0.97, -0.45, 0, Math.PI * 2);
-        gCtx.stroke();
-        gCtx.setLineDash([]);
+          // 1. Earth Sphere with Normal Relief & Specular Ocean Reflections
+          const earthMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(2.0, 64, 64),
+            new THREE.MeshPhongMaterial({
+              map: earthMap,
+              normalMap: normalMap,
+              normalScale: new THREE.Vector2(0.5, 0.5),
+              specularMap: specularMap,
+              specular: new THREE.Color('#38bdf8'),
+              shininess: 16,
+              emissive: new THREE.Color('#0369a1'),
+              emissiveMap: earthMap,
+              emissiveIntensity: 0.18
+            })
+          );
+          planetGroup.add(earthMesh);
 
-        // Satellite 2 along polar orbit
-        const sat2X = CX + Math.cos(satAngle2) * (R * 0.35) * Math.cos(-0.45) - Math.sin(satAngle2) * (R * 0.97) * Math.sin(-0.45);
-        const sat2Y = CY + Math.cos(satAngle2) * (R * 0.35) * Math.sin(-0.45) + Math.sin(satAngle2) * (R * 0.97) * Math.cos(-0.45);
+          // 2. Independent Cloud Sphere (rotates with atmospheric physics)
+          const cloudsMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(2.022, 64, 64),
+            new THREE.MeshPhongMaterial({
+              map: cloudMap,
+              transparent: true,
+              opacity: 0.36,
+              depthWrite: false,
+              side: THREE.DoubleSide
+            })
+          );
+          planetGroup.add(cloudsMesh);
 
-        gCtx.fillStyle = '#60a5fa';
-        gCtx.beginPath();
-        gCtx.arc(sat2X, sat2Y, 3.0, 0, Math.PI * 2);
-        gCtx.fill();
-        gCtx.fillStyle = '#ffffff';
-        gCtx.beginPath();
-        gCtx.arc(sat2X, sat2Y, 1.4, 0, Math.PI * 2);
-        gCtx.fill();
+          // 3. Planetary Lighting: Upper-left Directional Sunlight + Ambient Space Blue
+          scene.add(new THREE.AmbientLight(0xd5e7ff, 1.45));
+          const sun = new THREE.DirectionalLight(0xfff9f0, 3.2);
+          sun.position.set(-6, 4, 7);
+          scene.add(sun);
 
-        // 4. Telemetry beacons (glowing white / cyan beacons over continents)
-        for (const node of telemetryNodes) {
-          node.pulse += 0.05;
-          const alpha = 0.4 + 0.6 * Math.abs(Math.sin(node.pulse));
-          const nx = CX + Math.cos(node.angle) * (R * node.radiusRatio);
-          const ny = CY + Math.sin(node.angle) * (R * node.radiusRatio * 0.85);
+          const blueFill = new THREE.PointLight(0x38bdf8, 2.2, 20);
+          blueFill.position.set(-4, -2, -1);
+          scene.add(blueFill);
 
-          gCtx.fillStyle = `rgba(56, 189, 248, ${alpha})`;
-          gCtx.beginPath();
-          gCtx.arc(nx, ny, node.size * 1.5, 0, Math.PI * 2);
-          gCtx.fill();
+          // 4. Interactive Drag & Spin Mechanics
+          let dragging = false;
+          let lastX = 0, lastY = 0;
+          let rotX = 0.22, rotY = -2.1;
+          let targetX = rotX;
+          let velX = 0, velY = 0;
 
-          gCtx.fillStyle = '#ffffff';
-          gCtx.beginPath();
-          gCtx.arc(nx, ny, node.size * 0.5, 0, Math.PI * 2);
-          gCtx.fill();
-        }
+          globeCanvas.addEventListener('pointerdown', e => {
+            dragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            globeCanvas.setPointerCapture(e.pointerId);
+          });
 
-        requestAnimationFrame(renderGlobeEffects);
+          globeCanvas.addEventListener('pointermove', e => {
+            if (!dragging) return;
+            const dx = e.clientX - lastX;
+            const dy = e.clientY - lastY;
+            targetY += dx * 0.006;
+            targetX += dy * 0.006;
+            targetX = THREE.MathUtils.clamp(targetX, -1.2, 1.2);
+            velX = dx * 0.0007;
+            velY = dy * 0.0007;
+            lastX = e.clientX;
+            lastY = e.clientY;
+          });
+
+          const stopDrag = () => { dragging = false; };
+          globeCanvas.addEventListener('pointerup', stopDrag);
+          globeCanvas.addEventListener('pointercancel', stopDrag);
+
+          // Controls
+          toggleEarthRotation = function() {
+            autoRotate = !autoRotate;
+            const icon = document.getElementById('earth-rot-icon');
+            const label = document.getElementById('earth-rot-label');
+            if (icon) icon.textContent = autoRotate ? 'Ⅱ' : '▶';
+            if (label) label.textContent = autoRotate ? 'Pause' : 'Resume';
+          };
+          window.toggleEarthRotation = toggleEarthRotation;
+
+          rotateToOtherSide = function() {
+            targetY += Math.PI; // Spin 180° directly to the other side of the globe
+          };
+          window.rotateToOtherSide = rotateToOtherSide;
+
+          // Render Loop
+          const clock = new THREE.Clock();
+          function animateGlobe() {
+            requestAnimationFrame(animateGlobe);
+            const dt = Math.min(clock.getDelta(), 0.04);
+            if (autoRotate && !dragging) {
+              targetY += dt * 0.12;
+            }
+            if (!dragging) {
+              targetY += velX;
+              targetX += velY;
+              velX *= 0.94;
+              velY *= 0.94;
+            }
+            rotX += (targetX - rotX) * 0.08;
+            rotY += (targetY - rotY) * 0.08;
+            planetGroup.rotation.set(rotX, rotY, 0);
+            cloudsMesh.rotation.y += dt * 0.016;
+            renderer.render(scene, camera);
+          }
+          animateGlobe();
+        }).catch(err => {
+          console.warn('WebGL texture loading issue, showing fallback asset:', err);
+          if (fallbackImg) fallbackImg.classList.remove('hidden');
+        });
+      } catch (err) {
+        console.warn('WebGL init error, using fallback:', err);
+        if (fallbackImg) fallbackImg.classList.remove('hidden');
       }
-
-      renderGlobeEffects();
+    } else {
+      if (fallbackImg) fallbackImg.classList.remove('hidden');
     }
 
     // Interactive pointer parallax tracking

@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VISUAL AI · Photorealistic Interactive 3D Earth Globe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #040812;
+    color: #f0f6fc;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  body {
+    background: radial-gradient(ellipse at 50% 50%, #0c1a30 0%, #060e1c 55%, #02050c 100%);
+  }
+
+  #space-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+    cursor: grab;
+    z-index: 1;
+  }
+  #space-canvas.dragging {
+    cursor: grabbing;
+  }
+
+  /* Atmospheric Vignette */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(2, 5, 12, 0.75) 100%);
+    z-index: 2;
+  }
+
+  /* Top HUD Bar */
+  .hud-top {
+    position: fixed;
+    top: 20px;
+    left: 24px;
+    right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .hud-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: auto;
+  }
+  .brand-logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: #ffffff;
+  }
+  .brand-logo span {
+    color: #38bdf8;
+  }
+  .badge {
+    font: 10px "DM Mono", monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  .hud-telemetry {
+    font: 11px "DM Mono", monospace;
+    color: #8ca0ba;
+    display: flex;
+    gap: 18px;
+    background: rgba(13, 20, 34, 0.82);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    padding: 8px 16px;
+    border-radius: 100px;
+    backdrop-filter: blur(16px);
+    pointer-events: auto;
+  }
+  .telemetry-val {
+    color: #38bdf8;
+    font-weight: 500;
+  }
+
+  /* Side Hemisphere Quick-Select Pills */
+  .hemisphere-selector {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+  }
+  .hemi-btn {
+    font: 11px "DM Mono", monospace;
+    color: #8ca0ba;
+    background: rgba(13, 20, 34, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: all 0.2s ease;
+    text-align: right;
+  }
+  .hemi-btn:hover {
+    color: #ffffff;
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+    transform: translateX(-4px);
+  }
+  .hemi-btn.active {
+    color: #ffffff;
+    border-color: #38bdf8;
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+  }
+
+  /* Bottom Controls HUD */
+  .hud-bottom {
+    position: fixed;
+    bottom: 24px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .controls-panel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(13, 20, 34, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    padding: 6px 12px;
+    border-radius: 100px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+  }
+
+  .hud-btn {
+    font: 11px "DM Mono", monospace;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 100px;
+    padding: 8px 16px;
+    background: rgba(56, 189, 248, 0.08);
+    color: #eaf5ff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hud-btn:hover {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.22);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+    transform: translateY(-1px);
+  }
+  .hud-btn.primary {
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    border-color: #38bdf8;
+    font-weight: 600;
+  }
+
+  .hint {
+    font: 10px "DM Mono", monospace;
+    color: #64748b;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0 8px;
+  }
+
+  #loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: #040812;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    transition: opacity 0.5s ease;
+  }
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(56, 189, 248, 0.15);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text {
+    font: 12px "DM Mono", monospace;
+    color: #38bdf8;
+    letter-spacing: 0.14em;
+  }
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">LOADING 3D PLANETARY ENGINE · 2048PX MAPS</div>
+</div>
+
+<canvas id="space-canvas" aria-label="Interactive 3D Earth Globe"></canvas>
+<div class="vignette"></div>
+
+<!-- Top HUD Bar -->
+<header class="hud-top">
+  <div class="hud-brand">
+    <div class="brand-logo">VISUAL AI<span>.</span></div>
+    <span class="badge">LIVE 3D EARTH PROTOTYPE</span>
+  </div>
+
+  <div class="hud-telemetry">
+    <span>HEMISPHERE: <strong id="telemetry-hemi" class="telemetry-val">ASIA & OCEANIA</strong></span>
+    <span>LON: <strong id="telemetry-lon" class="telemetry-val">115° E</strong></span>
+    <span>LAT: <strong id="telemetry-lat" class="telemetry-val">12° N</strong></span>
+  </div>
+</header>
+
+<!-- Right Side Quick Hemisphere Switcher -->
+<nav class="hemisphere-selector" aria-label="Hemisphere presets">
+  <button class="hemi-btn" onclick="jumpToHemisphere('americas')">Americas (Other Side) ↗</button>
+  <button class="hemi-btn" onclick="jumpToHemisphere('europe-africa')">Europe & Africa ↗</button>
+  <button class="hemi-btn active" onclick="jumpToHemisphere('asia')">Asia & Australia ↗</button>
+  <button class="hemi-btn" onclick="jumpToHemisphere('pacific')">Pacific Basin ↗</button>
+</nav>
+
+<!-- Bottom Controls -->
+<footer class="hud-bottom">
+  <div class="controls-panel">
+    <button id="btn-toggle-rot" class="hud-btn primary" onclick="toggleRotation()">
+      <span id="rot-icon">Ⅱ</span>
+      <span id="rot-text">Pause Rotation</span>
+    </button>
+    <button class="hud-btn" onclick="resetEarthView()">
+      ↺ Reset Angle
+    </button>
+    <span class="hint">⇄ Drag to spin · Scroll to zoom</span>
+  </div>
+</footer>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const canvas = document.querySelector('#space-canvas');
+const loadingOverlay = document.querySelector('#loading-overlay');
+const hemiEl = document.querySelector('#telemetry-hemi');
+const lonEl = document.querySelector('#telemetry-lon');
+const latEl = document.querySelector('#telemetry-lat');
+
+// Three.js Core
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 7.8);
+
+// 1. Starfield Particles in Celestial Cyan & Deep Space
+const starCount = 3600;
+const starGeo = new THREE.BufferGeometry();
+const starPos = [];
+const starColors = [];
+for (let i = 0; i < starCount; i++) {
+  const r = THREE.MathUtils.randFloat(12, 45);
+  const a = Math.random() * Math.PI * 2;
+  const z = THREE.MathUtils.randFloat(-1, 1);
+  const q = Math.sqrt(1 - z * z);
+  starPos.push(r * q * Math.cos(a), r * z, r * q * Math.sin(a));
+  const c = new THREE.Color().setHSL(0.55 + Math.random() * 0.1, 0.45, 0.65 + Math.random() * 0.35);
+  starColors.push(c.r, c.g, c.b);
+}
+starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+starGeo.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.024, vertexColors: true, transparent: true, opacity: 0.85, sizeAttenuation: true }));
+scene.add(stars);
+
+// 2. Procedural Deep-Space Nebula Canvas
+const nebulaCanvas = document.createElement('canvas');
+nebulaCanvas.width = 1024; nebulaCanvas.height = 1024;
+const nctx = nebulaCanvas.getContext('2d');
+nctx.fillStyle = '#040812'; nctx.fillRect(0, 0, 1024, 1024);
+function drawNebula(x, y, r, color, alpha) {
+  const g = nctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, color.replace('ALPHA', String(alpha)));
+  g.addColorStop(0.4, color.replace('ALPHA', String(alpha * 0.4)));
+  g.addColorStop(1, color.replace('ALPHA', '0'));
+  nctx.fillStyle = g;
+  nctx.fillRect(x - r, y - r, r * 2, r * 2);
+}
+for (let i = 0; i < 22; i++) {
+  const x = 100 + Math.random() * 824, y = 100 + Math.random() * 824, r = 120 + Math.random() * 240;
+  const palette = ['rgba(14,165,233,ALPHA)', 'rgba(37,99,235,ALPHA)', 'rgba(56,189,248,ALPHA)', 'rgba(2,132,199,ALPHA)'];
+  drawNebula(x, y, r, palette[i % palette.length], 0.12 + Math.random() * 0.12);
+}
+const nebulaTexture = new THREE.CanvasTexture(nebulaCanvas);
+const nebula = new THREE.Mesh(
+  new THREE.PlaneGeometry(36, 26),
+  new THREE.MeshBasicMaterial({ map: nebulaTexture, transparent: true, opacity: 0.75, depthWrite: false })
+);
+nebula.position.set(0, 0, -18);
+scene.add(nebula);
+
+// 3. Texture Loading with Local Fallback Hierarchy
+const loader = new THREE.TextureLoader();
+loader.setCrossOrigin('anonymous');
+
+const textures = {
+  atmos: ['/static/earth_atmos_2048.jpg', 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'],
+  normal: ['/static/earth_normal_2048.jpg', 'https://threejs.org/examples/textures/planets/earth_normal_2048.jpg'],
+  specular: ['/static/earth_specular_2048.jpg', 'https://threejs.org/examples/textures/planets/earth_specular_2048.jpg'],
+  clouds: ['/static/earth_clouds_1024.png', 'https://threejs.org/examples/textures/planets/earth_clouds_1024.png']
+};
+
+async function loadTextureWithFallback(sources) {
+  for (const src of sources) {
+    try {
+      const tex = await new Promise((resolve, reject) => loader.load(src, resolve, undefined, reject));
+      return tex;
+    } catch (e) {
+      console.warn('Fallback texture attempt:', src);
+    }
+  }
+  throw new Error('All texture sources failed.');
+}
+
+let earthMesh, cloudsMesh, planetGroup;
+
+try {
+  const [earthMap, normalMap, specularMap, cloudMap] = await Promise.all([
+    loadTextureWithFallback(textures.atmos),
+    loadTextureWithFallback(textures.normal),
+    loadTextureWithFallback(textures.specular),
+    loadTextureWithFallback(textures.clouds)
+  ]);
+
+  [earthMap, normalMap, specularMap, cloudMap].forEach(t => {
+    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  });
+  earthMap.colorSpace = THREE.SRGBColorSpace;
+  cloudMap.colorSpace = THREE.SRGBColorSpace;
+
+  planetGroup = new THREE.Group();
+  scene.add(planetGroup);
+
+  // High-Precision Sphere Geometry with Relief & Specular Water
+  earthMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(2.1, 128, 128),
+    new THREE.MeshPhongMaterial({
+      map: earthMap,
+      normalMap: normalMap,
+      normalScale: new THREE.Vector2(0.55, 0.55),
+      specularMap: specularMap,
+      specular: new THREE.Color('#38bdf8'),
+      shininess: 18,
+      emissive: new THREE.Color('#0369a1'),
+      emissiveMap: earthMap,
+      emissiveIntensity: 0.16
+    })
+  );
+  planetGroup.add(earthMesh);
+
+  // Translucent Independent Atmospheric Cloud Layer
+  cloudsMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(2.122, 128, 128),
+    new THREE.MeshPhongMaterial({
+      map: cloudMap,
+      transparent: true,
+      opacity: 0.36,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    })
+  );
+  planetGroup.add(cloudsMesh);
+
+  // Hide loading screen once textures are ready
+  if (loadingOverlay) {
+    loadingOverlay.style.opacity = '0';
+    setTimeout(() => loadingOverlay.remove(), 500);
+  }
+} catch (err) {
+  console.error('Texture load failure:', err);
+  if (loadingOverlay) loadingOverlay.innerHTML = '<p style="color:#ef4444;font-family:monospace;">Failed to load 3D textures. Check connection.</p>';
+}
+
+// 4. Photorealistic Planetary Lighting
+scene.add(new THREE.AmbientLight(0xd5e7ff, 1.4));
+
+// Primary Sunlight (from upper-left)
+const sunlight = new THREE.DirectionalLight(0xfff9f0, 3.2);
+sunlight.position.set(-6, 4, 7);
+scene.add(sunlight);
+
+// Azure Earthshine / Space Fill
+const blueFill = new THREE.PointLight(0x38bdf8, 2.4, 25);
+blueFill.position.set(-5, -3, -2);
+scene.add(blueFill);
+
+// 5. Orbital State, Drag Physics & Controls
+let autoRotate = true;
+let dragging = false;
+let lastX = 0, lastY = 0;
+let rotX = 0.22, rotY = -2.1; // Default looking at Asia / Australia
+let targetX = rotX, targetY = rotY;
+let zoom = 7.8;
+let velocityX = 0, velocityY = 0;
+
+canvas.addEventListener('pointerdown', e => {
+  dragging = true;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  canvas.classList.add('dragging');
+  canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  const dx = e.clientX - lastX;
+  const dy = e.clientY - lastY;
+  targetY += dx * 0.005;
+  targetX += dy * 0.005;
+  targetX = THREE.MathUtils.clamp(targetX, -1.25, 1.25);
+  velocityX = dx * 0.0006;
+  velocityY = dy * 0.0006;
+  lastX = e.clientX;
+  lastY = e.clientY;
+});
+
+function endDrag() {
+  dragging = false;
+  canvas.classList.remove('dragging');
+}
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+
+// Mouse wheel zoom
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoom = THREE.MathUtils.clamp(zoom + e.deltaY * 0.005, 4.6, 11.5);
+}, { passive: false });
+
+// Telemetry calculation
+function updateTelemetry() {
+  if (!planetGroup) return;
+  const radToDeg = 180 / Math.PI;
+  let lon = ((-rotY * radToDeg) % 360 + 360) % 360;
+  if (lon > 180) lon -= 360;
+  const lat = Math.round(rotX * radToDeg);
+  const roundedLon = Math.round(Math.abs(lon));
+  const lonHem = lon >= 0 ? '° E' : '° W';
+  const latHem = lat >= 0 ? '° N' : '° S';
+
+  lonEl.textContent = `${roundedLon}${lonHem}`;
+  latEl.textContent = `${Math.abs(lat)}${latHem}`;
+
+  // Identify Facing Hemisphere
+  if (lon >= -40 && lon <= 60) {
+    hemiEl.textContent = 'EUROPE & AFRICA';
+    setActiveHemiBtn('europe-africa');
+  } else if (lon > 60 && lon <= 150) {
+    hemiEl.textContent = 'ASIA & OCEANIA';
+    setActiveHemiBtn('asia');
+  } else if (lon > 150 || lon < -150) {
+    hemiEl.textContent = 'PACIFIC BASIN';
+    setActiveHemiBtn('pacific');
+  } else {
+    hemiEl.textContent = 'AMERICAS (OTHER SIDE)';
+    setActiveHemiBtn('americas');
+  }
+}
+
+function setActiveHemiBtn(name) {
+  document.querySelectorAll('.hemi-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick')?.includes(name));
+  });
+}
+
+// Global functions for HUD
+window.toggleRotation = function() {
+  autoRotate = !autoRotate;
+  document.getElementById('rot-icon').textContent = autoRotate ? 'Ⅱ' : '▶';
+  document.getElementById('rot-text').textContent = autoRotate ? 'Pause Rotation' : 'Resume Rotation';
+};
+
+window.resetEarthView = function() {
+  targetX = 0.22;
+  targetY = -2.1;
+  zoom = 7.8;
+  velocityX = 0;
+  velocityY = 0;
+  if (!autoRotate) window.toggleRotation();
+};
+
+window.jumpToHemisphere = function(name) {
+  autoRotate = false;
+  document.getElementById('rot-icon').textContent = '▶';
+  document.getElementById('rot-text').textContent = 'Resume Rotation';
+
+  if (name === 'americas') {
+    targetX = 0.25;
+    targetY = 1.6; // Americas / Other side of the globe
+  } else if (name === 'europe-africa') {
+    targetX = 0.2;
+    targetY = -0.3; // Europe & Africa
+  } else if (name === 'asia') {
+    targetX = 0.22;
+    targetY = -2.1; // Asia & Australia
+  } else if (name === 'pacific') {
+    targetX = 0.15;
+    targetY = -3.8; // Pacific Basin
+  }
+};
+
+// Window Resize
+function onResize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.fov = w < 768 ? 44 : 36;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', onResize);
+onResize();
+
+// Render Loop
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.04);
+
+  if (autoRotate && !dragging) {
+    targetY += dt * 0.12;
+  }
+  if (!dragging) {
+    targetY += velocityX;
+    targetX += velocityY;
+    velocityX *= 0.94;
+    velocityY *= 0.94;
+  }
+
+  rotX += (targetX - rotX) * 0.08;
+  rotY += (targetY - rotY) * 0.08;
+
+  if (planetGroup) {
+    planetGroup.rotation.set(rotX, rotY, 0);
+  }
+  if (cloudsMesh) {
+    cloudsMesh.rotation.y += dt * 0.018; // Atmospheric differential speed
+  }
+  stars.rotation.y += dt * 0.001;
+
+  camera.position.z += (zoom - camera.position.z) * 0.08;
+  renderer.render(scene, camera);
+  updateTelemetry();
+}
+animate();
+</script>
+</body>
+</html>
