@@ -345,42 +345,60 @@
       pointer-events: none;
       z-index: 0;
     }
-    /* 3D Celestial Globe Architecture */
+    /* 3D Earth Globe - Deep Blue Space Gravity */
+    .hero-banner {
+      position: relative;
+      min-height: 330px;
+      padding: 105px 0 35px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+    .orb-scene {
+      position: absolute;
+      inset: 0;
+      perspective: 1000px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
     .orb {
       position: absolute;
-      width: min(42vw, 420px);
-      height: min(42vw, 420px);
+      width: min(44vw, 430px);
+      height: min(44vw, 430px);
       aspect-ratio: 1 / 1;
-      right: 4%;
-      top: 50%;
+      right: 3%;
+      top: 54%;
       transform: translateY(-50%);
       border-radius: 50% !important;
-      background: radial-gradient(circle at 30% 28%, #faffc7 0%, #d8ff3e 14%, #79a815 30%, #293f08 54%, #101903 76%, #050a01 96%);
-      box-shadow: inset -28px -28px 65px rgba(0, 0, 0, 0.95), inset 14px 14px 38px rgba(255, 255, 255, 0.35), 0 0 90px rgba(216, 255, 62, 0.3);
-      filter: drop-shadow(0 0 65px rgba(183, 255, 37, 0.28));
+      background: radial-gradient(circle at 30% 28%, #93c5fd 0%, #38bdf8 14%, #1d4ed8 32%, #0f172a 56%, #030712 78%, #02040a 96%);
+      box-shadow: inset -28px -28px 70px rgba(0, 0, 0, 0.96), inset 14px 14px 42px rgba(191, 219, 254, 0.45), 0 0 100px rgba(56, 189, 248, 0.35);
+      filter: drop-shadow(0 0 75px rgba(56, 189, 248, 0.32));
       transform-style: preserve-3d;
-      opacity: 0.95;
+      opacity: 0.96;
       transition: margin 0.15s ease-out;
       will-change: transform;
     }
     html:not(.dark) .orb {
-      background: radial-gradient(circle at 30% 28%, #ffffff 0%, #d8ff3e 20%, #9fcb0f 42%, #4d6905 68%, #212e02 92%);
-      box-shadow: inset -22px -22px 55px rgba(0, 0, 0, 0.52), inset 12px 12px 32px rgba(255, 255, 255, 0.85), 0 0 65px rgba(183, 255, 37, 0.2);
+      background: radial-gradient(circle at 30% 28%, #ffffff 0%, #60a5fa 20%, #2563eb 45%, #1e3a8a 70%, #0f172a 92%);
+      box-shadow: inset -22px -22px 55px rgba(0, 0, 0, 0.55), inset 12px 12px 35px rgba(255, 255, 255, 0.9), 0 0 75px rgba(56, 189, 248, 0.25);
     }
-    /* Concentric Tilted Orbital Rings */
+    /* Concentric Tilted Orbital Rings in Celestial Cyan Space */
     .orb:before, .orb:after {
       content: "";
       position: absolute;
       inset: -14%;
       border-radius: 50%;
-      border: 1.5px solid rgba(216, 255, 62, 0.32);
+      border: 1.5px solid rgba(56, 189, 248, 0.35);
       transform: rotateX(68deg) rotateZ(22deg);
-      box-shadow: 0 0 35px rgba(216, 255, 62, 0.15);
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.22);
       pointer-events: none;
     }
     .orb:after {
       inset: -25%;
-      border-color: rgba(216, 255, 62, 0.18);
+      border-color: rgba(96, 165, 250, 0.22);
       border-style: dashed;
       transform: rotateY(65deg) rotateZ(-25deg);
     }
@@ -1522,7 +1540,7 @@
 
   <!-- Interactive Parallax and Mobile Menu Enhancements -->
   <script>
-    // 3D Interactive Rotating Wireframe Globe Engine
+    // 3D Interactive Earth Globe Engine (Blue Space Gravity)
     const heroOrb = document.getElementById('orb');
     const globeCanvas = document.getElementById('globe-canvas');
 
@@ -1536,17 +1554,66 @@
       let tiltX = 0.38; // ~22 degrees axial tilt
       let targetTiltX = 0.38;
 
-      // Surface coordinate nodes (pulsing network matrix across the globe)
-      const globeNodes = [];
-      for (let i = 0; i < 56; i++) {
-        globeNodes.push({
-          lat: (Math.random() - 0.5) * 140,
-          lon: Math.random() * 360,
-          size: Math.random() * 2.2 + 1.2,
-          pulse: Math.random() * Math.PI * 2,
-          pulseSpeed: 0.03 + Math.random() * 0.04
-        });
+      // Real Earth Continent Polygon Outlines (Lat, Lon)
+      const earthContinents = [
+        // North America
+        [[71, -164], [72, -128], [69, -88], [58, -75], [52, -56], [47, -65], [35, -75], [26, -80], [21, -87], [16, -95], [8, -78], [15, -92], [22, -106], [33, -118], [48, -125], [59, -140], [65, -168], [71, -164]],
+        // South America
+        [[12, -72], [10, -62], [5, -52], [-5, -35], [-23, -42], [-35, -55], [-54, -68], [-55, -73], [-42, -73], [-18, -70], [-5, -81], [5, -77], [12, -72]],
+        // Europe & Western Asia
+        [[36, -6], [43, -9], [48, -4], [54, 5], [58, 6], [71, 28], [68, 48], [56, 38], [45, 35], [40, 26], [36, 22], [38, 15], [36, -6]],
+        // Africa
+        [[36, -5], [37, 10], [32, 25], [31, 32], [12, 44], [12, 51], [0, 42], [-15, 40], [-26, 33], [-34, 18], [-33, 17], [-18, 12], [-5, 10], [4, 8], [5, 2], [5, -3], [5, -10], [15, -17], [28, -12], [36, -5]],
+        // Asia
+        [[42, 28], [55, 38], [68, 48], [73, 80], [75, 110], [70, 140], [65, 175], [60, 160], [45, 145], [40, 130], [22, 120], [10, 105], [20, 88], [8, 77], [22, 69], [25, 57], [30, 48], [35, 36], [42, 28]],
+        // Australia
+        [[-12, 130], [-12, 136], [-17, 140], [-22, 150], [-32, 153], [-38, 145], [-35, 117], [-22, 113], [-15, 124], [-12, 130]],
+        // Greenland
+        [[78, -20], [83, -30], [82, -50], [76, -68], [65, -52], [60, -44], [65, -38], [70, -25], [78, -20]],
+        // Antarctica
+        [[-65, -60], [-70, -10], [-72, 40], [-68, 90], [-65, 140], [-70, 180], [-75, -120], [-65, -60]]
+      ];
+
+      // Major World Capital & Tech Beacon Nodes
+      const worldCities = [
+        { name: "New York", lat: 40.7, lon: -74.0, size: 2.8, pulse: 0 },
+        { name: "London", lat: 51.5, lon: -0.1, size: 2.8, pulse: 1.0 },
+        { name: "Tokyo", lat: 35.7, lon: 139.7, size: 2.8, pulse: 2.0 },
+        { name: "Paris", lat: 48.9, lon: 2.3, size: 2.4, pulse: 3.0 },
+        { name: "Sydney", lat: -33.9, lon: 151.2, size: 2.5, pulse: 4.0 },
+        { name: "Cairo", lat: 30.0, lon: 31.2, size: 2.4, pulse: 2.5 },
+        { name: "Mumbai", lat: 19.1, lon: 72.9, size: 2.6, pulse: 1.5 },
+        { name: "Rio", lat: -22.9, lon: -43.2, size: 2.5, pulse: 3.5 },
+        { name: "Singapore", lat: 1.3, lon: 103.8, size: 2.6, pulse: 4.5 },
+        { name: "San Francisco", lat: 37.8, lon: -122.4, size: 2.5, pulse: 0.8 },
+        { name: "Dubai", lat: 25.2, lon: 55.3, size: 2.5, pulse: 2.1 },
+        { name: "Berlin", lat: 52.5, lon: 13.4, size: 2.3, pulse: 2.8 }
+      ];
+
+      // Interpolate points along polygon segments for smooth spherical curvature
+      function interpolateSegment(p1, p2, maxStep = 3) {
+        const dLat = p2[0] - p1[0];
+        const dLon = p2[1] - p1[1];
+        const dist = Math.hypot(dLat, dLon);
+        const steps = Math.max(1, Math.ceil(dist / maxStep));
+        const res = [];
+        for (let i = 0; i < steps; i++) {
+          const t = i / steps;
+          res.push([p1[0] + dLat * t, p1[1] + dLon * t]);
+        }
+        return res;
       }
+
+      // Pre-compute dense coastline curvature
+      const denseContinents = earthContinents.map(poly => {
+        const dense = [];
+        for (let i = 0; i < poly.length; i++) {
+          const p1 = poly[i];
+          const p2 = poly[(i + 1) % poly.length];
+          dense.push(...interpolateSegment(p1, p2, 3));
+        }
+        return dense;
+      });
 
       function project3D(latDeg, lonDeg, rot, tilt) {
         const lat = latDeg * Math.PI / 180;
@@ -1564,23 +1631,20 @@
 
       function renderGlobe() {
         gCtx.clearRect(0, 0, size, size);
-        rotY += 0.007; // Smooth continuous planetary rotation
+        rotY += 0.0075; // Planetary rotation
         tiltX += (targetTiltX - tiltX) * 0.06;
 
-        const isDark = document.documentElement.classList.contains('dark') || !localStorage.getItem('research_lab_theme');
-        const lime = isDark ? '216, 255, 62' : '139, 181, 0';
-
-        // 1. Draw Latitude Parallels (Equator, Tropics, Polar circles)
-        const latitudes = [-65, -45, -23.5, 0, 23.5, 45, 65];
+        // 1. Latitude parallels in celestial azure
+        const latitudes = [-60, -40, -23.5, 0, 23.5, 40, 60];
         for (const lat of latitudes) {
           gCtx.beginPath();
           let first = true;
           const isEquator = lat === 0;
-          gCtx.strokeStyle = isEquator ? `rgba(${lime}, 0.55)` : `rgba(${lime}, 0.18)`;
-          gCtx.lineWidth = isEquator ? 1.6 : 0.85;
+          gCtx.strokeStyle = isEquator ? 'rgba(56, 189, 248, 0.45)' : 'rgba(56, 189, 248, 0.16)';
+          gCtx.lineWidth = isEquator ? 1.5 : 0.8;
           if (isEquator) gCtx.setLineDash([5, 4]); else gCtx.setLineDash([]);
 
-          for (let lon = 0; lon <= 360; lon += 5) {
+          for (let lon = 0; lon <= 360; lon += 4) {
             const pt = project3D(lat, lon, rotY, tiltX);
             if (first) { gCtx.moveTo(pt.x, pt.y); first = false; }
             else { gCtx.lineTo(pt.x, pt.y); }
@@ -1589,51 +1653,79 @@
         }
         gCtx.setLineDash([]);
 
-        // 2. Draw Longitude Meridians (Dual-pass depth culling)
-        const meridians = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5];
+        // 2. Longitude meridians in soft blue space
+        const meridians = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
         for (const m of meridians) {
-          for (let pass = 0; pass < 2; pass++) {
-            gCtx.beginPath();
-            let started = false;
-            gCtx.lineWidth = pass === 1 ? 1.25 : 0.65;
-            gCtx.strokeStyle = pass === 1 ? `rgba(${lime}, 0.42)` : `rgba(${lime}, 0.12)`;
+          gCtx.beginPath();
+          let started = false;
+          gCtx.lineWidth = 0.7;
+          gCtx.strokeStyle = 'rgba(56, 189, 248, 0.15)';
 
-            for (let lat = -90; lat <= 90; lat += 4) {
-              const lon = pass === 0 ? m + 180 : m;
-              const pt = project3D(lat, lon, rotY, tiltX);
-              if (pass === 1 && pt.z < -20) continue; // Front hemisphere only
-              if (!started) { gCtx.moveTo(pt.x, pt.y); started = true; }
-              else { gCtx.lineTo(pt.x, pt.y); }
+          for (let lat = -90; lat <= 90; lat += 4) {
+            const pt = project3D(lat, m, rotY, tiltX);
+            if (pt.z < -25) { started = false; continue; } // Cull backside
+            if (!started) { gCtx.moveTo(pt.x, pt.y); started = true; }
+            else { gCtx.lineTo(pt.x, pt.y); }
+          }
+          gCtx.stroke();
+        }
+
+        // 3. Render Earth Continents (Landmasses & Coastlines)
+        for (const continent of denseContinents) {
+          const segments = [];
+          let curr = [];
+          for (const pt of continent) {
+            const proj = project3D(pt[0], pt[1], rotY, tiltX);
+            if (proj.z > -10) {
+              curr.push(proj);
+            } else {
+              if (curr.length > 1) segments.push(curr);
+              curr = [];
             }
+          }
+          if (curr.length > 1) segments.push(curr);
+
+          for (const seg of segments) {
+            gCtx.beginPath();
+            gCtx.moveTo(seg[0].x, seg[0].y);
+            for (let i = 1; i < seg.length; i++) {
+              gCtx.lineTo(seg[i].x, seg[i].y);
+            }
+            gCtx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+            gCtx.lineWidth = 1.8;
             gCtx.stroke();
+
+            // Luminous landmass fill
+            gCtx.lineTo(CX, CY);
+            gCtx.fillStyle = 'rgba(14, 165, 233, 0.15)';
+            gCtx.fill();
           }
         }
 
-        // 3. Draw Rotating Surface Coordinate Nodes
-        for (const node of globeNodes) {
-          node.pulse += node.pulseSpeed;
-          const pt = project3D(node.lat, node.lon, rotY, tiltX);
-          if (pt.z > -15) { // Visible on front half of globe
-            const alpha = 0.35 + 0.65 * Math.abs(Math.sin(node.pulse));
-            gCtx.fillStyle = `rgba(${lime}, ${alpha})`;
+        // 4. Major World Cities & Beacon Nodes
+        for (const city of worldCities) {
+          city.pulse += 0.05;
+          const pt = project3D(city.lat, city.lon, rotY, tiltX);
+          if (pt.z > -10) {
+            const alpha = 0.4 + 0.6 * Math.abs(Math.sin(city.pulse));
+            gCtx.fillStyle = `rgba(56, 189, 248, ${alpha})`;
             gCtx.beginPath();
-            gCtx.arc(pt.x, pt.y, node.size, 0, Math.PI * 2);
+            gCtx.arc(pt.x, pt.y, city.size * 1.4, 0, Math.PI * 2);
             gCtx.fill();
 
-            // Specular core on prominent nodes
-            if (node.size > 2.0 && pt.z > 80) {
-              gCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-              gCtx.beginPath();
-              gCtx.arc(pt.x, pt.y, node.size * 0.45, 0, Math.PI * 2);
-              gCtx.fill();
-            }
+            // Specular core
+            gCtx.fillStyle = '#ffffff';
+            gCtx.beginPath();
+            gCtx.arc(pt.x, pt.y, city.size * 0.5, 0, Math.PI * 2);
+            gCtx.fill();
           }
         }
 
-        // 4. Subtle Atmospheric Rim Glow (Fresnel perimeter halo)
-        const rimGrad = gCtx.createRadialGradient(CX, CY, R * 0.88, CX, CY, R);
-        rimGrad.addColorStop(0, `rgba(${lime}, 0)`);
-        rimGrad.addColorStop(1, `rgba(${lime}, 0.28)`);
+        // 5. Atmospheric Azure/Cyan Rim Glow (Earth's atmosphere seen from deep space)
+        const rimGrad = gCtx.createRadialGradient(CX, CY, R * 0.86, CX, CY, R);
+        rimGrad.addColorStop(0, 'rgba(56, 189, 248, 0)');
+        rimGrad.addColorStop(0.7, 'rgba(56, 189, 248, 0.18)');
+        rimGrad.addColorStop(1, 'rgba(14, 165, 233, 0.48)');
         gCtx.fillStyle = rimGrad;
         gCtx.beginPath();
         gCtx.arc(CX, CY, R, 0, Math.PI * 2);
@@ -1653,7 +1745,7 @@
         const y = (event.clientY / window.innerHeight - 0.5) * 16;
         heroOrb.style.marginLeft = `${x}px`;
         heroOrb.style.marginTop = `${y}px`;
-        targetTiltX = 0.38 + (event.clientY / window.innerHeight - 0.5) * 0.3;
+        targetTiltX = 0.38 + (event.clientY / window.innerHeight - 0.5) * 0.35;
       }, { passive: true });
     }
 
