@@ -554,7 +554,7 @@ function switchTab(tabId) {
   state.activeTab = tabId;
   document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
   document.querySelectorAll(".nav-tab").forEach(btn => {
-    btn.classList.remove("border-accent", "text-accent");
+    btn.classList.remove("border-accent", "text-accent", "active-tab");
     btn.classList.add("border-transparent", "text-app-muted");
   });
 
@@ -563,9 +563,20 @@ function switchTab(tabId) {
 
   const activeBtn = document.querySelector(`.nav-tab[data-tab="${tabId}"]`);
   if (activeBtn) {
-    activeBtn.classList.add("border-accent", "text-accent");
+    activeBtn.classList.add("border-accent", "text-accent", "active-tab");
     activeBtn.classList.remove("border-transparent", "text-app-muted");
   }
+
+  // Toggle hero section: visible on Home, hidden on dedicated workstation pages
+  const heroSection = document.getElementById("hero-section");
+  if (heroSection) {
+    if (tabId === "home") {
+      heroSection.classList.remove("hidden");
+    } else {
+      heroSection.classList.add("hidden");
+    }
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (tabId === "experiments") loadExperimentLogs();
   if (tabId === "reports") loadReportsList();
