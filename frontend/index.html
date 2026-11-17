@@ -93,7 +93,7 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 90px;
+      scroll-padding-top: 115px;
       overflow-y: scroll !important;
       overflow-x: hidden;
       min-height: 100%;
@@ -309,6 +309,27 @@
     html:not(.dark) .res-card:hover {
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
       border-color: var(--acid);
+    }
+
+    /* ========================================================================== */
+    /* WORKSTATION TABS & WEBSLIDES TOPBAR CLEARANCE                              */
+    /* Fixes all tabs so top action buttons, clear pills & headers are unblocked   */
+    /* ========================================================================== */
+    .tab-content:not(#tab-home) {
+      padding-top: 110px !important;
+    }
+
+    /* Slide Footer Navigation across all pipeline webslides */
+    .slide-footer-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 20px;
+      margin-top: 28px;
+      border-top: 1px solid var(--line);
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
     }
 
     /* ========================================================================== */
@@ -887,14 +908,14 @@
 
       </div>
 
-      <!-- Step Navigation for Image -> Text -->
-      <div class="flex items-center justify-between pt-3 border-t border-app-border text-xs font-mono">
+      <!-- Slide Navigation -->
+      <div class="slide-footer-nav">
         <button onclick="switchTab('home')" class="btn-clear-pill">
           ← Back to Home
         </button>
         <div class="flex items-center space-x-2">
-          <span class="text-app-muted text-[11px] hidden sm:inline">Swipe or navigate:</span>
-          <button onclick="switchTab('text-to-image')" class="btn-acid text-xs py-1.5 px-3">
+          <span class="text-app-muted text-[11px] hidden sm:inline font-mono">Module 01 of 07</span>
+          <button onclick="switchTab('text-to-image')" class="btn-acid text-xs py-2 px-4">
             Next: Text → Image Latent Synthesis →
           </button>
         </div>
@@ -999,6 +1020,19 @@
           </details>
         </div>
       </div>
+
+      <!-- Slide Navigation -->
+      <div class="slide-footer-nav">
+        <button onclick="switchTab('image-to-text')" class="btn-clear-pill">
+          ← Back: 01 Image → Text Analysis
+        </button>
+        <div class="flex items-center space-x-2">
+          <span class="text-app-muted text-[11px] hidden sm:inline font-mono">Module 02 of 07</span>
+          <button onclick="switchTab('bidirectional')" class="btn-acid text-xs py-2 px-4">
+            Next: 03 Parity Evaluation →
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- ============================================================== -->
@@ -1015,7 +1049,7 @@
           <button id="btn-clear-bidirectional" onclick="clearBidirectionalComparison()" class="btn-clear-pill" title="Clear bidirectional comparison">
             Clear
           </button>
-          <button onclick="runBidirectionalComparison()" class="px-4 py-2 text-xs font-bold cursor-pointer">
+          <button onclick="runBidirectionalComparison()" class="btn-acid text-xs py-2 px-4 cursor-pointer">
             Recalculate Parity ↗
           </button>
         </div>
@@ -1094,13 +1128,12 @@
 
             <div class="p-3.5 rounded-xl bg-surface-muted border border-app-border space-y-1">
               <span class="text-[10px] font-mono text-app-muted uppercase">Overall Parity</span>
-              <div id="bi-overall-metric"
-        <!-- Metric Compatibility Aliases -->
-        <span id="bi-metric-color" class="hidden"></span>
-        <span id="bi-metric-semantic" class="hidden"></span>
-        <span id="bi-metric-overall" class="hidden"></span>
-        <span id="bi-metric-fidelity" class="hidden"></span>
- class="text-2xl font-bold text-accent">--%</div>
+              <div id="bi-overall-metric" class="text-2xl font-bold text-accent">--%</div>
+              <!-- Metric Compatibility Aliases -->
+              <span id="bi-metric-color" class="hidden"></span>
+              <span id="bi-metric-semantic" class="hidden"></span>
+              <span id="bi-metric-overall" class="hidden"></span>
+              <span id="bi-metric-fidelity" class="hidden"></span>
               <div class="w-full bg-app-border rounded-full h-1 mt-2">
                 <div id="bi-overall-bar" class="bg-accent h-1 rounded-full" style="width: 0%"></div>
               </div>
@@ -1108,6 +1141,19 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- Slide Navigation -->
+      <div class="slide-footer-nav">
+        <button onclick="switchTab('text-to-image')" class="btn-clear-pill">
+          ← Back: 02 Text → Image Latent Synthesis
+        </button>
+        <div class="flex items-center space-x-2">
+          <span class="text-app-muted text-[11px] hidden sm:inline font-mono">Module 03 of 07</span>
+          <button onclick="switchTab('forensics')" class="btn-acid text-xs py-2 px-4">
+            Next: 04 Explainable AI Forensics →
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1309,6 +1355,19 @@
           </div>
         </details>
       </div>
+
+      <!-- Slide Navigation -->
+      <div class="slide-footer-nav">
+        <button onclick="switchTab('bidirectional')" class="btn-clear-pill">
+          ← Back: 03 Parity Evaluation
+        </button>
+        <div class="flex items-center space-x-2">
+          <span class="text-app-muted text-[11px] hidden sm:inline font-mono">Module 04 of 07</span>
+          <button onclick="switchTab('experiments')" class="btn-acid text-xs py-2 px-4">
+            Next: 05 Research Audit Log →
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- ============================================================== -->
@@ -1347,6 +1406,19 @@
               <tr><td colspan="7" class="p-4 text-center text-app-muted">Loading experiment records...</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Slide Navigation -->
+      <div class="slide-footer-nav">
+        <button onclick="switchTab('forensics')" class="btn-clear-pill">
+          ← Back: 04 Deep Forensics
+        </button>
+        <div class="flex items-center space-x-2">
+          <span class="text-app-muted text-[11px] hidden sm:inline font-mono">Module 05 of 07</span>
+          <button onclick="switchTab('reports')" class="btn-acid text-xs py-2 px-4">
+            Next: 06 Forensic Reports →
+          </button>
         </div>
       </div>
     </div>
@@ -1389,6 +1461,19 @@
           </table>
         </div>
       </div>
+
+      <!-- Slide Navigation -->
+      <div class="slide-footer-nav">
+        <button onclick="switchTab('experiments')" class="btn-clear-pill">
+          ← Back: 05 Research Audit Log
+        </button>
+        <div class="flex items-center space-x-2">
+          <span class="text-app-muted text-[11px] hidden sm:inline font-mono">Module 06 of 07</span>
+          <button onclick="switchTab('pipeline')" class="btn-acid text-xs py-2 px-4">
+            Next: 07 Technical Architecture →
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- ============================================================== -->
@@ -1403,6 +1488,19 @@
 
       <div class="space-y-3" id="pipeline-stages-container">
         <!-- Rendered by JS -->
+      </div>
+
+      <!-- Slide Navigation -->
+      <div class="slide-footer-nav">
+        <button onclick="switchTab('reports')" class="btn-clear-pill">
+          ← Back: 06 Forensic Reports
+        </button>
+        <div class="flex items-center space-x-2">
+          <span class="text-app-muted text-[11px] hidden sm:inline font-mono">Module 07 of 07</span>
+          <button onclick="switchTab('home')" class="btn-acid text-xs py-2 px-4">
+            Return to Home ⌂
+          </button>
+        </div>
       </div>
     </div>
 
