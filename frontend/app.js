@@ -42,7 +42,7 @@ window.toggleVlmScrollMode = function() {
 };
 
 let state = {
-  activeTab: 'image-to-text',
+  activeTab: 'home',
   uploadedFilename: null,
   uploadedUrl: null,
   generatedFilename: null,
