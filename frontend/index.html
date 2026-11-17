@@ -352,14 +352,14 @@
       width: min(390px, 86vw);
       height: min(390px, 86vw);
       perspective: 1200px;
-      pointer-events: none;
-      z-index: 1;
+      pointer-events: auto !important;
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    /* 3D Earth Globe - Perfectly proportioned sphere */
+    /* 3D Earth Globe - Perfectly proportioned sphere with interactive physics */
     .orb {
       position: relative;
       width: 100%;
@@ -371,6 +371,28 @@
       opacity: 0.98;
       transition: margin 0.15s ease-out;
       will-change: transform;
+      pointer-events: auto !important;
+      cursor: grab !important;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none !important;
+    }
+
+    .orb:active,
+    .orb.is-dragging,
+    #globe-3d-canvas:active,
+    #globe-3d-canvas.is-dragging {
+      cursor: grabbing !important;
+    }
+
+    #globe-3d-canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+      pointer-events: auto !important;
+      cursor: grab !important;
+      touch-action: none !important;
     }
 
     .earth-sphere-img {
@@ -1865,36 +1887,80 @@
           blueFill.position.set(-4, -2, -1);
           scene.add(blueFill);
 
-          // 4. Interactive Drag & Spin Mechanics
+          // 4. Interactive Drag & Spin Mechanics with Momentum & Wheel Zoom
           let dragging = false;
           let lastX = 0, lastY = 0;
           let rotX = 0.22, rotY = -2.1;
           let targetX = rotX;
           let velX = 0, velY = 0;
+          let targetCameraZ = 7.2;
 
-          globeCanvas.addEventListener('pointerdown', e => {
+          function handlePointerDown(e) {
+            if (e.button !== undefined && e.button !== 0) return;
             dragging = true;
             lastX = e.clientX;
             lastY = e.clientY;
-            globeCanvas.setPointerCapture(e.pointerId);
-          });
+            velX = 0;
+            velY = 0;
+            if (heroOrb) heroOrb.classList.add('is-dragging');
+            if (globeCanvas) globeCanvas.classList.add('is-dragging');
+            try {
+              (e.target || globeCanvas).setPointerCapture(e.pointerId);
+            } catch (_) {}
+          }
 
-          globeCanvas.addEventListener('pointermove', e => {
+          function handlePointerMove(e) {
             if (!dragging) return;
             const dx = e.clientX - lastX;
             const dy = e.clientY - lastY;
-            targetY += dx * 0.006;
-            targetX += dy * 0.006;
-            targetX = THREE.MathUtils.clamp(targetX, -1.2, 1.2);
-            velX = dx * 0.0007;
-            velY = dy * 0.0007;
+            targetY += dx * 0.0075;
+            targetX += dy * 0.0075;
+            targetX = THREE.MathUtils.clamp(targetX, -1.35, 1.35);
+            velX = dx * 0.0012;
+            velY = dy * 0.0012;
             lastX = e.clientX;
             lastY = e.clientY;
-          });
+          }
 
-          const stopDrag = () => { dragging = false; };
-          globeCanvas.addEventListener('pointerup', stopDrag);
-          globeCanvas.addEventListener('pointercancel', stopDrag);
+          function handlePointerUp(e) {
+            if (dragging) {
+              dragging = false;
+              if (heroOrb) heroOrb.classList.remove('is-dragging');
+              if (globeCanvas) globeCanvas.classList.remove('is-dragging');
+              try {
+                if (e && e.pointerId) {
+                  (e.target || globeCanvas).releasePointerCapture(e.pointerId);
+                }
+              } catch (_) {}
+            }
+          }
+
+          globeCanvas.addEventListener('pointerdown', handlePointerDown);
+          globeCanvas.addEventListener('pointermove', handlePointerMove);
+          globeCanvas.addEventListener('pointerup', handlePointerUp);
+          globeCanvas.addEventListener('pointercancel', handlePointerUp);
+          globeCanvas.addEventListener('pointerleave', handlePointerUp);
+
+          if (heroOrb) {
+            heroOrb.addEventListener('pointerdown', handlePointerDown);
+            heroOrb.addEventListener('pointermove', handlePointerMove);
+            heroOrb.addEventListener('pointerup', handlePointerUp);
+            heroOrb.addEventListener('pointercancel', handlePointerUp);
+            heroOrb.addEventListener('dblclick', () => {
+              rotateToOtherSide();
+            });
+          }
+
+          // Smooth Mouse Wheel Zoom (In & Out)
+          function handleWheel(e) {
+            e.preventDefault();
+            targetCameraZ += e.deltaY * 0.005;
+            targetCameraZ = THREE.MathUtils.clamp(targetCameraZ, 3.8, 11.0);
+          }
+          globeCanvas.addEventListener('wheel', handleWheel, { passive: false });
+          if (heroOrb) {
+            heroOrb.addEventListener('wheel', handleWheel, { passive: false });
+          }
 
           // Controls
           toggleEarthRotation = function() {
@@ -1916,6 +1982,7 @@
           function animateGlobe() {
             requestAnimationFrame(animateGlobe);
             const dt = Math.min(clock.getDelta(), 0.04);
+            camera.position.z += (targetCameraZ - camera.position.z) * 0.12;
             if (autoRotate && !dragging) {
               targetY += dt * 0.12;
             }
@@ -1925,8 +1992,8 @@
               velX *= 0.94;
               velY *= 0.94;
             }
-            rotX += (targetX - rotX) * 0.08;
-            rotY += (targetY - rotY) * 0.08;
+            rotX += (targetX - rotX) * 0.10;
+            rotY += (targetY - rotY) * 0.10;
             planetGroup.rotation.set(rotX, rotY, 0);
             cloudsMesh.rotation.y += dt * 0.016;
             renderer.render(scene, camera);

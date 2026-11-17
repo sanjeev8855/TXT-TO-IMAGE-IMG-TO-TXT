@@ -2149,7 +2149,7 @@ function closeReportModal() {
 }
 
 /* ========================================================================== */
-/* 3D INTERACTIVE SPATIAL CONSTELLATION & PARALLAX BACKGROUND                 */
+/* REALISTIC ASTRONOMICAL STARFIELD & CONSTELLATIONS (HOME PAGE ONLY)         */
 /* ========================================================================== */
 function init3DBackground() {
   const canvas = document.getElementById("bg-3d-canvas");
@@ -2175,62 +2175,161 @@ function init3DBackground() {
   resize();
   window.addEventListener("resize", resize, { passive: true });
 
-  // 3D Nodes generation
-  const NODE_COUNT = 75;
-  const SPREAD_X = 520;
-  const SPREAD_Y = 380;
-  const SPREAD_Z = 460;
-  const FOCAL_LENGTH = 520;
-  const MAX_CONN_DIST = 165;
+  const SPREAD_X = 640;
+  const SPREAD_Y = 460;
+  const SPREAD_Z = 480;
+  const FOCAL_LENGTH = 540;
 
-  const nodes = [];
-  const paletteDark = [
-    { r: 59, g: 130, b: 246 },   // blue-500
-    { r: 6, g: 182, b: 212 },    // cyan-500
-    { r: 99, g: 102, b: 241 },   // indigo-500
-    { r: 168, g: 85, b: 247 },   // purple-500
-    { r: 56, g: 189, b: 248 }    // sky-400
+  // Real celestial spectral star colors (diamond whites, pale ice-blue, warm starlight, sapphire)
+  const starColorsDark = [
+    { r: 255, g: 255, b: 255 }, // Pure Diamond White
+    { r: 240, g: 249, b: 255 }, // Celestial Ice White
+    { r: 224, g: 242, b: 254 }, // Starlight Sky
+    { r: 186, g: 230, b: 253 }, // Pale Electric Cyan
+    { r: 254, g: 243, b: 199 }, // Stellar Warm Gold
+    { r: 147, g: 197, b: 253 }  // Sirius Blue
   ];
-  const paletteLight = [
-    { r: 37, g: 99, b: 235 },    // blue-600
-    { r: 8, g: 145, b: 178 },    // cyan-600
-    { r: 79, g: 70, b: 229 },    // indigo-600
-    { r: 147, g: 51, b: 234 }    // purple-600
+  const starColorsLight = [
+    { r: 37, g: 99, b: 235 },   // Royal Blue
+    { r: 14, g: 165, b: 233 },  // Electric Cyan
+    { r: 2, g: 132, b: 199 },   // Deep Sky
+    { r: 79, g: 70, b: 229 }   // Indigo
   ];
 
-  for (let i = 0; i < NODE_COUNT; i++) {
-    nodes.push({
-      x: (Math.random() - 0.5) * SPREAD_X * 2,
-      y: (Math.random() - 0.5) * SPREAD_Y * 2,
-      z: (Math.random() - 0.5) * SPREAD_Z * 2,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      vz: (Math.random() - 0.5) * 0.35,
-      baseRadius: Math.random() * 2.2 + 1.2,
-      pulse: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.02 + Math.random() * 0.025,
-      colorDark: paletteDark[Math.floor(Math.random() * paletteDark.length)],
-      colorLight: paletteLight[Math.floor(Math.random() * paletteLight.length)],
+  // 1. Constellation Landmark Stars (Forming real geometric asterisms)
+  const landmarkStarData = [
+    // Cassiopeia "W" (stars 0 to 4)
+    { x: -380, y: -240, z: 80, name: 'Schedar' },
+    { x: -320, y: -280, z: 60, name: 'Caph' },
+    { x: -260, y: -230, z: 90, name: 'Gamma Cas' },
+    { x: -210, y: -270, z: 70, name: 'Ruchbah' },
+    { x: -160, y: -220, z: 100, name: 'Segin' },
+
+    // Cygnus the Northern Cross (stars 5 to 9)
+    { x: -180, y: -80, z: -40, name: 'Deneb' },
+    { x: -190, y: 10, z: -20, name: 'Sadr' },
+    { x: -200, y: 110, z: 0, name: 'Albireo' },
+    { x: -280, y: 20, z: -10, name: 'Gienah' },
+    { x: -100, y: 0, z: -30, name: 'Delta Cyg' },
+
+    // Orion Asterism (stars 10 to 16)
+    { x: -360, y: 120, z: 40, name: 'Betelgeuse' },
+    { x: -240, y: 100, z: 60, name: 'Bellatrix' },
+    { x: -310, y: 180, z: 50, name: 'Alnitak' },
+    { x: -290, y: 190, z: 50, name: 'Alnilam' },
+    { x: -270, y: 200, z: 50, name: 'Mintaka' },
+    { x: -350, y: 270, z: 70, name: 'Saiph' },
+    { x: -230, y: 250, z: 80, name: 'Rigel' },
+
+    // Ursa Major / Big Dipper (stars 17 to 23)
+    { x: 120, y: -280, z: 30, name: 'Alkaid' },
+    { x: 180, y: -250, z: 20, name: 'Mizar' },
+    { x: 230, y: -220, z: 40, name: 'Alioth' },
+    { x: 280, y: -230, z: 30, name: 'Megrez' },
+    { x: 340, y: -220, z: 50, name: 'Dubhe' },
+    { x: 330, y: -160, z: 40, name: 'Merak' },
+    { x: 270, y: -170, z: 30, name: 'Phecda' },
+
+    // Lyra & Vega (stars 24 to 28)
+    { x: 80, y: -70, z: -60, name: 'Vega' },
+    { x: 130, y: -40, z: -50, name: 'Epsilon Lyr' },
+    { x: 140, y: 20, z: -40, name: 'Zeta Lyr' },
+    { x: 90, y: 30, z: -50, name: 'Sheliak' },
+    { x: 70, y: -10, z: -60, name: 'Sulafat' },
+
+    // Pegasus Great Square (stars 29 to 32)
+    { x: 220, y: 90, z: -20, name: 'Alpheratz' },
+    { x: 340, y: 80, z: 0, name: 'Scheat' },
+    { x: 350, y: 200, z: 20, name: 'Markab' },
+    { x: 230, y: 210, z: 10, name: 'Algenib' }
+  ];
+
+  // Specific constellation lines connecting designated star indices
+  const constellationLines = [
+    // Cassiopeia
+    [0, 1], [1, 2], [2, 3], [3, 4],
+    // Cygnus Cross
+    [5, 6], [6, 7], [8, 6], [6, 9],
+    // Orion
+    [10, 12], [11, 14], [12, 13], [13, 14], [12, 15], [14, 16], [10, 11],
+    // Big Dipper (Handle + Bowl)
+    [17, 18], [18, 19], [19, 20], [20, 21], [21, 22], [22, 23], [23, 20],
+    // Lyra
+    [24, 25], [25, 26], [26, 27], [27, 28], [28, 24],
+    // Pegasus Square
+    [29, 30], [30, 31], [31, 32], [32, 29]
+  ];
+
+  const stars = [];
+
+  // Add Landmark Constellation Stars
+  for (let i = 0; i < landmarkStarData.length; i++) {
+    const d = landmarkStarData[i];
+    stars.push({
+      x: d.x,
+      y: d.y,
+      z: d.z,
+      vx: (Math.random() - 0.5) * 0.08,
+      vy: (Math.random() - 0.5) * 0.08,
+      vz: (Math.random() - 0.5) * 0.08,
+      isLandmark: true,
+      hasSpikes: true,
+      radius: 1.8 + Math.random() * 0.6, // 1.8 - 2.4px
+      twinklePhase: Math.random() * Math.PI * 2,
+      twinkleSpeed: 0.018 + Math.random() * 0.025,
+      colorDark: starColorsDark[i % starColorsDark.length],
+      colorLight: starColorsLight[i % starColorsLight.length],
       screenX: 0,
       screenY: 0,
-      screenRadius: 0,
       rotZ: 0,
       visible: false
     });
   }
 
-  // Floating background dust particles (atmospheric micro-sparks)
-  const DUST_COUNT = 30;
-  const dustParticles = [];
-  for (let i = 0; i < DUST_COUNT; i++) {
-    dustParticles.push({
-      x: (Math.random() - 0.5) * SPREAD_X * 2.4,
-      y: (Math.random() - 0.5) * SPREAD_Y * 2.4,
-      z: (Math.random() - 0.5) * SPREAD_Z * 2,
-      vy: -(0.15 + Math.random() * 0.3),
-      size: Math.random() * 1.5 + 0.6,
-      alpha: Math.random() * 0.5 + 0.2
+  // 2. Add Background Field Stars (Tiny starlight pinpoints)
+  const FIELD_STAR_COUNT = 160;
+  for (let i = 0; i < FIELD_STAR_COUNT; i++) {
+    const isMedium = i < 40;
+    stars.push({
+      x: (Math.random() - 0.5) * SPREAD_X * 2.2,
+      y: (Math.random() - 0.5) * SPREAD_Y * 2.2,
+      z: (Math.random() - 0.5) * SPREAD_Z * 2.0,
+      vx: (Math.random() - 0.5) * 0.10,
+      vy: (Math.random() - 0.5) * 0.10,
+      vz: (Math.random() - 0.5) * 0.10,
+      isLandmark: false,
+      hasSpikes: isMedium && Math.random() > 0.6,
+      radius: isMedium ? (1.1 + Math.random() * 0.4) : (0.55 + Math.random() * 0.45),
+      twinklePhase: Math.random() * Math.PI * 2,
+      twinkleSpeed: 0.012 + Math.random() * 0.035,
+      colorDark: starColorsDark[Math.floor(Math.random() * starColorsDark.length)],
+      colorLight: starColorsLight[Math.floor(Math.random() * starColorsLight.length)],
+      screenX: 0,
+      screenY: 0,
+      rotZ: 0,
+      visible: false
     });
+  }
+
+  // Shooting star / meteor streak manager
+  let shootingStar = null;
+  let nextShootingStarTime = Date.now() + 3500;
+
+  function spawnShootingStar() {
+    const startX = Math.random() * (width * 0.7);
+    const startY = Math.random() * (height * 0.35);
+    const angle = (Math.PI / 4) + (Math.random() - 0.5) * 0.3;
+    const speed = 12 + Math.random() * 8;
+    const length = 80 + Math.random() * 70;
+    shootingStar = {
+      x: startX,
+      y: startY,
+      dx: Math.cos(angle) * speed,
+      dy: Math.sin(angle) * speed,
+      length: length,
+      alpha: 1.0,
+      decay: 0.022 + Math.random() * 0.015
+    };
   }
 
   // Interactive mouse parallax
@@ -2239,18 +2338,24 @@ function init3DBackground() {
   let currentAngleX = 0;
   let currentAngleY = 0;
   let baseAngleY = 0;
-  let baseAngleX = 0;
 
   window.addEventListener("mousemove", (e) => {
     const normX = (e.clientX / window.innerWidth) - 0.5;
     const normY = (e.clientY / window.innerHeight) - 0.5;
-    targetAngleY = normX * 0.45;
-    targetAngleX = -normY * 0.35;
+    targetAngleY = normX * 0.28;
+    targetAngleX = -normY * 0.22;
   }, { passive: true });
 
   let animationFrameId = null;
 
   function render() {
+    // 1. Strict Page Check: Render ONLY on Home page!
+    if (typeof state !== 'undefined' && state.activeTab && state.activeTab !== 'home') {
+      ctx.clearRect(0, 0, width, height);
+      animationFrameId = requestAnimationFrame(render);
+      return;
+    }
+
     if (document.hidden) {
       animationFrameId = requestAnimationFrame(render);
       return;
@@ -2260,13 +2365,12 @@ function init3DBackground() {
 
     const isDark = document.documentElement.classList.contains("dark");
 
-    // Smooth lerp mouse parallax + gentle auto-rotation
-    baseAngleY += 0.0012;
-    baseAngleX += 0.0004;
+    // Smooth subtle cosmic drift and parallax
+    baseAngleY += 0.0004;
     currentAngleX += (targetAngleX - currentAngleX) * 0.04;
     currentAngleY += (targetAngleY - currentAngleY) * 0.04;
 
-    const rotX = currentAngleX + Math.sin(baseAngleX) * 0.08;
+    const rotX = currentAngleX;
     const rotY = currentAngleY + baseAngleY;
 
     const cosX = Math.cos(rotX);
@@ -2277,130 +2381,142 @@ function init3DBackground() {
     const centerX = width / 2;
     const centerY = height / 2;
 
-    // 1. Project nodes to 2.5D/3D screen space
-    for (let i = 0; i < nodes.length; i++) {
-      const n = nodes[i];
+    // Project stars in 3D
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
 
-      // Drift in 3D
-      n.x += n.vx;
-      n.y += n.vy;
-      n.z += n.vz;
-      n.pulse += n.pulseSpeed;
+      s.x += s.vx;
+      s.y += s.vy;
+      s.z += s.vz;
+      s.twinklePhase += s.twinkleSpeed;
 
-      // Wrap around bounding box
-      if (n.x < -SPREAD_X) n.x = SPREAD_X;
-      else if (n.x > SPREAD_X) n.x = -SPREAD_X;
-      if (n.y < -SPREAD_Y) n.y = SPREAD_Y;
-      else if (n.y > SPREAD_Y) n.y = -SPREAD_Y;
-      if (n.z < -SPREAD_Z) n.z = SPREAD_Z;
-      else if (n.z > SPREAD_Z) n.z = -SPREAD_Z;
+      // Celestial wrap boundaries
+      const boundX = s.isLandmark ? SPREAD_X * 1.2 : SPREAD_X * 2.2;
+      const boundY = s.isLandmark ? SPREAD_Y * 1.2 : SPREAD_Y * 2.2;
+      const boundZ = SPREAD_Z * 1.8;
 
-      // 3D rotation: rotate around Y then X
-      const x1 = n.x * cosY - n.z * sinY;
-      const z1 = n.z * cosY + n.x * sinY;
+      if (s.x < -boundX) s.x = boundX;
+      else if (s.x > boundX) s.x = -boundX;
+      if (s.y < -boundY) s.y = boundY;
+      else if (s.y > boundY) s.y = -boundY;
+      if (s.z < -boundZ) s.z = boundZ;
+      else if (s.z > boundZ) s.z = -boundZ;
 
-      const y2 = n.y * cosX - z1 * sinX;
-      const z2 = z1 * cosX + n.y * sinX;
+      // 3D Matrix Rotation (around Y then X)
+      const x1 = s.x * cosY - s.z * sinY;
+      const z1 = s.z * cosY + s.x * sinY;
+      const y2 = s.y * cosX - z1 * sinX;
+      const z2 = z1 * cosX + s.y * sinX;
 
-      n.rotZ = z2;
-
-      // Perspective projection
-      const cameraDistance = FOCAL_LENGTH + z2;
-      if (cameraDistance > 20) {
-        const scale = FOCAL_LENGTH / cameraDistance;
-        n.screenX = centerX + x1 * scale;
-        n.screenY = centerY + y2 * scale;
-        n.screenRadius = Math.max(0.6, (n.baseRadius + Math.sin(n.pulse) * 0.6) * scale);
-        n.visible = (n.screenX >= -50 && n.screenX <= width + 50 && n.screenY >= -50 && n.screenY <= height + 50);
-      } else {
-        n.visible = false;
-      }
-    }
-
-    // 2. Draw 3D filaments between close nodes
-    for (let i = 0; i < nodes.length; i++) {
-      const n1 = nodes[i];
-      if (!n1.visible) continue;
-
-      for (let j = i + 1; j < nodes.length; j++) {
-        const n2 = nodes[j];
-        if (!n2.visible) continue;
-
-        const dx = n1.x - n2.x;
-        const dy = n1.y - n2.y;
-        const dz = n1.z - n2.z;
-        const dist3D = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-        if (dist3D < MAX_CONN_DIST) {
-          const proximity = 1 - (dist3D / MAX_CONN_DIST);
-          const depthRatio = Math.max(0.15, Math.min(1, (n1.rotZ + n2.rotZ + SPREAD_Z * 2) / (SPREAD_Z * 3)));
-          const alpha = proximity * proximity * depthRatio * (isDark ? 0.32 : 0.22);
-
-          ctx.beginPath();
-          ctx.moveTo(n1.screenX, n1.screenY);
-          ctx.lineTo(n2.screenX, n2.screenY);
-          if (isDark) {
-            ctx.strokeStyle = `rgba(129, 140, 248, ${alpha})`;
-          } else {
-            ctx.strokeStyle = `rgba(59, 130, 246, ${alpha * 0.8})`;
-          }
-          ctx.lineWidth = Math.max(0.5, 1.2 * depthRatio);
-          ctx.stroke();
-        }
-      }
-    }
-
-    // 3. Draw nodes sorted by depth (back to front)
-    const sortedNodes = nodes.filter(n => n.visible).sort((a, b) => b.rotZ - a.rotZ);
-
-    for (let i = 0; i < sortedNodes.length; i++) {
-      const n = sortedNodes[i];
-      const c = isDark ? n.colorDark : n.colorLight;
-      const depthRatio = Math.max(0.2, Math.min(1, (n.rotZ + SPREAD_Z) / (SPREAD_Z * 2)));
-      const alpha = (0.35 + depthRatio * 0.55);
-
-      // Glow halo in dark mode
-      if (isDark && depthRatio > 0.45) {
-        ctx.beginPath();
-        ctx.arc(n.screenX, n.screenY, n.screenRadius * 2.8, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.18})`;
-        ctx.fill();
-      }
-
-      // Crisp core
-      ctx.beginPath();
-      ctx.arc(n.screenX, n.screenY, n.screenRadius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
-      ctx.fill();
-    }
-
-    // 4. Render 3D ambient dust motes
-    for (let i = 0; i < dustParticles.length; i++) {
-      const p = dustParticles[i];
-      p.y += p.vy;
-      if (p.y < -SPREAD_Y) {
-        p.y = SPREAD_Y;
-        p.x = (Math.random() - 0.5) * SPREAD_X * 2.4;
-      }
-
-      const x1 = p.x * cosY - p.z * sinY;
-      const z1 = p.z * cosY + p.x * sinY;
-      const y2 = p.y * cosX - z1 * sinX;
-      const z2 = z1 * cosX + p.y * sinX;
+      s.rotZ = z2;
 
       const camDist = FOCAL_LENGTH + z2;
       if (camDist > 30) {
         const scale = FOCAL_LENGTH / camDist;
-        const sx = centerX + x1 * scale;
-        const sy = centerY + y2 * scale;
-        if (sx >= 0 && sx <= width && sy >= 0 && sy <= height) {
-          ctx.beginPath();
-          ctx.arc(sx, sy, Math.max(0.5, p.size * scale), 0, Math.PI * 2);
-          ctx.fillStyle = isDark
-            ? `rgba(147, 197, 253, ${p.alpha * 0.4})`
-            : `rgba(96, 165, 250, ${p.alpha * 0.25})`;
-          ctx.fill();
-        }
+        s.screenX = centerX + x1 * scale;
+        s.screenY = centerY + y2 * scale;
+        s.scale = scale;
+        s.visible = (s.screenX >= -40 && s.screenX <= width + 40 && s.screenY >= -40 && s.screenY <= height + 40);
+      } else {
+        s.visible = false;
+      }
+    }
+
+    // 2. Draw Fine Celestial Constellation Lines
+    for (let i = 0; i < constellationLines.length; i++) {
+      const [idx1, idx2] = constellationLines[i];
+      const s1 = stars[idx1];
+      const s2 = stars[idx2];
+      if (s1 && s2 && s1.visible && s2.visible) {
+        const depthRatio = Math.max(0.2, Math.min(1.0, (s1.rotZ + s2.rotZ + SPREAD_Z * 2) / (SPREAD_Z * 3.5)));
+        const alpha = depthRatio * (isDark ? 0.24 : 0.16);
+
+        ctx.beginPath();
+        ctx.moveTo(s1.screenX, s1.screenY);
+        ctx.lineTo(s2.screenX, s2.screenY);
+        ctx.strokeStyle = isDark
+          ? `rgba(56, 189, 248, ${alpha})`
+          : `rgba(37, 99, 235, ${alpha * 0.9})`;
+        ctx.lineWidth = Math.max(0.4, 0.75 * depthRatio);
+        ctx.stroke();
+      }
+    }
+
+    // 3. Draw Stars with Authentic Astronomical Glints & Twinkling
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      if (!s.visible) continue;
+
+      const twinkle = 0.65 + 0.35 * Math.sin(s.twinklePhase);
+      const depthRatio = Math.max(0.25, Math.min(1.0, (s.rotZ + SPREAD_Z) / (SPREAD_Z * 2)));
+      const alpha = Math.min(1.0, twinkle * depthRatio * (isDark ? 0.95 : 0.85));
+      const c = isDark ? s.colorDark : s.colorLight;
+      const r = Math.max(0.45, s.radius * s.scale);
+
+      // Diffraction Spikes for Landmark / Bright Alpha Stars (The 4-point cross glint '+')
+      if (s.hasSpikes && isDark && depthRatio > 0.35) {
+        const spikeLen = (3.5 + 6.0 * twinkle) * s.scale;
+        ctx.lineWidth = 0.7;
+
+        // Horizontal starlight needle
+        ctx.beginPath();
+        ctx.moveTo(s.screenX - spikeLen, s.screenY);
+        ctx.lineTo(s.screenX + spikeLen, s.screenY);
+        ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.75})`;
+        ctx.stroke();
+
+        // Vertical starlight needle
+        ctx.beginPath();
+        ctx.moveTo(s.screenX, s.screenY - spikeLen);
+        ctx.lineTo(s.screenX, s.screenY + spikeLen);
+        ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.75})`;
+        ctx.stroke();
+
+        // Soft micro-corona
+        ctx.beginPath();
+        ctx.arc(s.screenX, s.screenY, r * 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.22})`;
+        ctx.fill();
+      }
+
+      // Brilliant Pinpoint Diamond Core
+      ctx.beginPath();
+      ctx.arc(s.screenX, s.screenY, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
+      ctx.fill();
+    }
+
+    // 4. Subtle Cosmic Shooting Star (Meteor Streak)
+    const now = Date.now();
+    if (!shootingStar && now > nextShootingStarTime) {
+      if (Math.random() < 0.6) {
+        spawnShootingStar();
+      }
+      nextShootingStarTime = now + 8000 + Math.random() * 8000;
+    }
+
+    if (shootingStar) {
+      const ss = shootingStar;
+      const tailX = ss.x - (ss.dx / Math.hypot(ss.dx, ss.dy)) * ss.length;
+      const tailY = ss.y - (ss.dy / Math.hypot(ss.dx, ss.dy)) * ss.length;
+
+      const grad = ctx.createLinearGradient(tailX, tailY, ss.x, ss.y);
+      grad.addColorStop(0, "rgba(56, 189, 248, 0)");
+      grad.addColorStop(0.7, `rgba(186, 230, 253, ${ss.alpha * 0.45})`);
+      grad.addColorStop(1, `rgba(255, 255, 255, ${ss.alpha * 0.85})`);
+
+      ctx.beginPath();
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(ss.x, ss.y);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      ss.x += ss.dx;
+      ss.y += ss.dy;
+      ss.alpha -= ss.decay;
+      if (ss.alpha <= 0 || ss.x > width + 100 || ss.y > height + 100) {
+        shootingStar = null;
       }
     }
 
