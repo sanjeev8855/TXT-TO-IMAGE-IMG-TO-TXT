@@ -39,8 +39,8 @@
             accent: {
               DEFAULT: 'var(--acid)',
               hover: 'var(--acid-hover)',
-              light: 'rgba(216, 255, 62, 0.12)',
-              border: 'rgba(216, 255, 62, 0.35)'
+              light: 'rgba(56, 189, 248, 0.12)',
+              border: 'rgba(56, 189, 248, 0.35)'
             },
             state: {
               success: '#22c55e',
@@ -58,29 +58,31 @@
   </script>
   <style>
     :root {
-      --bg: #0c0d0e;
-      --panel: #16181a;
-      --panel-muted: #1c1f22;
-      --panel-subtle: #121416;
-      --ink: #f4f1e9;
-      --muted: #999890;
-      --line: #2a2c2f;
-      --acid: #d8ff3e;
-      --acid-hover: #e8ff8b;
+      --bg: #080b11;
+      --panel: #111622;
+      --panel-muted: #171e2e;
+      --panel-subtle: #0d121c;
+      --ink: #f0f6fc;
+      --muted: #8ca0ba;
+      --line: #1e293b;
+      --acid: #38bdf8;
+      --acid-hover: #7dd3fc;
+      --blue-accent: #0284c7;
+      --blue-glow: rgba(56, 189, 248, 0.35);
       --radius: 20px;
       --max: 1320px;
     }
 
     html:not(.dark) {
-      --bg: #f5f4ef;
+      --bg: #f4f8fc;
       --panel: #ffffff;
-      --panel-muted: #ebe9e1;
-      --panel-subtle: #f9f8f4;
-      --ink: #141413;
-      --muted: #6e6d67;
-      --line: #dedcd2;
-      --acid: #8bb500;
-      --acid-hover: #7ba200;
+      --panel-muted: #e6eef8;
+      --panel-subtle: #f8fafc;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #d5e2f0;
+      --acid: #0284c7;
+      --acid-hover: #0369a1;
       --radius: 20px;
     }
 
@@ -225,24 +227,25 @@
       background: rgba(255, 255, 255, 0.04);
     }
     .nav-tab.border-accent, .nav-tab.active-tab {
-      color: #111 !important;
-      background: var(--acid) !important;
-      border-color: var(--acid) !important;
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+      border-color: #38bdf8 !important;
       font-weight: 600;
-      box-shadow: 0 0 18px rgba(216, 255, 62, 0.35);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.45);
     }
     html:not(.dark) .nav-tab.border-accent, html:not(.dark) .nav-tab.active-tab {
-      color: #fff !important;
-      background: var(--acid) !important;
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+      border-color: #38bdf8 !important;
     }
 
     /* Pill Action Buttons */
     .btn-acid, .button, .navcta {
       border: 0;
       border-radius: 100px;
-      background: var(--acid);
-      color: #111;
-      padding: 10px 18px;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #38bdf8 100%);
+      color: #ffffff;
+      padding: 10px 20px;
       font-weight: 700;
       font-size: 12px;
       cursor: pointer;
@@ -251,14 +254,14 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, filter 0.2s ease;
       text-decoration: none;
-      box-shadow: 0 4px 16px rgba(216, 255, 62, 0.25);
+      box-shadow: 0 4px 18px rgba(37, 99, 235, 0.45);
     }
     .btn-acid:hover, .button:hover, .navcta:hover {
       transform: translateY(-2px);
-      background: var(--acid-hover);
-      box-shadow: 0 6px 24px rgba(216, 255, 62, 0.4);
+      box-shadow: 0 6px 26px rgba(56, 189, 248, 0.6);
+      filter: brightness(1.1);
     }
     .btn-acid:active, .button:active, .navcta:active {
       transform: translateY(0.5px) scale(0.98);
@@ -296,8 +299,8 @@
       transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
     }
     .res-card:hover {
-      border-color: rgba(216, 255, 62, 0.32);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(216, 255, 62, 0.08);
+      border-color: rgba(56, 189, 248, 0.38);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(56, 189, 248, 0.14);
       transform: translateY(-2px);
     }
     html:not(.dark) .res-card {
@@ -356,6 +359,18 @@
       border-bottom: 1px solid var(--line);
       margin-bottom: 24px;
     }
+    /* Deep space cosmic blue nebula aura near Earth globe */
+    .hero-banner:after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 600px;
+      background: radial-gradient(circle at 70% 50%, rgba(14, 165, 233, 0.24) 0%, rgba(29, 78, 216, 0.12) 42%, transparent 74%);
+      pointer-events: none;
+      z-index: 1;
+    }
     .orb-scene {
       position: absolute;
       inset: 0;
@@ -373,13 +388,27 @@
       top: 54%;
       transform: translateY(-50%);
       border-radius: 50% !important;
-      background: radial-gradient(circle at 30% 28%, #93c5fd 0%, #38bdf8 14%, #1d4ed8 32%, #0f172a 56%, #030712 78%, #02040a 96%);
-      box-shadow: inset -28px -28px 70px rgba(0, 0, 0, 0.96), inset 14px 14px 42px rgba(191, 219, 254, 0.45), 0 0 100px rgba(56, 189, 248, 0.35);
-      filter: drop-shadow(0 0 75px rgba(56, 189, 248, 0.32));
+      box-shadow: 0 0 95px rgba(14, 165, 233, 0.4), 0 0 45px rgba(56, 189, 248, 0.3);
       transform-style: preserve-3d;
-      opacity: 0.96;
+      opacity: 0.98;
       transition: margin 0.15s ease-out;
       will-change: transform;
+      overflow: visible;
+    }
+    .earth-sphere-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      pointer-events: none;
+      filter: contrast(1.06) brightness(1.03);
+      animation: earthFloat 9s ease-in-out infinite alternate;
+    }
+    @keyframes earthFloat {
+      0% { transform: scale(1) translateY(0); }
+      100% { transform: scale(1.02) translateY(-6px); }
     }
     html:not(.dark) .orb {
       background: radial-gradient(circle at 30% 28%, #ffffff 0%, #60a5fa 20%, #2563eb 45%, #1e3a8a 70%, #0f172a 92%);
@@ -442,8 +471,9 @@
     /* Tags & Badges */
     .tag {
       font: 10px "DM Mono", monospace;
-      color: var(--acid);
-      border: 1px solid rgba(216, 255, 62, 0.35);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.38);
+      background: rgba(56, 189, 248, 0.08);
       border-radius: 100px;
       padding: 4px 10px;
       white-space: nowrap;
@@ -486,25 +516,25 @@
     }
     #drop-zone:hover {
       border-color: var(--acid);
-      background: rgba(216, 255, 62, 0.03);
-      box-shadow: 0 0 30px rgba(216, 255, 62, 0.12);
+      background: rgba(56, 189, 248, 0.04);
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
       transform: scale(1.006);
     }
 
     /* Primary glowing action buttons */
     #btn-run-pipeline, button[onclick="executeTextToImage()"], button[onclick="analyzeActiveImage()"], button[onclick="synthesizeFromCurrentPrompt()"], button[onclick="runBidirectionalComparison()"] {
-      background: var(--acid) !important;
-      color: #111 !important;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #38bdf8 100%) !important;
+      color: #ffffff !important;
       font-weight: 700 !important;
       border-radius: 100px !important;
-      box-shadow: 0 6px 20px rgba(216, 255, 62, 0.3) !important;
+      box-shadow: 0 6px 22px rgba(37, 99, 235, 0.45) !important;
       transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
       border: 0 !important;
     }
     #btn-run-pipeline:hover, button[onclick="executeTextToImage()"]:hover, button[onclick="analyzeActiveImage()"]:hover, button[onclick="synthesizeFromCurrentPrompt()"]:hover, button[onclick="runBidirectionalComparison()"]:hover {
-      background: var(--acid-hover) !important;
       transform: translateY(-2px) !important;
-      box-shadow: 0 8px 28px rgba(216, 255, 62, 0.45) !important;
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.65) !important;
+      filter: brightness(1.08) !important;
     }
 
     /* Focus Accessible Ring */
@@ -605,7 +635,7 @@
 
   <!-- Studio Hero Banner with WOWWW Morphing 3D Orb -->
   <header class="hero-banner">
-    <div class="orb-scene"><div class="orb" id="orb"><canvas id="globe-canvas" width="500" height="500"></canvas></div></div>
+    <div class="orb-scene"><div class="orb" id="orb"><img id="earth-img-asset" class="earth-sphere-img" src="/static/earth_3d_globe.png" alt="3D Earth Globe"><canvas id="globe-canvas" width="500" height="500"></canvas></div></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
       <div class="max-w-3xl">
         <div class="eyebrow">Multimodal Vision & Latent Synthesis Studio · Est. 2026</div>
@@ -1547,194 +1577,101 @@
     if (globeCanvas) {
       const gCtx = globeCanvas.getContext('2d');
       const size = 500;
-      const R = 238;
+      const R = 248;
       const CX = size / 2;
       const CY = size / 2;
-      let rotY = 0;
-      let tiltX = 0.38; // ~22 degrees axial tilt
-      let targetTiltX = 0.38;
+      let orbitAngle = 0;
+      let satAngle2 = Math.PI;
 
-      // Real Earth Continent Polygon Outlines (Lat, Lon)
-      const earthContinents = [
-        // North America
-        [[71, -164], [72, -128], [69, -88], [58, -75], [52, -56], [47, -65], [35, -75], [26, -80], [21, -87], [16, -95], [8, -78], [15, -92], [22, -106], [33, -118], [48, -125], [59, -140], [65, -168], [71, -164]],
-        // South America
-        [[12, -72], [10, -62], [5, -52], [-5, -35], [-23, -42], [-35, -55], [-54, -68], [-55, -73], [-42, -73], [-18, -70], [-5, -81], [5, -77], [12, -72]],
-        // Europe & Western Asia
-        [[36, -6], [43, -9], [48, -4], [54, 5], [58, 6], [71, 28], [68, 48], [56, 38], [45, 35], [40, 26], [36, 22], [38, 15], [36, -6]],
-        // Africa
-        [[36, -5], [37, 10], [32, 25], [31, 32], [12, 44], [12, 51], [0, 42], [-15, 40], [-26, 33], [-34, 18], [-33, 17], [-18, 12], [-5, 10], [4, 8], [5, 2], [5, -3], [5, -10], [15, -17], [28, -12], [36, -5]],
-        // Asia
-        [[42, 28], [55, 38], [68, 48], [73, 80], [75, 110], [70, 140], [65, 175], [60, 160], [45, 145], [40, 130], [22, 120], [10, 105], [20, 88], [8, 77], [22, 69], [25, 57], [30, 48], [35, 36], [42, 28]],
-        // Australia
-        [[-12, 130], [-12, 136], [-17, 140], [-22, 150], [-32, 153], [-38, 145], [-35, 117], [-22, 113], [-15, 124], [-12, 130]],
-        // Greenland
-        [[78, -20], [83, -30], [82, -50], [76, -68], [65, -52], [60, -44], [65, -38], [70, -25], [78, -20]],
-        // Antarctica
-        [[-65, -60], [-70, -10], [-72, 40], [-68, 90], [-65, 140], [-70, 180], [-75, -120], [-65, -60]]
+      // Telemetry beacon points over the Earth
+      const telemetryNodes = [
+        { angle: 0.2, radiusRatio: 0.94, size: 3.2, pulse: 0 },
+        { angle: 1.8, radiusRatio: 0.88, size: 2.8, pulse: 1.2 },
+        { angle: 3.4, radiusRatio: 0.92, size: 3.0, pulse: 2.4 },
+        { angle: 4.8, radiusRatio: 0.85, size: 2.6, pulse: 3.6 }
       ];
 
-      // Major World Capital & Tech Beacon Nodes
-      const worldCities = [
-        { name: "New York", lat: 40.7, lon: -74.0, size: 2.8, pulse: 0 },
-        { name: "London", lat: 51.5, lon: -0.1, size: 2.8, pulse: 1.0 },
-        { name: "Tokyo", lat: 35.7, lon: 139.7, size: 2.8, pulse: 2.0 },
-        { name: "Paris", lat: 48.9, lon: 2.3, size: 2.4, pulse: 3.0 },
-        { name: "Sydney", lat: -33.9, lon: 151.2, size: 2.5, pulse: 4.0 },
-        { name: "Cairo", lat: 30.0, lon: 31.2, size: 2.4, pulse: 2.5 },
-        { name: "Mumbai", lat: 19.1, lon: 72.9, size: 2.6, pulse: 1.5 },
-        { name: "Rio", lat: -22.9, lon: -43.2, size: 2.5, pulse: 3.5 },
-        { name: "Singapore", lat: 1.3, lon: 103.8, size: 2.6, pulse: 4.5 },
-        { name: "San Francisco", lat: 37.8, lon: -122.4, size: 2.5, pulse: 0.8 },
-        { name: "Dubai", lat: 25.2, lon: 55.3, size: 2.5, pulse: 2.1 },
-        { name: "Berlin", lat: 52.5, lon: 13.4, size: 2.3, pulse: 2.8 }
-      ];
-
-      // Interpolate points along polygon segments for smooth spherical curvature
-      function interpolateSegment(p1, p2, maxStep = 3) {
-        const dLat = p2[0] - p1[0];
-        const dLon = p2[1] - p1[1];
-        const dist = Math.hypot(dLat, dLon);
-        const steps = Math.max(1, Math.ceil(dist / maxStep));
-        const res = [];
-        for (let i = 0; i < steps; i++) {
-          const t = i / steps;
-          res.push([p1[0] + dLat * t, p1[1] + dLon * t]);
-        }
-        return res;
-      }
-
-      // Pre-compute dense coastline curvature
-      const denseContinents = earthContinents.map(poly => {
-        const dense = [];
-        for (let i = 0; i < poly.length; i++) {
-          const p1 = poly[i];
-          const p2 = poly[(i + 1) % poly.length];
-          dense.push(...interpolateSegment(p1, p2, 3));
-        }
-        return dense;
-      });
-
-      function project3D(latDeg, lonDeg, rot, tilt) {
-        const lat = latDeg * Math.PI / 180;
-        const lon = lonDeg * Math.PI / 180 + rot;
-        
-        const x = R * Math.cos(lat) * Math.sin(lon);
-        const y = R * Math.sin(lat);
-        const z = R * Math.cos(lat) * Math.cos(lon);
-        
-        const y1 = y * Math.cos(tilt) - z * Math.sin(tilt);
-        const z1 = y * Math.sin(tilt) + z * Math.cos(tilt);
-        
-        return { x: CX + x, y: CY - y1, z: z1 };
-      }
-
-      function renderGlobe() {
+      function renderGlobeEffects() {
         gCtx.clearRect(0, 0, size, size);
-        rotY += 0.0075; // Planetary rotation
-        tiltX += (targetTiltX - tiltX) * 0.06;
+        orbitAngle += 0.009;
+        satAngle2 += 0.006;
 
-        // 1. Latitude parallels in celestial azure
-        const latitudes = [-60, -40, -23.5, 0, 23.5, 40, 60];
-        for (const lat of latitudes) {
-          gCtx.beginPath();
-          let first = true;
-          const isEquator = lat === 0;
-          gCtx.strokeStyle = isEquator ? 'rgba(56, 189, 248, 0.45)' : 'rgba(56, 189, 248, 0.16)';
-          gCtx.lineWidth = isEquator ? 1.5 : 0.8;
-          if (isEquator) gCtx.setLineDash([5, 4]); else gCtx.setLineDash([]);
-
-          for (let lon = 0; lon <= 360; lon += 4) {
-            const pt = project3D(lat, lon, rotY, tiltX);
-            if (first) { gCtx.moveTo(pt.x, pt.y); first = false; }
-            else { gCtx.lineTo(pt.x, pt.y); }
-          }
-          gCtx.stroke();
-        }
-        gCtx.setLineDash([]);
-
-        // 2. Longitude meridians in soft blue space
-        const meridians = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
-        for (const m of meridians) {
-          gCtx.beginPath();
-          let started = false;
-          gCtx.lineWidth = 0.7;
-          gCtx.strokeStyle = 'rgba(56, 189, 248, 0.15)';
-
-          for (let lat = -90; lat <= 90; lat += 4) {
-            const pt = project3D(lat, m, rotY, tiltX);
-            if (pt.z < -25) { started = false; continue; } // Cull backside
-            if (!started) { gCtx.moveTo(pt.x, pt.y); started = true; }
-            else { gCtx.lineTo(pt.x, pt.y); }
-          }
-          gCtx.stroke();
-        }
-
-        // 3. Render Earth Continents (Landmasses & Coastlines)
-        for (const continent of denseContinents) {
-          const segments = [];
-          let curr = [];
-          for (const pt of continent) {
-            const proj = project3D(pt[0], pt[1], rotY, tiltX);
-            if (proj.z > -10) {
-              curr.push(proj);
-            } else {
-              if (curr.length > 1) segments.push(curr);
-              curr = [];
-            }
-          }
-          if (curr.length > 1) segments.push(curr);
-
-          for (const seg of segments) {
-            gCtx.beginPath();
-            gCtx.moveTo(seg[0].x, seg[0].y);
-            for (let i = 1; i < seg.length; i++) {
-              gCtx.lineTo(seg[i].x, seg[i].y);
-            }
-            gCtx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
-            gCtx.lineWidth = 1.8;
-            gCtx.stroke();
-
-            // Luminous landmass fill
-            gCtx.lineTo(CX, CY);
-            gCtx.fillStyle = 'rgba(14, 165, 233, 0.15)';
-            gCtx.fill();
-          }
-        }
-
-        // 4. Major World Cities & Beacon Nodes
-        for (const city of worldCities) {
-          city.pulse += 0.05;
-          const pt = project3D(city.lat, city.lon, rotY, tiltX);
-          if (pt.z > -10) {
-            const alpha = 0.4 + 0.6 * Math.abs(Math.sin(city.pulse));
-            gCtx.fillStyle = `rgba(56, 189, 248, ${alpha})`;
-            gCtx.beginPath();
-            gCtx.arc(pt.x, pt.y, city.size * 1.4, 0, Math.PI * 2);
-            gCtx.fill();
-
-            // Specular core
-            gCtx.fillStyle = '#ffffff';
-            gCtx.beginPath();
-            gCtx.arc(pt.x, pt.y, city.size * 0.5, 0, Math.PI * 2);
-            gCtx.fill();
-          }
-        }
-
-        // 5. Atmospheric Azure/Cyan Rim Glow (Earth's atmosphere seen from deep space)
-        const rimGrad = gCtx.createRadialGradient(CX, CY, R * 0.86, CX, CY, R);
+        // 1. Soft atmospheric azure rim glow (Earth's blue atmosphere seen from orbit)
+        const rimGrad = gCtx.createRadialGradient(CX, CY, R * 0.84, CX, CY, R);
         rimGrad.addColorStop(0, 'rgba(56, 189, 248, 0)');
-        rimGrad.addColorStop(0.7, 'rgba(56, 189, 248, 0.18)');
-        rimGrad.addColorStop(1, 'rgba(14, 165, 233, 0.48)');
+        rimGrad.addColorStop(0.65, 'rgba(56, 189, 248, 0.16)');
+        rimGrad.addColorStop(1, 'rgba(14, 165, 233, 0.52)');
         gCtx.fillStyle = rimGrad;
         gCtx.beginPath();
         gCtx.arc(CX, CY, R, 0, Math.PI * 2);
         gCtx.fill();
 
-        requestAnimationFrame(renderGlobe);
+        // 2. Orbital Flight Path 1 (Equatorial / Tilted Ellipse)
+        gCtx.strokeStyle = 'rgba(56, 189, 248, 0.38)';
+        gCtx.lineWidth = 1.2;
+        gCtx.setLineDash([8, 8]);
+        gCtx.beginPath();
+        gCtx.ellipse(CX, CY, R * 0.96, R * 0.38, 0.38, 0, Math.PI * 2);
+        gCtx.stroke();
+        gCtx.setLineDash([]);
+
+        // Satellite 1 along orbit 1
+        const sat1X = CX + Math.cos(orbitAngle) * (R * 0.96) * Math.cos(0.38) - Math.sin(orbitAngle) * (R * 0.38) * Math.sin(0.38);
+        const sat1Y = CY + Math.cos(orbitAngle) * (R * 0.96) * Math.sin(0.38) + Math.sin(orbitAngle) * (R * 0.38) * Math.cos(0.38);
+        
+        gCtx.fillStyle = '#38bdf8';
+        gCtx.beginPath();
+        gCtx.arc(sat1X, sat1Y, 3.5, 0, Math.PI * 2);
+        gCtx.fill();
+        gCtx.fillStyle = '#ffffff';
+        gCtx.beginPath();
+        gCtx.arc(sat1X, sat1Y, 1.8, 0, Math.PI * 2);
+        gCtx.fill();
+
+        // 3. Orbital Flight Path 2 (Polar Orbit)
+        gCtx.strokeStyle = 'rgba(96, 165, 250, 0.22)';
+        gCtx.lineWidth = 1.0;
+        gCtx.setLineDash([4, 6]);
+        gCtx.beginPath();
+        gCtx.ellipse(CX, CY, R * 0.35, R * 0.97, -0.45, 0, Math.PI * 2);
+        gCtx.stroke();
+        gCtx.setLineDash([]);
+
+        // Satellite 2 along polar orbit
+        const sat2X = CX + Math.cos(satAngle2) * (R * 0.35) * Math.cos(-0.45) - Math.sin(satAngle2) * (R * 0.97) * Math.sin(-0.45);
+        const sat2Y = CY + Math.cos(satAngle2) * (R * 0.35) * Math.sin(-0.45) + Math.sin(satAngle2) * (R * 0.97) * Math.cos(-0.45);
+
+        gCtx.fillStyle = '#60a5fa';
+        gCtx.beginPath();
+        gCtx.arc(sat2X, sat2Y, 3.0, 0, Math.PI * 2);
+        gCtx.fill();
+        gCtx.fillStyle = '#ffffff';
+        gCtx.beginPath();
+        gCtx.arc(sat2X, sat2Y, 1.4, 0, Math.PI * 2);
+        gCtx.fill();
+
+        // 4. Telemetry beacons (glowing white / cyan beacons over continents)
+        for (const node of telemetryNodes) {
+          node.pulse += 0.05;
+          const alpha = 0.4 + 0.6 * Math.abs(Math.sin(node.pulse));
+          const nx = CX + Math.cos(node.angle) * (R * node.radiusRatio);
+          const ny = CY + Math.sin(node.angle) * (R * node.radiusRatio * 0.85);
+
+          gCtx.fillStyle = `rgba(56, 189, 248, ${alpha})`;
+          gCtx.beginPath();
+          gCtx.arc(nx, ny, node.size * 1.5, 0, Math.PI * 2);
+          gCtx.fill();
+
+          gCtx.fillStyle = '#ffffff';
+          gCtx.beginPath();
+          gCtx.arc(nx, ny, node.size * 0.5, 0, Math.PI * 2);
+          gCtx.fill();
+        }
+
+        requestAnimationFrame(renderGlobeEffects);
       }
 
-      renderGlobe();
+      renderGlobeEffects();
     }
 
     // Interactive pointer parallax tracking
