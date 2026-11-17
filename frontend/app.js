@@ -2332,6 +2332,65 @@ function init3DBackground() {
     };
   }
 
+  // -------------------------------------------------------------
+  // SYSTEM 2: SPATIAL NETWORK PARTICLES (FOR ALL OTHER WEBPAGES)
+  // Matching Screenshot 1: Purple, Cyan, Blue nodes with Halos & Filaments
+  // -------------------------------------------------------------
+  const NODE_COUNT = 75;
+  const NET_SPREAD_X = 520;
+  const NET_SPREAD_Y = 380;
+  const NET_SPREAD_Z = 460;
+  const MAX_CONN_DIST = 165;
+
+  const netNodes = [];
+  const netPaletteDark = [
+    { r: 59, g: 130, b: 246 },   // blue-500
+    { r: 6, g: 182, b: 212 },    // cyan-500
+    { r: 99, g: 102, b: 241 },   // indigo-500
+    { r: 168, g: 85, b: 247 },   // purple-500 (Screenshot 1)
+    { r: 56, g: 189, b: 248 }    // sky-400
+  ];
+  const netPaletteLight = [
+    { r: 37, g: 99, b: 235 },    // blue-600
+    { r: 8, g: 145, b: 178 },    // cyan-600
+    { r: 79, g: 70, b: 229 },    // indigo-600
+    { r: 147, g: 51, b: 234 }    // purple-600
+  ];
+
+  for (let i = 0; i < NODE_COUNT; i++) {
+    netNodes.push({
+      x: (Math.random() - 0.5) * NET_SPREAD_X * 2,
+      y: (Math.random() - 0.5) * NET_SPREAD_Y * 2,
+      z: (Math.random() - 0.5) * NET_SPREAD_Z * 2,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      vz: (Math.random() - 0.5) * 0.35,
+      baseRadius: Math.random() * 2.2 + 1.2,
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.02 + Math.random() * 0.025,
+      colorDark: netPaletteDark[Math.floor(Math.random() * netPaletteDark.length)],
+      colorLight: netPaletteLight[Math.floor(Math.random() * netPaletteLight.length)],
+      screenX: 0,
+      screenY: 0,
+      screenRadius: 0,
+      rotZ: 0,
+      visible: false
+    });
+  }
+
+  const DUST_COUNT = 30;
+  const dustParticles = [];
+  for (let i = 0; i < DUST_COUNT; i++) {
+    dustParticles.push({
+      x: (Math.random() - 0.5) * NET_SPREAD_X * 2.4,
+      y: (Math.random() - 0.5) * NET_SPREAD_Y * 2.4,
+      z: (Math.random() - 0.5) * NET_SPREAD_Z * 2,
+      vy: -(0.15 + Math.random() * 0.3),
+      size: Math.random() * 1.5 + 0.6,
+      alpha: Math.random() * 0.5 + 0.2
+    });
+  }
+
   // Interactive mouse parallax
   let targetAngleX = 0;
   let targetAngleY = 0;
@@ -2342,20 +2401,13 @@ function init3DBackground() {
   window.addEventListener("mousemove", (e) => {
     const normX = (e.clientX / window.innerWidth) - 0.5;
     const normY = (e.clientY / window.innerHeight) - 0.5;
-    targetAngleY = normX * 0.28;
-    targetAngleX = -normY * 0.22;
+    targetAngleY = normX * 0.35;
+    targetAngleX = -normY * 0.28;
   }, { passive: true });
 
   let animationFrameId = null;
 
   function render() {
-    // 1. Strict Page Check: Render ONLY on Home page!
-    if (typeof state !== 'undefined' && state.activeTab && state.activeTab !== 'home') {
-      ctx.clearRect(0, 0, width, height);
-      animationFrameId = requestAnimationFrame(render);
-      return;
-    }
-
     if (document.hidden) {
       animationFrameId = requestAnimationFrame(render);
       return;
@@ -2364,9 +2416,10 @@ function init3DBackground() {
     ctx.clearRect(0, 0, width, height);
 
     const isDark = document.documentElement.classList.contains("dark");
+    const isHome = (!state || !state.activeTab || state.activeTab === "home");
 
     // Smooth subtle cosmic drift and parallax
-    baseAngleY += 0.0004;
+    baseAngleY += 0.0006;
     currentAngleX += (targetAngleX - currentAngleX) * 0.04;
     currentAngleY += (targetAngleY - currentAngleY) * 0.04;
 
@@ -2381,142 +2434,268 @@ function init3DBackground() {
     const centerX = width / 2;
     const centerY = height / 2;
 
-    // Project stars in 3D
-    for (let i = 0; i < stars.length; i++) {
-      const s = stars[i];
+    if (isHome) {
+      // =========================================================
+      // HOMEPAGE: Realistic Stars & Astronomical Constellations
+      // =========================================================
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
 
-      s.x += s.vx;
-      s.y += s.vy;
-      s.z += s.vz;
-      s.twinklePhase += s.twinkleSpeed;
+        s.x += s.vx;
+        s.y += s.vy;
+        s.z += s.vz;
+        s.twinklePhase += s.twinkleSpeed;
 
-      // Celestial wrap boundaries
-      const boundX = s.isLandmark ? SPREAD_X * 1.2 : SPREAD_X * 2.2;
-      const boundY = s.isLandmark ? SPREAD_Y * 1.2 : SPREAD_Y * 2.2;
-      const boundZ = SPREAD_Z * 1.8;
+        const boundX = s.isLandmark ? SPREAD_X * 1.2 : SPREAD_X * 2.2;
+        const boundY = s.isLandmark ? SPREAD_Y * 1.2 : SPREAD_Y * 2.2;
+        const boundZ = SPREAD_Z * 1.8;
 
-      if (s.x < -boundX) s.x = boundX;
-      else if (s.x > boundX) s.x = -boundX;
-      if (s.y < -boundY) s.y = boundY;
-      else if (s.y > boundY) s.y = -boundY;
-      if (s.z < -boundZ) s.z = boundZ;
-      else if (s.z > boundZ) s.z = -boundZ;
+        if (s.x < -boundX) s.x = boundX;
+        else if (s.x > boundX) s.x = -boundX;
+        if (s.y < -boundY) s.y = boundY;
+        else if (s.y > boundY) s.y = -boundY;
+        if (s.z < -boundZ) s.z = boundZ;
+        else if (s.z > boundZ) s.z = -boundZ;
 
-      // 3D Matrix Rotation (around Y then X)
-      const x1 = s.x * cosY - s.z * sinY;
-      const z1 = s.z * cosY + s.x * sinY;
-      const y2 = s.y * cosX - z1 * sinX;
-      const z2 = z1 * cosX + s.y * sinX;
+        const x1 = s.x * cosY - s.z * sinY;
+        const z1 = s.z * cosY + s.x * sinY;
+        const y2 = s.y * cosX - z1 * sinX;
+        const z2 = z1 * cosX + s.y * sinX;
 
-      s.rotZ = z2;
+        s.rotZ = z2;
 
-      const camDist = FOCAL_LENGTH + z2;
-      if (camDist > 30) {
-        const scale = FOCAL_LENGTH / camDist;
-        s.screenX = centerX + x1 * scale;
-        s.screenY = centerY + y2 * scale;
-        s.scale = scale;
-        s.visible = (s.screenX >= -40 && s.screenX <= width + 40 && s.screenY >= -40 && s.screenY <= height + 40);
-      } else {
-        s.visible = false;
+        const camDist = FOCAL_LENGTH + z2;
+        if (camDist > 30) {
+          const scale = FOCAL_LENGTH / camDist;
+          s.screenX = centerX + x1 * scale;
+          s.screenY = centerY + y2 * scale;
+          s.scale = scale;
+          s.visible = (s.screenX >= -40 && s.screenX <= width + 40 && s.screenY >= -40 && s.screenY <= height + 40);
+        } else {
+          s.visible = false;
+        }
       }
-    }
 
-    // 2. Draw Fine Celestial Constellation Lines
-    for (let i = 0; i < constellationLines.length; i++) {
-      const [idx1, idx2] = constellationLines[i];
-      const s1 = stars[idx1];
-      const s2 = stars[idx2];
-      if (s1 && s2 && s1.visible && s2.visible) {
-        const depthRatio = Math.max(0.2, Math.min(1.0, (s1.rotZ + s2.rotZ + SPREAD_Z * 2) / (SPREAD_Z * 3.5)));
-        const alpha = depthRatio * (isDark ? 0.24 : 0.16);
+      // 2. Draw Fine Celestial Constellation Lines
+      for (let i = 0; i < constellationLines.length; i++) {
+        const [idx1, idx2] = constellationLines[i];
+        const s1 = stars[idx1];
+        const s2 = stars[idx2];
+        if (s1 && s2 && s1.visible && s2.visible) {
+          const depthRatio = Math.max(0.2, Math.min(1.0, (s1.rotZ + s2.rotZ + SPREAD_Z * 2) / (SPREAD_Z * 3.5)));
+          const alpha = depthRatio * (isDark ? 0.24 : 0.16);
 
-        ctx.beginPath();
-        ctx.moveTo(s1.screenX, s1.screenY);
-        ctx.lineTo(s2.screenX, s2.screenY);
-        ctx.strokeStyle = isDark
-          ? `rgba(56, 189, 248, ${alpha})`
-          : `rgba(37, 99, 235, ${alpha * 0.9})`;
-        ctx.lineWidth = Math.max(0.4, 0.75 * depthRatio);
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(s1.screenX, s1.screenY);
+          ctx.lineTo(s2.screenX, s2.screenY);
+          ctx.strokeStyle = isDark
+            ? `rgba(56, 189, 248, ${alpha})`
+            : `rgba(37, 99, 235, ${alpha * 0.9})`;
+          ctx.lineWidth = Math.max(0.4, 0.75 * depthRatio);
+          ctx.stroke();
+        }
       }
-    }
 
-    // 3. Draw Stars with Authentic Astronomical Glints & Twinkling
-    for (let i = 0; i < stars.length; i++) {
-      const s = stars[i];
-      if (!s.visible) continue;
+      // 3. Draw Stars with Authentic Astronomical Glints & Twinkling
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+        if (!s.visible) continue;
 
-      const twinkle = 0.65 + 0.35 * Math.sin(s.twinklePhase);
-      const depthRatio = Math.max(0.25, Math.min(1.0, (s.rotZ + SPREAD_Z) / (SPREAD_Z * 2)));
-      const alpha = Math.min(1.0, twinkle * depthRatio * (isDark ? 0.95 : 0.85));
-      const c = isDark ? s.colorDark : s.colorLight;
-      const r = Math.max(0.45, s.radius * s.scale);
+        const twinkle = 0.65 + 0.35 * Math.sin(s.twinklePhase);
+        const depthRatio = Math.max(0.25, Math.min(1.0, (s.rotZ + SPREAD_Z) / (SPREAD_Z * 2)));
+        const alpha = Math.min(1.0, twinkle * depthRatio * (isDark ? 0.95 : 0.85));
+        const c = isDark ? s.colorDark : s.colorLight;
+        const r = Math.max(0.45, s.radius * s.scale);
 
-      // Diffraction Spikes for Landmark / Bright Alpha Stars (The 4-point cross glint '+')
-      if (s.hasSpikes && isDark && depthRatio > 0.35) {
-        const spikeLen = (3.5 + 6.0 * twinkle) * s.scale;
-        ctx.lineWidth = 0.7;
+        // Diffraction Spikes for Landmark / Bright Alpha Stars (The 4-point cross glint '+')
+        if (s.hasSpikes && isDark && depthRatio > 0.35) {
+          const spikeLen = (3.5 + 6.0 * twinkle) * s.scale;
+          ctx.lineWidth = 0.7;
 
-        // Horizontal starlight needle
+          // Horizontal starlight needle
+          ctx.beginPath();
+          ctx.moveTo(s.screenX - spikeLen, s.screenY);
+          ctx.lineTo(s.screenX + spikeLen, s.screenY);
+          ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.75})`;
+          ctx.stroke();
+
+          // Vertical starlight needle
+          ctx.beginPath();
+          ctx.moveTo(s.screenX, s.screenY - spikeLen);
+          ctx.lineTo(s.screenX, s.screenY + spikeLen);
+          ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.75})`;
+          ctx.stroke();
+
+          // Soft micro-corona
+          ctx.beginPath();
+          ctx.arc(s.screenX, s.screenY, r * 1.8, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.22})`;
+          ctx.fill();
+        }
+
+        // Brilliant Pinpoint Diamond Core
         ctx.beginPath();
-        ctx.moveTo(s.screenX - spikeLen, s.screenY);
-        ctx.lineTo(s.screenX + spikeLen, s.screenY);
-        ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.75})`;
-        ctx.stroke();
-
-        // Vertical starlight needle
-        ctx.beginPath();
-        ctx.moveTo(s.screenX, s.screenY - spikeLen);
-        ctx.lineTo(s.screenX, s.screenY + spikeLen);
-        ctx.strokeStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.75})`;
-        ctx.stroke();
-
-        // Soft micro-corona
-        ctx.beginPath();
-        ctx.arc(s.screenX, s.screenY, r * 1.8, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.22})`;
+        ctx.arc(s.screenX, s.screenY, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
         ctx.fill();
       }
 
-      // Brilliant Pinpoint Diamond Core
-      ctx.beginPath();
-      ctx.arc(s.screenX, s.screenY, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
-      ctx.fill();
-    }
-
-    // 4. Subtle Cosmic Shooting Star (Meteor Streak)
-    const now = Date.now();
-    if (!shootingStar && now > nextShootingStarTime) {
-      if (Math.random() < 0.6) {
-        spawnShootingStar();
+      // 4. Subtle Cosmic Shooting Star (Meteor Streak)
+      const now = Date.now();
+      if (!shootingStar && now > nextShootingStarTime) {
+        if (Math.random() < 0.6) {
+          spawnShootingStar();
+        }
+        nextShootingStarTime = now + 8000 + Math.random() * 8000;
       }
-      nextShootingStarTime = now + 8000 + Math.random() * 8000;
-    }
 
-    if (shootingStar) {
-      const ss = shootingStar;
-      const tailX = ss.x - (ss.dx / Math.hypot(ss.dx, ss.dy)) * ss.length;
-      const tailY = ss.y - (ss.dy / Math.hypot(ss.dx, ss.dy)) * ss.length;
+      if (shootingStar) {
+        const ss = shootingStar;
+        const tailX = ss.x - (ss.dx / Math.hypot(ss.dx, ss.dy)) * ss.length;
+        const tailY = ss.y - (ss.dy / Math.hypot(ss.dx, ss.dy)) * ss.length;
 
-      const grad = ctx.createLinearGradient(tailX, tailY, ss.x, ss.y);
-      grad.addColorStop(0, "rgba(56, 189, 248, 0)");
-      grad.addColorStop(0.7, `rgba(186, 230, 253, ${ss.alpha * 0.45})`);
-      grad.addColorStop(1, `rgba(255, 255, 255, ${ss.alpha * 0.85})`);
+        const grad = ctx.createLinearGradient(tailX, tailY, ss.x, ss.y);
+        grad.addColorStop(0, "rgba(56, 189, 248, 0)");
+        grad.addColorStop(0.7, `rgba(186, 230, 253, ${ss.alpha * 0.45})`);
+        grad.addColorStop(1, `rgba(255, 255, 255, ${ss.alpha * 0.85})`);
 
-      ctx.beginPath();
-      ctx.moveTo(tailX, tailY);
-      ctx.lineTo(ss.x, ss.y);
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(ss.x, ss.y);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
 
-      ss.x += ss.dx;
-      ss.y += ss.dy;
-      ss.alpha -= ss.decay;
-      if (ss.alpha <= 0 || ss.x > width + 100 || ss.y > height + 100) {
-        shootingStar = null;
+        ss.x += ss.dx;
+        ss.y += ss.dy;
+        ss.alpha -= ss.decay;
+        if (ss.alpha <= 0 || ss.x > width + 100 || ss.y > height + 100) {
+          shootingStar = null;
+        }
+      }
+
+    } else {
+      // =========================================================
+      // ALL OTHER WEBPAGES: Spatial Network Particles (Screenshot 1)
+      // Purple, Cyan, Blue glowing nodes with halos & filaments
+      // =========================================================
+      for (let i = 0; i < netNodes.length; i++) {
+        const n = netNodes[i];
+
+        n.x += n.vx;
+        n.y += n.vy;
+        n.z += n.vz;
+        n.pulse += n.pulseSpeed;
+
+        if (n.x < -NET_SPREAD_X) n.x = NET_SPREAD_X;
+        else if (n.x > NET_SPREAD_X) n.x = -NET_SPREAD_X;
+        if (n.y < -NET_SPREAD_Y) n.y = NET_SPREAD_Y;
+        else if (n.y > NET_SPREAD_Y) n.y = -NET_SPREAD_Y;
+        if (n.z < -NET_SPREAD_Z) n.z = NET_SPREAD_Z;
+        else if (n.z > NET_SPREAD_Z) n.z = -NET_SPREAD_Z;
+
+        const x1 = n.x * cosY - n.z * sinY;
+        const z1 = n.z * cosY + n.x * sinY;
+        const y2 = n.y * cosX - z1 * sinX;
+        const z2 = z1 * cosX + n.y * sinX;
+
+        n.rotZ = z2;
+
+        const camDist = FOCAL_LENGTH + z2;
+        if (camDist > 20) {
+          const scale = FOCAL_LENGTH / camDist;
+          n.screenX = centerX + x1 * scale;
+          n.screenY = centerY + y2 * scale;
+          n.screenRadius = Math.max(0.6, (n.baseRadius + Math.sin(n.pulse) * 0.6) * scale);
+          n.visible = (n.screenX >= -50 && n.screenX <= width + 50 && n.screenY >= -50 && n.screenY <= height + 50);
+        } else {
+          n.visible = false;
+        }
+      }
+
+      // Draw filaments between close nodes
+      for (let i = 0; i < netNodes.length; i++) {
+        const n1 = netNodes[i];
+        if (!n1.visible) continue;
+
+        for (let j = i + 1; j < netNodes.length; j++) {
+          const n2 = netNodes[j];
+          if (!n2.visible) continue;
+
+          const dx = n1.x - n2.x;
+          const dy = n1.y - n2.y;
+          const dz = n1.z - n2.z;
+          const dist3D = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+          if (dist3D < MAX_CONN_DIST) {
+            const proximity = 1 - (dist3D / MAX_CONN_DIST);
+            const depthRatio = Math.max(0.15, Math.min(1, (n1.rotZ + n2.rotZ + NET_SPREAD_Z * 2) / (NET_SPREAD_Z * 3)));
+            const alpha = proximity * proximity * depthRatio * (isDark ? 0.32 : 0.22);
+
+            ctx.beginPath();
+            ctx.moveTo(n1.screenX, n1.screenY);
+            ctx.lineTo(n2.screenX, n2.screenY);
+            ctx.strokeStyle = isDark
+              ? `rgba(129, 140, 248, ${alpha})`
+              : `rgba(59, 130, 246, ${alpha * 0.8})`;
+            ctx.lineWidth = Math.max(0.5, 1.2 * depthRatio);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw nodes sorted by depth (back to front with glow halos as in Screenshot 1)
+      const sortedNetNodes = netNodes.filter(n => n.visible).sort((a, b) => b.rotZ - a.rotZ);
+
+      for (let i = 0; i < sortedNetNodes.length; i++) {
+        const n = sortedNetNodes[i];
+        const c = isDark ? n.colorDark : n.colorLight;
+        const depthRatio = Math.max(0.2, Math.min(1, (n.rotZ + NET_SPREAD_Z) / (NET_SPREAD_Z * 2)));
+        const alpha = (0.35 + depthRatio * 0.55);
+
+        // Glow halo in dark mode (the purple and cyan outer glow shown in Screenshot 1)
+        if (isDark && depthRatio > 0.40) {
+          ctx.beginPath();
+          ctx.arc(n.screenX, n.screenY, n.screenRadius * 2.8, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha * 0.18})`;
+          ctx.fill();
+        }
+
+        // Crisp core
+        ctx.beginPath();
+        ctx.arc(n.screenX, n.screenY, n.screenRadius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
+        ctx.fill();
+      }
+
+      // Ambient floating dust particles
+      for (let i = 0; i < dustParticles.length; i++) {
+        const p = dustParticles[i];
+        p.y += p.vy;
+        if (p.y < -NET_SPREAD_Y) {
+          p.y = NET_SPREAD_Y;
+          p.x = (Math.random() - 0.5) * NET_SPREAD_X * 2.4;
+        }
+
+        const x1 = p.x * cosY - p.z * sinY;
+        const z1 = p.z * cosY + p.x * sinY;
+        const y2 = p.y * cosX - z1 * sinX;
+        const z2 = z1 * cosX + p.y * sinX;
+
+        const camDist = FOCAL_LENGTH + z2;
+        if (camDist > 30) {
+          const scale = FOCAL_LENGTH / camDist;
+          const sx = centerX + x1 * scale;
+          const sy = centerY + y2 * scale;
+          if (sx >= 0 && sx <= width && sy >= 0 && sy <= height) {
+            ctx.beginPath();
+            ctx.arc(sx, sy, Math.max(0.5, p.size * scale), 0, Math.PI * 2);
+            ctx.fillStyle = isDark
+              ? `rgba(147, 197, 253, ${p.alpha * 0.4})`
+              : `rgba(96, 165, 250, ${p.alpha * 0.25})`;
+            ctx.fill();
+          }
+        }
       }
     }
 
