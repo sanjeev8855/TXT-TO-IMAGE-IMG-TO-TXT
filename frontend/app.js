@@ -267,6 +267,99 @@ window.clearForensicAnalysis = function() {
   }
 };
 
+window.clearAnalysisResults = function() {
+  const vlmResults = document.getElementById("vlm-results");
+  const vlmPlaceholder = document.getElementById("vlm-placeholder");
+  const modelBadge = document.getElementById("vlm-model-badge");
+
+  if (vlmResults) vlmResults.classList.add("hidden");
+  if (vlmPlaceholder) vlmPlaceholder.classList.remove("hidden");
+  if (modelBadge) modelBadge.classList.add("hidden");
+
+  const summaryEl = document.getElementById("vlm-summary");
+  const promptEl = document.getElementById("vlm-prompt");
+  const sceneEl = document.getElementById("vlm-scene");
+  const lightingEl = document.getElementById("vlm-lighting");
+  const compEl = document.getElementById("vlm-comp");
+  const styleEl = document.getElementById("vlm-style");
+  const foreBackEl = document.getElementById("vlm-fore-back");
+  const cameraEl = document.getElementById("vlm-camera");
+  const obsEl = document.getElementById("vlm-obs");
+  const assumpEl = document.getElementById("vlm-assump");
+  const objectsTable = document.getElementById("vlm-objects-table");
+
+  if (summaryEl) summaryEl.textContent = "";
+  if (promptEl) promptEl.textContent = "";
+  if (sceneEl) sceneEl.textContent = "";
+  if (lightingEl) lightingEl.textContent = "";
+  if (compEl) compEl.textContent = "";
+  if (styleEl) styleEl.textContent = "";
+  if (foreBackEl) foreBackEl.textContent = "";
+  if (cameraEl) cameraEl.textContent = "";
+  if (obsEl) obsEl.textContent = "";
+  if (assumpEl) assumpEl.textContent = "";
+  if (objectsTable) objectsTable.innerHTML = "";
+
+  if (typeof window.clearColorDistribution === "function") {
+    window.clearColorDistribution();
+  }
+
+  state.vlmOutput = null;
+  state.structuredData = null;
+
+  if (typeof showToast === "function") {
+    showToast("Analysis results cleared", "info");
+  }
+};
+
+window.clearRagContext = function() {
+  const ragContainer = document.getElementById("rag-results-container");
+  if (ragContainer) {
+    ragContainer.innerHTML = '<div class="py-2.5 text-center text-app-muted text-xs font-mono">Context documents will appear here after analysis.</div>';
+  }
+  state.ragContext = [];
+  state.retrievedDocuments = [];
+
+  if (typeof showToast === "function") {
+    showToast("Retrieved RAG context cleared", "info");
+  }
+};
+
+window.clearBidirectionalComparison = function() {
+  const container = document.getElementById("bidirectional-container");
+  const empty = document.getElementById("bidirectional-empty");
+  if (container) container.classList.add("hidden");
+  if (empty) empty.classList.remove("hidden");
+
+  const origImg = document.getElementById("bi-orig-img");
+  const genImg = document.getElementById("bi-gen-img");
+  const origDesc = document.getElementById("bi-orig-desc");
+  const genPrompt = document.getElementById("bi-gen-prompt");
+  const origMeta = document.getElementById("bi-orig-meta");
+  const genMeta = document.getElementById("bi-gen-meta");
+
+  if (origImg) origImg.src = "";
+  if (genImg) genImg.src = "";
+  if (origDesc) origDesc.textContent = "";
+  if (genPrompt) genPrompt.textContent = "";
+  if (origMeta) origMeta.textContent = "";
+  if (genMeta) genMeta.textContent = "";
+
+  const metricOverall = document.getElementById("bi-metric-overall");
+  const metricColor = document.getElementById("bi-metric-color");
+  const metricSemantic = document.getElementById("bi-metric-semantic");
+  const metricFidelity = document.getElementById("bi-metric-fidelity");
+
+  if (metricOverall) metricOverall.textContent = "—";
+  if (metricColor) metricColor.textContent = "—";
+  if (metricSemantic) metricSemantic.textContent = "—";
+  if (metricFidelity) metricFidelity.textContent = "—";
+
+  if (typeof showToast === "function") {
+    showToast("Bidirectional comparison cleared", "info");
+  }
+};
+
 // Pipeline Stages Specification
 const TECHNICAL_PIPELINE_STAGES = [
   {

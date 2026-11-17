@@ -467,6 +467,9 @@
                 <h3 id="analysis-results-heading" class="text-xs font-semibold text-app-text uppercase tracking-wider">Analysis Results</h3>
                 <span id="vlm-model-badge" class="hidden"></span>
               </div>
+              <button id="btn-clear-analysis-results" onclick="clearAnalysisResults()" class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 transition cursor-pointer select-none" title="Clear analysis results">
+                Clear
+              </button>
             </div>
 
             <!-- Empty Placeholder -->
@@ -603,7 +606,9 @@
             <div class="res-card p-2.5 space-y-1.5">
               <div class="flex items-center justify-between border-b border-app-border pb-1">
                 <h4 class="text-xs font-semibold text-app-text uppercase tracking-wider">Retrieved RAG Context</h4>
-                <span id="rag-status-badge" class="text-[11px] font-mono text-app-muted">Vector Search</span>
+                <button id="btn-clear-rag-context" onclick="clearRagContext()" class="text-[11px] font-mono px-2 py-0.5 rounded bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 transition cursor-pointer select-none" title="Clear retrieved RAG context">
+                  Clear
+                </button>
               </div>
               <div id="rag-results-container" class="space-y-1.5">
                 <div class="py-2.5 text-center text-app-muted text-xs font-mono">
@@ -746,9 +751,14 @@
           <h2 class="text-base font-semibold text-app-text tracking-tight">Bidirectional Comparative Analysis</h2>
           <p class="text-xs text-app-muted">Evaluate reconstruction fidelity between original uploaded input and synthesized generative output.</p>
         </div>
-        <button onclick="runBidirectionalComparison()" class="px-3 py-1 bg-accent hover:bg-accent-hover text-white rounded text-xs font-medium transition">
-          Recalculate Parity
-        </button>
+        <div class="flex items-center space-x-2">
+          <button id="btn-clear-bidirectional" onclick="clearBidirectionalComparison()" class="px-2.5 py-1 bg-surface hover:bg-surface-muted border border-app-border text-app-muted hover:text-red-500 rounded text-xs font-mono transition cursor-pointer select-none" title="Clear bidirectional comparison">
+            Clear
+          </button>
+          <button onclick="runBidirectionalComparison()" class="px-3 py-1 bg-accent hover:bg-accent-hover text-white rounded text-xs font-medium transition cursor-pointer">
+            Recalculate Parity
+          </button>
+        </div>
       </div>
 
       <!-- Empty State -->
@@ -1253,6 +1263,6 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=3.5"></script>
+  <script src="/static/app.js?v=3.6"></script>
 </body>
 </html>
