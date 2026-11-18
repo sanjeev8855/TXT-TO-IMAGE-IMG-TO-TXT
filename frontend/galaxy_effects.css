@@ -188,8 +188,8 @@ button:not(:disabled):active,
 /* Rocket Launch / Portal Trigger Quirky Hover Jump */
 #btn-galaxy-auth-trigger:hover {
   transform: translateY(-2.5px) scale(1.04);
-  border-color: #c084fc !important;
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 35px rgba(249, 115, 22, 0.3) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.45), 0 0 35px rgba(2, 132, 199, 0.25) !important;
 }
 
 #btn-galaxy-auth-trigger:hover span:first-child {
