@@ -1,0 +1,413 @@
+/* =============================================================================
+   GALAXY THEME SMOOTH PAGE TRANSITIONS, QUIRKY BUTTONS & CELESTIAL CURSOR
+   High-quality creative interactions inspired by deep cosmic nebula aesthetics
+   ============================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. GALAXY SMOOTH PAGE & WORKSTATION TAB TRANSITIONS
+   ------------------------------------------------------------------------- */
+.tab-content {
+  opacity: 0;
+  transform: translateY(18px) scale(0.992);
+  filter: blur(4px);
+  transition: opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+  position: relative;
+}
+
+.tab-content.tab-revealed {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  filter: blur(0) !important;
+}
+
+/* Cosmic Horizontal Auroral Light Sweep along top boundary of newly revealed tab */
+.tab-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.7), rgba(168, 85, 247, 0.8), rgba(249, 115, 22, 0.7), transparent);
+  border-radius: 999px;
+  opacity: 0;
+  transform: scaleX(0.2);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  filter: blur(1.5px);
+  z-index: 5;
+}
+
+.tab-content.tab-revealed::before {
+  opacity: 0.95;
+  transform: scaleX(1);
+}
+
+/* Staggered silky entrance for child cards, grids & sections */
+.tab-content.tab-revealed > div:nth-child(1),
+.tab-content.tab-revealed > section:nth-child(1) {
+  animation: galaxyStaggerDrift 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
+}
+
+.tab-content.tab-revealed > div:nth-child(2),
+.tab-content.tab-revealed > section:nth-child(2) {
+  animation: galaxyStaggerDrift 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.09s both;
+}
+
+.tab-content.tab-revealed > div:nth-child(3),
+.tab-content.tab-revealed > section:nth-child(3) {
+  animation: galaxyStaggerDrift 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both;
+}
+
+.tab-content.tab-revealed > div:nth-child(4),
+.tab-content.tab-revealed > section:nth-child(4) {
+  animation: galaxyStaggerDrift 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.19s both;
+}
+
+@keyframes galaxyStaggerDrift {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero Section Silky Reveal on Home */
+.hero-banner {
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.4s ease;
+  will-change: opacity, transform;
+}
+
+.hero-banner.hero-revealed {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+}
+
+
+/* -------------------------------------------------------------------------
+   2. HIGH QUALITY & QUIRKY BUTTON ANIMATIONS FOR ALL BUTTONS
+   ------------------------------------------------------------------------- */
+/* Universal interactive button styling */
+button,
+.btn-acid,
+.button,
+.navcta,
+.nav-tab,
+.btn-clear-pill,
+.social-btn,
+.primary-btn,
+input[type="button"],
+input[type="submit"] {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.25s ease,
+              border-color 0.25s ease,
+              filter 0.22s ease;
+  will-change: transform, box-shadow;
+  user-select: none;
+}
+
+/* Quirky levitation & stardust halo on hover */
+button:not(:disabled):hover,
+.btn-acid:not(:disabled):hover,
+.button:not(:disabled):hover,
+.navcta:not(:disabled):hover,
+.btn-clear-pill:not(:disabled):hover,
+.social-btn:not(:disabled):hover,
+.primary-btn:not(:disabled):hover {
+  transform: translateY(-2.5px) scale(1.028);
+}
+
+/* Quirky compression snap on click / active */
+button:not(:disabled):active,
+.btn-acid:not(:disabled):active,
+.button:not(:disabled):active,
+.navcta:not(:disabled):active,
+.btn-clear-pill:not(:disabled):active,
+.social-btn:not(:disabled):active,
+.primary-btn:not(:disabled):active {
+  transform: translateY(1.5px) scale(0.95) !important;
+  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Cosmic Starlight Sheen Sweep across primary action buttons on hover */
+.btn-acid::after,
+.button::after,
+.navcta::after,
+.primary-btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -70%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 45%,
+    rgba(168, 85, 247, 0.5) 70%,
+    rgba(56, 189, 248, 0.6) 85%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.btn-acid:hover::after,
+.button:hover::after,
+.navcta:hover::after,
+.primary-btn:hover::after {
+  opacity: 1;
+  transform: rotate(25deg) translateX(460%);
+}
+
+/* Quirky glowing aura on .btn-acid hover */
+.btn-acid:hover,
+.button:hover,
+.navcta:hover {
+  box-shadow: 0 8px 24px -2px rgba(56, 189, 248, 0.55),
+              0 0 18px rgba(168, 85, 247, 0.4),
+              0 0 32px rgba(37, 99, 235, 0.3) !important;
+  filter: brightness(1.08);
+}
+
+/* Nav Tab Pills Quirky Starlight */
+.nav-tab:hover {
+  transform: translateY(-2px) scale(1.035);
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  background: rgba(56, 189, 248, 0.10) !important;
+  color: #38bdf8 !important;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+}
+
+/* Active Nav Tab Pulsing Respiration */
+@keyframes galaxyTabPulse {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.48), 0 0 28px rgba(37, 99, 235, 0.28);
+    border-color: #38bdf8;
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.72), 0 0 38px rgba(168, 85, 247, 0.42);
+    border-color: #7dd3fc;
+  }
+}
+
+.nav-tab.active-tab {
+  animation: galaxyTabPulse 3.5s ease-in-out infinite;
+}
+
+/* Quirky Clear Pill Button (Red starlight glow) */
+.btn-clear-pill:hover {
+  transform: translateY(-2px) scale(1.04);
+  border-color: rgba(255, 82, 82, 0.55) !important;
+  background: rgba(255, 82, 82, 0.12) !important;
+  color: #ff6b6b !important;
+  box-shadow: 0 0 14px rgba(255, 82, 82, 0.35);
+}
+
+/* Rocket Launch / Portal Trigger Quirky Hover Jump */
+#btn-galaxy-auth-trigger:hover {
+  transform: translateY(-2.5px) scale(1.04);
+  border-color: #c084fc !important;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 35px rgba(249, 115, 22, 0.3) !important;
+}
+
+#btn-galaxy-auth-trigger:hover span:first-child {
+  display: inline-block;
+  animation: rocketWiggle 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes rocketWiggle {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-3px) rotate(-12deg) scale(1.15); }
+}
+
+/* Universal Supernova Ripple on Click */
+.galaxy-cosmic-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(56, 189, 248, 0.6) 35%, rgba(168, 85, 247, 0.35) 65%, transparent 100%);
+  transform: translate(-50%, -50%) scale(0);
+  animation: galaxySupernovaWave 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 10;
+}
+
+@keyframes galaxySupernovaWave {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.85;
+  }
+  60% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.4);
+    opacity: 0;
+  }
+}
+
+
+/* -------------------------------------------------------------------------
+   3. GALAXY CELESTIAL CURSOR HOVER ANIMATIONS
+   ------------------------------------------------------------------------- */
+@media (hover: hover) and (pointer: fine) {
+  /* Hide standard cursor only when galaxy cursor is enabled and active */
+  body.galaxy-cursor-active a,
+  body.galaxy-cursor-active button,
+  body.galaxy-cursor-active .btn-acid,
+  body.galaxy-cursor-active .nav-tab,
+  body.galaxy-cursor-active .btn-clear-pill,
+  body.galaxy-cursor-active [role="button"],
+  body.galaxy-cursor-active .cursor-pointer {
+    cursor: none !important;
+  }
+
+  /* Radiant Celestial Core Point */
+  .galaxy-cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 15%, #38bdf8 65%, #a855f7 100%);
+    box-shadow: 0 0 10px #38bdf8, 0 0 18px rgba(168, 85, 247, 0.85);
+    pointer-events: none;
+    z-index: 999999;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.25s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.2s ease;
+    will-change: left, top, transform;
+    opacity: 0;
+  }
+
+  /* Orbiting Gravitational Nebula Ring / Aura */
+  .galaxy-cursor-aura {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(56, 189, 248, 0.65);
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.35), inset 0 0 8px rgba(168, 85, 247, 0.25);
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 72%);
+    pointer-events: none;
+    z-index: 999998;
+    transform: translate(-50%, -50%);
+    transition: width 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+                height 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.25s ease,
+                background 0.25s ease,
+                box-shadow 0.25s ease,
+                opacity 0.25s ease;
+    will-change: left, top, transform, width, height;
+    opacity: 0;
+  }
+
+  /* Cursor visible when moving */
+  .galaxy-cursor-dot.visible,
+  .galaxy-cursor-aura.visible {
+    opacity: 1;
+  }
+
+  /* Stardust Trail Canvas */
+  .galaxy-cursor-trail-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 999997;
+  }
+
+  /* Quirky Cursor State: Hovering Interactive Buttons & Nav Tabs */
+  .galaxy-cursor-aura.hover-button {
+    width: 58px;
+    height: 58px;
+    border-color: #38bdf8;
+    border-width: 2px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(168, 85, 247, 0.12) 65%, transparent 100%);
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.7), 0 0 42px rgba(168, 85, 247, 0.45);
+    animation: galaxyAuraSpin 7s linear infinite;
+  }
+
+  .galaxy-cursor-dot.hover-button {
+    transform: translate(-50%, -50%) scale(1.6);
+    background: radial-gradient(circle, #ffffff 20%, #f97316 75%, #ef4444 100%);
+    box-shadow: 0 0 14px #f97316, 0 0 24px #ef4444;
+  }
+
+  /* Quirky Cursor State: Hovering 3D Earth Globe / Canvas */
+  .galaxy-cursor-aura.hover-globe {
+    width: 72px;
+    height: 72px;
+    border: 2px dashed rgba(56, 189, 248, 0.85);
+    box-shadow: 0 0 28px rgba(56, 189, 248, 0.65), inset 0 0 14px rgba(2, 132, 199, 0.4);
+    background: radial-gradient(circle, rgba(2, 132, 199, 0.22) 0%, transparent 75%);
+    animation: galaxyAuraSpin 10s linear infinite;
+  }
+
+  .galaxy-cursor-dot.hover-globe {
+    transform: translate(-50%, -50%) scale(2);
+    background: radial-gradient(circle, #ffffff 25%, #00d4ff 80%, #0284c7 100%);
+    box-shadow: 0 0 16px #00d4ff;
+  }
+
+  /* Quirky Cursor State: Hovering Bento Cards & Links */
+  .galaxy-cursor-aura.hover-card {
+    width: 48px;
+    height: 48px;
+    border-color: rgba(168, 85, 247, 0.8);
+    box-shadow: 0 0 18px rgba(168, 85, 247, 0.5);
+    background: rgba(168, 85, 247, 0.08);
+  }
+
+  .galaxy-cursor-dot.hover-card {
+    transform: translate(-50%, -50%) scale(1.3);
+    background: #a855f7;
+    box-shadow: 0 0 12px #a855f7;
+  }
+
+  /* Cursor Clicking Active State (Compression) */
+  .galaxy-cursor-aura.clicking {
+    width: 24px !important;
+    height: 24px !important;
+    border-color: #f97316 !important;
+    box-shadow: 0 0 28px rgba(249, 115, 22, 0.85) !important;
+    transition: width 0.1s ease, height 0.1s ease !important;
+  }
+
+  .galaxy-cursor-dot.clicking {
+    transform: translate(-50%, -50%) scale(0.65) !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 16px #ffffff !important;
+  }
+
+  @keyframes galaxyAuraSpin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+}
+
+/* Touchscreens / Mobile devices: cleanly disable custom cursor */
+@media (hover: none) or (pointer: coarse) {
+  .galaxy-cursor-dot,
+  .galaxy-cursor-aura,
+  .galaxy-cursor-trail-canvas {
+    display: none !important;
+  }
+}

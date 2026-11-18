@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/galaxy_auth.css">
+  <link rel="stylesheet" href="/static/galaxy_effects.css">
   <script>
     (function() {
       const saved = localStorage.getItem('research_lab_theme');
@@ -934,7 +935,7 @@
   </div>
 
     <!-- Studio Hero Banner with Balanced 3D Earth Globe -->
-  <header class="hero-banner" id="hero-section">
+  <header class="hero-banner hero-revealed" id="hero-section">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <!-- Hero Text Content (7 cols) -->
@@ -1857,7 +1858,7 @@
     <!-- ============================================================== -->
     <!-- TAB 9: OVERVIEW / INTRO                                        -->
     <!-- ============================================================== -->
-    <div id="tab-home" class="tab-content space-y-8">
+    <div id="tab-home" class="tab-content tab-revealed space-y-8">
       
       <!-- Section 01: Core Studio Capabilities (Bento Showcase) -->
       <section id="home-capabilities" class="space-y-4">
@@ -2107,6 +2108,9 @@
 
   <!-- Galaxy Auth Animated Controller (Rocket Launch Edition) -->
   <script src="/static/galaxy_auth.js"></script>
+
+  <!-- Galaxy Theme Visual Effects & Celestial Cursor Engine -->
+  <script src="/static/galaxy_effects.js"></script>
 
   <!-- Application Logic -->
   <script src="/static/app.js?v=5.0"></script>

@@ -553,14 +553,24 @@ window.toggleT2ITools = toggleT2ITools;
 // Navigation System
 function switchTab(tabId) {
   state.activeTab = tabId;
-  document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+  document.querySelectorAll(".tab-content").forEach(el => {
+    el.classList.remove("tab-revealed");
+    el.classList.add("hidden");
+  });
   document.querySelectorAll(".nav-tab").forEach(btn => {
     btn.classList.remove("border-accent", "text-accent", "active-tab");
     btn.classList.add("border-transparent", "text-app-muted");
   });
 
   const activeContent = document.getElementById(`tab-${tabId}`);
-  if (activeContent) activeContent.classList.remove("hidden");
+  if (activeContent) {
+    activeContent.classList.remove("hidden");
+    if (window.revealGalaxyTab) {
+      window.revealGalaxyTab(activeContent);
+    } else {
+      requestAnimationFrame(() => activeContent.classList.add("tab-revealed"));
+    }
+  }
 
   const activeBtn = document.querySelector(`.nav-tab[data-tab="${tabId}"]`);
   if (activeBtn) {
@@ -573,7 +583,11 @@ function switchTab(tabId) {
   if (heroSection) {
     if (tabId === "home") {
       heroSection.classList.remove("hidden");
+      requestAnimationFrame(() => {
+        heroSection.classList.add("hero-revealed");
+      });
     } else {
+      heroSection.classList.remove("hero-revealed");
       heroSection.classList.add("hidden");
     }
   }
