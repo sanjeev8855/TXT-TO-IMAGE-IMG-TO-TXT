@@ -374,6 +374,13 @@ async def get_experiments(limit: int = Query(default=30, ge=1, le=100)):
     """Module 8: Returns history of all logged research experiments."""
     return research_logger.get_recent_experiments(limit=limit)
 
+@router.post("/experiments/clear")
+@router.delete("/experiments")
+async def clear_experiments():
+    """Clears all logged experiment records from the SQLite database."""
+    deleted = research_logger.clear_experiments()
+    return {"status": "success", "message": f"Cleared {deleted} experiment records.", "deleted_count": deleted}
+
 @router.get("/knowledge-base")
 async def get_knowledge_base():
     """Browse indexed RAG knowledge documents."""
@@ -402,6 +409,63 @@ async def get_reports():
             except Exception:
                 continue
     return reports
+
+@router.post("/reports/clear")
+@router.delete("/reports")
+async def clear_reports():
+    """Clears all generated forensic report JSON files and associated heatmaps."""
+    deleted_reports = 0
+    if config.reports_dir.exists():
+        for p in config.reports_dir.glob("REP_*.json"):
+            try:
+                p.unlink(missing_ok=True)
+                deleted_reports += 1
+            except Exception:
+                pass
+
+    deleted_heatmaps = 0
+    if config.heatmaps_dir.exists():
+        for p in config.heatmaps_dir.glob("forensic_*.*"):
+            try:
+                p.unlink(missing_ok=True)
+                deleted_heatmaps += 1
+            except Exception:
+                pass
+
+    return {
+        "status": "success",
+        "message": f"Cleared {deleted_reports} reports and {deleted_heatmaps} heatmaps.",
+        "deleted_reports": deleted_reports,
+        "deleted_heatmaps": deleted_heatmaps
+    }
+
+@router.post("/clear-all")
+async def clear_all_data():
+    """Clears all audit experiments, reports, and generated forensic outputs."""
+    deleted_exps = research_logger.clear_experiments()
+    deleted_reports = 0
+    if config.reports_dir.exists():
+        for p in config.reports_dir.glob("REP_*.json"):
+            try:
+                p.unlink(missing_ok=True)
+                deleted_reports += 1
+            except Exception:
+                pass
+    deleted_heatmaps = 0
+    if config.heatmaps_dir.exists():
+        for p in config.heatmaps_dir.glob("forensic_*.*"):
+            try:
+                p.unlink(missing_ok=True)
+                deleted_heatmaps += 1
+            except Exception:
+                pass
+    return {
+        "status": "success",
+        "message": f"Successfully cleared all data ({deleted_exps} logs, {deleted_reports} reports, {deleted_heatmaps} heatmaps).",
+        "deleted_experiments": deleted_exps,
+        "deleted_reports": deleted_reports,
+        "deleted_heatmaps": deleted_heatmaps
+    }
 
 @router.post("/bidirectional/compare")
 async def compare_bidirectional(req: BidirectionalCompareRequest):

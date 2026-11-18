@@ -1963,8 +1963,77 @@ function formatAuditTimestamp(ts) {
   }
 }
 
+// Clear Experiment Logs
+async function clearExperimentLogs(skipConfirm = false) {
+  if (!skipConfirm) {
+    const ok = confirm("Are you sure you want to CLEAR all experiment audit logs from the database?");
+    if (!ok) return;
+  }
+  const btn = document.getElementById("btn-clear-experiments");
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch("/api/experiments/clear", { method: "POST" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to clear logs`);
+    const data = await res.json();
+    if (typeof showToast === "function") {
+      showToast(data.message || "All experiment logs cleared successfully.", "success");
+    }
+    const tbody = document.getElementById("experiments-table-body");
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-app-muted">All experiment records cleared. Ready for new runs.</td></tr>`;
+    }
+  } catch (err) {
+    console.error("Failed to clear experiment logs:", err);
+    if (typeof showToast === "function") {
+      showToast("Error clearing logs: " + err.message, "error");
+    }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+// Clear Reports List
+async function clearReportsList(skipConfirm = false) {
+  if (!skipConfirm) {
+    const ok = confirm("Are you sure you want to CLEAR all generated forensic reports and heatmaps?");
+    if (!ok) return;
+  }
+  const btn = document.getElementById("btn-clear-reports");
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch("/api/reports/clear", { method: "POST" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to clear reports`);
+    const data = await res.json();
+    if (typeof showToast === "function") {
+      showToast(data.message || "All forensic reports cleared successfully.", "success");
+    }
+    state.reportsList = [];
+    const tbody = document.getElementById("reports-table-body");
+    if (tbody) {
+      tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-app-muted">All forensic reports cleared. Ready for new evaluations.</td></tr>`;
+    }
+  } catch (err) {
+    console.error("Failed to clear reports:", err);
+    if (typeof showToast === "function") {
+      showToast("Error clearing reports: " + err.message, "error");
+    }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 // Load Experiment Logs
 async function loadExperimentLogs(isManual = false) {
+  if (isManual) {
+    const shouldClear = confirm("Do you want to CLEAR all experiment logs to start fresh?\n\n• Click [OK] to CLEAR all data and reset.\n• Click [Cancel] to just reload existing records.");
+    if (shouldClear) {
+      await clearExperimentLogs(true);
+      return;
+    }
+  }
+
   const btn = document.getElementById("btn-refresh-experiments");
   const icon = btn?.querySelector(".refresh-icon");
   const label = btn?.querySelector(".refresh-label");
@@ -2028,6 +2097,14 @@ async function loadExperimentLogs(isManual = false) {
 
 // Load Reports List
 async function loadReportsList(isManual = false) {
+  if (isManual) {
+    const shouldClear = confirm("Do you want to CLEAR all forensic reports to start fresh?\n\n• Click [OK] to CLEAR all report data and reset.\n• Click [Cancel] to just reload existing reports.");
+    if (shouldClear) {
+      await clearReportsList(true);
+      return;
+    }
+  }
+
   const btn = document.getElementById("btn-refresh-reports");
   const icon = btn?.querySelector(".refresh-icon");
   const label = btn?.querySelector(".refresh-label");

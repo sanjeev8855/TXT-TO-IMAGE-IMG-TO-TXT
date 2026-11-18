@@ -126,4 +126,19 @@ class ResearchExperimentLogger:
                 results.append(d)
             return results
 
+    def clear_experiments(self) -> int:
+        """Clears all logged experiment records from the SQLite database."""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM experiments")
+            count = cursor.fetchone()[0]
+            cursor.execute("DELETE FROM experiments")
+            try:
+                cursor.execute("DELETE FROM sqlite_sequence WHERE name='experiments'")
+            except Exception:
+                pass
+            conn.commit()
+            cursor.execute("VACUUM")
+            return count
+
 research_logger = ResearchExperimentLogger()
