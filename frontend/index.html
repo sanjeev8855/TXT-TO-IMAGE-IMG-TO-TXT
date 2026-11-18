@@ -1849,7 +1849,7 @@
           const planetGroup = new THREE.Group();
           scene.add(planetGroup);
 
-          // 1. Earth Sphere with Normal Relief & Deep Oceanic Blue Water
+          // 1. Earth Sphere with Normal Relief & Photorealistic Deep Oceanic Navy Water
           const earthMesh = new THREE.Mesh(
             new THREE.SphereGeometry(2.0, 64, 64),
             new THREE.MeshPhongMaterial({
@@ -1857,11 +1857,11 @@
               normalMap: normalMap,
               normalScale: new THREE.Vector2(0.5, 0.5),
               specularMap: specularMap,
-              specular: new THREE.Color('#38bdf8'),
-              shininess: 18,
-              emissive: new THREE.Color('#0369a1'),
+              specular: new THREE.Color('#1d4ed8'),
+              shininess: 24,
+              emissive: new THREE.Color('#02142b'),
               emissiveMap: earthMap,
-              emissiveIntensity: 0.18
+              emissiveIntensity: 0.06
             })
           );
           planetGroup.add(earthMesh);
@@ -1879,13 +1879,13 @@
           );
           planetGroup.add(cloudsMesh);
 
-          // 3. Planetary Lighting: Upper-left Directional Sunlight & Deep Azure Space Fill
-          scene.add(new THREE.AmbientLight(0xd5e7ff, 1.45));
-          const sun = new THREE.DirectionalLight(0xfff9f0, 3.2);
+          // 3. Planetary Lighting: True Orbital Sunlight & Deep Space Rim Illumination
+          scene.add(new THREE.AmbientLight(0xc8d6e5, 1.15));
+          const sun = new THREE.DirectionalLight(0xfff8ee, 3.2);
           sun.position.set(-6, 4, 7);
           scene.add(sun);
 
-          const blueFill = new THREE.PointLight(0x0284c7, 2.2, 20);
+          const blueFill = new THREE.PointLight(0x061a38, 1.2, 25);
           blueFill.position.set(-4, -2, -1);
           scene.add(blueFill);
 
