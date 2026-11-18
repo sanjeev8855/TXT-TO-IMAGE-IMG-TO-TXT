@@ -360,6 +360,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: visible !important;
     }
 
     /* 3D Earth Globe - Perfectly proportioned sphere with interactive physics */
@@ -379,6 +380,7 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: none !important;
+      overflow: visible !important;
     }
 
     .orb:active,
@@ -419,9 +421,45 @@
       box-shadow: 0 0 70px rgba(14, 165, 233, 0.3), 0 0 30px rgba(56, 189, 248, 0.2);
     }
 
-    /* Outer Orbital Rings removed as requested */
+    /* =========================================================================
+       CELESTIAL X, Y AXIS ORBITAL RINGS ENCIRCLING THE 3D EARTH GLOBE
+       Matching user specification & reference screenshot
+       ========================================================================= */
     .orb:before, .orb:after {
-      display: none !important;
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      transform-origin: center center;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      will-change: transform;
+    }
+
+    /* 1. Horizontal X-Axis Orbital Ring (Equatorial Celestial Loop) */
+    .orb:before {
+      inset: -14%;
+      border: 1.5px solid rgba(56, 189, 248, 0.45);
+      transform: rotateX(68deg) rotateZ(20deg);
+      box-shadow: 0 0 28px rgba(56, 189, 248, 0.28), inset 0 0 14px rgba(56, 189, 248, 0.14);
+      z-index: 10;
+    }
+
+    /* 2. Vertical Y-Axis Orbital Ring (Polar Meridian Celestial Loop) */
+    .orb:after {
+      inset: -16%;
+      border: 1.5px solid rgba(56, 189, 248, 0.40);
+      transform: rotateY(68deg) rotateZ(-20deg);
+      box-shadow: 0 0 28px rgba(56, 189, 248, 0.28), inset 0 0 14px rgba(56, 189, 248, 0.14);
+      z-index: 10;
+    }
+
+    html:not(.dark) .orb:before {
+      border-color: rgba(2, 132, 199, 0.45);
+      box-shadow: 0 0 22px rgba(2, 132, 199, 0.22);
+    }
+    html:not(.dark) .orb:after {
+      border-color: rgba(3, 105, 161, 0.42);
+      box-shadow: 0 0 22px rgba(3, 105, 161, 0.22);
     }
 
     #globe-canvas {
