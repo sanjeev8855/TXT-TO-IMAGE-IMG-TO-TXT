@@ -1,5 +1,5 @@
 /* =============================================================================
-   GALAXY THEME SMOOTH PAGE TRANSITIONS, QUIRKY BUTTONS & CELESTIAL CURSOR
+   GALAXY THEME SMOOTH PAGE TRANSITIONS, QUIRKY BUTTONS & SHOOTING STAR HOVER
    High-quality creative interactions inspired by deep cosmic nebula aesthetics
    ============================================================================= */
 
@@ -118,7 +118,7 @@ input[type="submit"] {
   user-select: none;
 }
 
-/* Quirky levitation & stardust halo on hover */
+/* Quirky levitation on hover */
 button:not(:disabled):hover,
 .btn-acid:not(:disabled):hover,
 .button:not(:disabled):hover,
@@ -139,39 +139,6 @@ button:not(:disabled):active,
 .primary-btn:not(:disabled):active {
   transform: translateY(1.5px) scale(0.95) !important;
   transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-/* Cosmic Starlight Sheen Sweep across primary action buttons on hover */
-.btn-acid::after,
-.button::after,
-.navcta::after,
-.primary-btn::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -70%;
-  width: 45%;
-  height: 200%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.35) 45%,
-    rgba(168, 85, 247, 0.5) 70%,
-    rgba(56, 189, 248, 0.6) 85%,
-    transparent 100%
-  );
-  transform: rotate(25deg);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
-}
-
-.btn-acid:hover::after,
-.button:hover::after,
-.navcta:hover::after,
-.primary-btn:hover::after {
-  opacity: 1;
-  transform: rotate(25deg) translateX(460%);
 }
 
 /* Quirky glowing aura on .btn-acid hover */
@@ -262,152 +229,157 @@ button:not(:disabled):active,
 
 
 /* -------------------------------------------------------------------------
-   3. GALAXY CELESTIAL CURSOR HOVER ANIMATIONS
+   3. SHOOTING STAR HOVER ANIMATION ENGINE (Replaces circle ring cursor)
    ------------------------------------------------------------------------- */
-@media (hover: hover) and (pointer: fine) {
-  /* Hide standard cursor only when galaxy cursor is enabled and active */
-  body.galaxy-cursor-active a,
-  body.galaxy-cursor-active button,
-  body.galaxy-cursor-active .btn-acid,
-  body.galaxy-cursor-active .nav-tab,
-  body.galaxy-cursor-active .btn-clear-pill,
-  body.galaxy-cursor-active [role="button"],
-  body.galaxy-cursor-active .cursor-pointer {
-    cursor: none !important;
-  }
+/* A. In-Button Shooting Star Streaks on Hover */
+.btn-acid::after,
+.button::after,
+.navcta::after,
+.nav-tab::after,
+.btn-clear-pill::after,
+.social-btn::after,
+.primary-btn::after,
+button:not(.no-anim)::after {
+  content: "";
+  position: absolute;
+  top: -45px;
+  left: -85px;
+  width: 95px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 85, 247, 0.3) 30%,
+    rgba(56, 189, 248, 0.85) 70%,
+    #ffffff 100%
+  );
+  border-radius: 999px;
+  transform: rotate(-35deg);
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px #38bdf8) drop-shadow(0 0 12px rgba(168, 85, 247, 0.7));
+  z-index: 10;
+}
 
-  /* Radiant Celestial Core Point */
-  .galaxy-cursor-dot {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #ffffff 15%, #38bdf8 65%, #a855f7 100%);
-    box-shadow: 0 0 10px #38bdf8, 0 0 18px rgba(168, 85, 247, 0.85);
-    pointer-events: none;
-    z-index: 999999;
-    transform: translate(-50%, -50%);
-    transition: opacity 0.25s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.2s ease;
-    will-change: left, top, transform;
+/* Radiant Meteor Head */
+.btn-acid::before,
+.button::before,
+.navcta::before,
+.primary-btn::before {
+  content: "";
+  position: absolute;
+  top: -45px;
+  left: -85px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff, 0 0 16px #38bdf8, 0 0 24px #c084fc;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 11;
+}
+
+/* Hover triggers the shooting star swiftly shooting across the button */
+.btn-acid:hover::after,
+.button:hover::after,
+.navcta:hover::after,
+.nav-tab:hover::after,
+.btn-clear-pill:hover::after,
+.social-btn:hover::after,
+.primary-btn:hover::after,
+button:not(.no-anim):hover::after {
+  animation: shootStarAcross 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.btn-acid:hover::before,
+.button:hover::before,
+.navcta:hover::before,
+.primary-btn:hover::before {
+  animation: shootStarHeadAcross 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes shootStarAcross {
+  0% {
     opacity: 0;
+    transform: translate(0, 0) rotate(-35deg) scaleX(0.4);
   }
-
-  /* Orbiting Gravitational Nebula Ring / Aura */
-  .galaxy-cursor-aura {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(56, 189, 248, 0.65);
-    box-shadow: 0 0 14px rgba(56, 189, 248, 0.35), inset 0 0 8px rgba(168, 85, 247, 0.25);
-    background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 72%);
-    pointer-events: none;
-    z-index: 999998;
-    transform: translate(-50%, -50%);
-    transition: width 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
-                height 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
-                border-color 0.25s ease,
-                background 0.25s ease,
-                box-shadow 0.25s ease,
-                opacity 0.25s ease;
-    will-change: left, top, transform, width, height;
-    opacity: 0;
-  }
-
-  /* Cursor visible when moving */
-  .galaxy-cursor-dot.visible,
-  .galaxy-cursor-aura.visible {
+  20% {
     opacity: 1;
+    transform: translate(35px, 20px) rotate(-35deg) scaleX(1);
   }
-
-  /* Stardust Trail Canvas */
-  .galaxy-cursor-trail-canvas {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 999997;
-  }
-
-  /* Quirky Cursor State: Hovering Interactive Buttons & Nav Tabs */
-  .galaxy-cursor-aura.hover-button {
-    width: 58px;
-    height: 58px;
-    border-color: #38bdf8;
-    border-width: 2px;
-    background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(168, 85, 247, 0.12) 65%, transparent 100%);
-    box-shadow: 0 0 24px rgba(56, 189, 248, 0.7), 0 0 42px rgba(168, 85, 247, 0.45);
-    animation: galaxyAuraSpin 7s linear infinite;
-  }
-
-  .galaxy-cursor-dot.hover-button {
-    transform: translate(-50%, -50%) scale(1.6);
-    background: radial-gradient(circle, #ffffff 20%, #f97316 75%, #ef4444 100%);
-    box-shadow: 0 0 14px #f97316, 0 0 24px #ef4444;
-  }
-
-  /* Quirky Cursor State: Hovering 3D Earth Globe / Canvas */
-  .galaxy-cursor-aura.hover-globe {
-    width: 72px;
-    height: 72px;
-    border: 2px dashed rgba(56, 189, 248, 0.85);
-    box-shadow: 0 0 28px rgba(56, 189, 248, 0.65), inset 0 0 14px rgba(2, 132, 199, 0.4);
-    background: radial-gradient(circle, rgba(2, 132, 199, 0.22) 0%, transparent 75%);
-    animation: galaxyAuraSpin 10s linear infinite;
-  }
-
-  .galaxy-cursor-dot.hover-globe {
-    transform: translate(-50%, -50%) scale(2);
-    background: radial-gradient(circle, #ffffff 25%, #00d4ff 80%, #0284c7 100%);
-    box-shadow: 0 0 16px #00d4ff;
-  }
-
-  /* Quirky Cursor State: Hovering Bento Cards & Links */
-  .galaxy-cursor-aura.hover-card {
-    width: 48px;
-    height: 48px;
-    border-color: rgba(168, 85, 247, 0.8);
-    box-shadow: 0 0 18px rgba(168, 85, 247, 0.5);
-    background: rgba(168, 85, 247, 0.08);
-  }
-
-  .galaxy-cursor-dot.hover-card {
-    transform: translate(-50%, -50%) scale(1.3);
-    background: #a855f7;
-    box-shadow: 0 0 12px #a855f7;
-  }
-
-  /* Cursor Clicking Active State (Compression) */
-  .galaxy-cursor-aura.clicking {
-    width: 24px !important;
-    height: 24px !important;
-    border-color: #f97316 !important;
-    box-shadow: 0 0 28px rgba(249, 115, 22, 0.85) !important;
-    transition: width 0.1s ease, height 0.1s ease !important;
-  }
-
-  .galaxy-cursor-dot.clicking {
-    transform: translate(-50%, -50%) scale(0.65) !important;
-    background: #ffffff !important;
-    box-shadow: 0 0 16px #ffffff !important;
-  }
-
-  @keyframes galaxyAuraSpin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  100% {
+    opacity: 0;
+    transform: translate(320px, 170px) rotate(-35deg) scaleX(1.4);
   }
 }
 
-/* Touchscreens / Mobile devices: cleanly disable custom cursor */
-@media (hover: none) or (pointer: coarse) {
-  .galaxy-cursor-dot,
-  .galaxy-cursor-aura,
-  .galaxy-cursor-trail-canvas {
-    display: none !important;
+@keyframes shootStarHeadAcross {
+  0% {
+    opacity: 0;
+    transform: translate(75px, 0) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(110px, 20px) scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(395px, 170px) scale(0.4);
+  }
+}
+
+/* B. Full-Screen Celestial Shooting Star Canvas */
+.galaxy-shooting-star-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999990;
+}
+
+/* C. Dynamic DOM Shooting Star Trail Element (for hover spawns) */
+.dynamic-shooting-star {
+  position: fixed;
+  pointer-events: none;
+  z-index: 999995;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 85, 247, 0.35) 25%,
+    rgba(56, 189, 248, 0.85) 65%,
+    #ffffff 100%
+  );
+  filter: drop-shadow(0 0 6px #38bdf8) drop-shadow(0 0 14px rgba(168, 85, 247, 0.75));
+  transform-origin: right center;
+  animation: dynamicMeteorFlight 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dynamic-shooting-star::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff, 0 0 16px #38bdf8, 0 0 24px #c084fc;
+}
+
+@keyframes dynamicMeteorFlight {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(var(--angle, -35deg)) scaleX(0.3);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx, 160px), var(--dy, 95px)) rotate(var(--angle, -35deg)) scaleX(1.3);
   }
 }

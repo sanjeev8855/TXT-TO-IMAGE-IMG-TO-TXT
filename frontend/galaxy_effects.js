@@ -2,213 +2,177 @@
  * Galaxy Theme Interactive Effects Engine
  * - Smooth page & workstation tab transitions with cosmic auroral sweeps
  * - Quirky, high-quality spring button animations and supernova click shockwaves
- * - Celestial Galaxy Cursor with gravitational aura and stardust particle trails
+ * - Celestial Shooting Star Hover Engine (Streaks across buttons and night sky on hover)
  */
 (function () {
   'use strict';
 
   // =========================================================================
-  // 1. CELESTIAL GALAXY CURSOR WITH STARDUST TRAILS & HOVER STATES
+  // 1. CELESTIAL SHOOTING STAR HOVER ENGINE
   // =========================================================================
-  const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  let starCanvas = null;
+  let starCtx = null;
+  let activeMeteors = [];
+  let starSparks = [];
+  let lastHoverTime = 0;
 
-  let dotEl = null;
-  let auraEl = null;
-  let trailCanvas = null;
-  let trailCtx = null;
-  let stardustParticles = [];
+  function initShootingStarEngine() {
+    // Background Shooting Star Canvas
+    starCanvas = document.createElement('canvas');
+    starCanvas.className = 'galaxy-shooting-star-canvas';
+    document.body.appendChild(starCanvas);
+    starCtx = starCanvas.getContext('2d');
 
-  let mouseX = -100;
-  let mouseY = -100;
-  let auraX = -100;
-  let auraY = -100;
-  let isMoving = false;
-  let moveTimeout = null;
-  let lastParticleDist = 0;
-  let prevMouseX = -100;
-  let prevMouseY = -100;
-
-  function initGalaxyCursor() {
-    if (!isFinePointer) return;
-
-    // Center Core Dot
-    dotEl = document.createElement('div');
-    dotEl.className = 'galaxy-cursor-dot';
-    document.body.appendChild(dotEl);
-
-    // Orbiting Nebula Aura Ring
-    auraEl = document.createElement('div');
-    auraEl.className = 'galaxy-cursor-aura';
-    document.body.appendChild(auraEl);
-
-    // Stardust Particle Canvas
-    trailCanvas = document.createElement('canvas');
-    trailCanvas.className = 'galaxy-cursor-trail-canvas';
-    document.body.appendChild(trailCanvas);
-    trailCtx = trailCanvas.getContext('2d');
-
-    function resizeTrailCanvas() {
-      trailCanvas.width = window.innerWidth;
-      trailCanvas.height = window.innerHeight;
+    function resizeStarCanvas() {
+      starCanvas.width = window.innerWidth;
+      starCanvas.height = window.innerHeight;
     }
-    window.addEventListener('resize', resizeTrailCanvas, { passive: true });
-    resizeTrailCanvas();
+    window.addEventListener('resize', resizeStarCanvas, { passive: true });
+    resizeStarCanvas();
 
-    document.body.classList.add('galaxy-cursor-active');
-
-    // Mouse Tracking
-    window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-
-      if (!dotEl.classList.contains('visible')) {
-        dotEl.classList.add('visible');
-        auraEl.classList.add('visible');
-        auraX = mouseX;
-        auraY = mouseY;
-      }
-
-      // Check distance moved to emit stardust
-      const dist = Math.hypot(mouseX - prevMouseX, mouseY - prevMouseY);
-      if (dist > 14 && stardustParticles.length < 24) {
-        spawnStardust(mouseX, mouseY);
-        prevMouseX = mouseX;
-        prevMouseY = mouseY;
-      }
-
-      clearTimeout(moveTimeout);
-      moveTimeout = setTimeout(() => {
-        isMoving = false;
-      }, 150);
-      isMoving = true;
-    }, { passive: true });
-
-    // Window Entry / Exit
-    document.addEventListener('mouseleave', () => {
-      if (dotEl) dotEl.classList.remove('visible');
-      if (auraEl) auraEl.classList.remove('visible');
-    });
-
-    document.addEventListener('mouseenter', () => {
-      if (dotEl) dotEl.classList.add('visible');
-      if (auraEl) auraEl.classList.add('visible');
-    });
-
-    // Mousedown / Mouseup Click Snap
-    window.addEventListener('mousedown', () => {
-      if (auraEl) auraEl.classList.add('clicking');
-      if (dotEl) dotEl.classList.add('clicking');
-    }, { passive: true });
-
-    window.addEventListener('mouseup', () => {
-      if (auraEl) auraEl.classList.remove('clicking');
-      if (dotEl) dotEl.classList.remove('clicking');
-    }, { passive: true });
-
-    // Quirky Hover Detection via Event Delegation
+    // Trigger Shooting Star on Hover over any button, tab, card, link, or dropzone
     document.addEventListener('mouseover', (e) => {
-      if (!auraEl || !dotEl) return;
-      const target = e.target;
+      const target = e.target.closest('button, .btn-acid, .nav-tab, .btn-clear-pill, .social-btn, .button, .navcta, .primary-btn, a, .res-card, #drop-zone, .cursor-pointer, [role="button"]');
+      if (!target) return;
 
-      // 1. Globe Canvas / Scene
-      if (target.closest('#globe-3d-canvas, #orb, .orb-scene')) {
-        auraEl.classList.add('hover-globe');
-        dotEl.classList.add('hover-globe');
-        auraEl.classList.remove('hover-button', 'hover-card');
-        dotEl.classList.remove('hover-button', 'hover-card');
-        return;
-      }
+      const now = performance.now();
+      // Throttle slightly so rapid movement generates clean, elegant shooting stars
+      if (now - lastHoverTime < 180) return;
+      lastHoverTime = now;
 
-      // 2. Interactive Buttons / Nav Tabs / Action Pills
-      if (target.closest('button, .btn-acid, .nav-tab, .btn-clear-pill, .social-btn, .button, .navcta, .primary-btn, [role="button"]')) {
-        auraEl.classList.add('hover-button');
-        dotEl.classList.add('hover-button');
-        auraEl.classList.remove('hover-globe', 'hover-card');
-        dotEl.classList.remove('hover-globe', 'hover-card');
-        return;
-      }
+      const rect = target.getBoundingClientRect();
+      const originX = rect.left + rect.width * 0.5 + (Math.random() - 0.5) * (rect.width * 0.4);
+      const originY = rect.top + rect.height * 0.5 + (Math.random() - 0.5) * (rect.height * 0.4);
 
-      // 3. Bento Cards / Links / Inputs
-      if (target.closest('.res-card, a, input, textarea, select, .cursor-pointer')) {
-        auraEl.classList.add('hover-card');
-        dotEl.classList.add('hover-card');
-        auraEl.classList.remove('hover-button', 'hover-globe');
-        dotEl.classList.remove('hover-button', 'hover-globe');
-        return;
-      }
-
-      // Default state
-      auraEl.classList.remove('hover-button', 'hover-globe', 'hover-card');
-      dotEl.classList.remove('hover-button', 'hover-globe', 'hover-card');
+      shootCosmicStar(originX, originY);
     }, { passive: true });
 
-    requestAnimationFrame(renderCursorPhysics);
+    // Also occasionally shoot a faint background shooting star during mouse movements across dark space
+    let lastMoveTime = 0;
+    window.addEventListener('mousemove', (e) => {
+      const now = performance.now();
+      if (now - lastMoveTime > 3200 && Math.random() < 0.35) {
+        lastMoveTime = now;
+        shootCosmicStar(e.clientX, e.clientY, true);
+      }
+    }, { passive: true });
+
+    requestAnimationFrame(renderShootingStars);
   }
 
-  // Stardust Particle Emitter
-  const COSMIC_COLORS = [
-    'rgba(56, 189, 248, ',   // Electric cyan
-    'rgba(168, 85, 247, ',   // Cosmic violet
-    'rgba(249, 115, 22, ',   // Stellar orange
-    'rgba(255, 255, 255, ',  // Pure white star
-    'rgba(99, 102, 241, '    // Deep indigo
-  ];
+  // Meteor / Shooting Star Object Factory
+  function shootCosmicStar(targetX, targetY, isAmbient = false) {
+    if (activeMeteors.length >= 8) return;
 
-  function spawnStardust(x, y) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = Math.random() * 0.9 + 0.2;
-    const baseColor = COSMIC_COLORS[Math.floor(Math.random() * COSMIC_COLORS.length)];
-    stardustParticles.push({
-      x: x + (Math.random() - 0.5) * 8,
-      y: y + (Math.random() - 0.5) * 8,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 0.15,
-      radius: Math.random() * 1.8 + 0.7,
-      alpha: 0.85,
-      decay: Math.random() * 0.035 + 0.025,
-      color: baseColor
+    // Angle: downward diagonal streak (-35 deg to -42 deg)
+    const angleRad = (-36 + (Math.random() - 0.5) * 8) * (Math.PI / 180);
+    const speed = isAmbient ? (Math.random() * 8 + 14) : (Math.random() * 10 + 16);
+    const length = isAmbient ? (Math.random() * 70 + 80) : (Math.random() * 90 + 110);
+
+    // Start slightly upstream along the flight vector
+    const startOffset = isAmbient ? 160 : 70;
+    const startX = targetX - Math.cos(angleRad) * startOffset;
+    const startY = targetY - Math.sin(angleRad) * startOffset;
+
+    activeMeteors.push({
+      x: startX,
+      y: startY,
+      vx: Math.cos(angleRad) * speed,
+      vy: Math.sin(angleRad) * speed,
+      length: length,
+      alpha: 1.0,
+      fadeRate: isAmbient ? 0.032 : 0.042,
+      thickness: isAmbient ? 1.4 : 2.2,
+      sparkTimer: 0
     });
   }
 
-  function renderCursorPhysics() {
-    if (dotEl && auraEl) {
-      // Instant Core Dot
-      dotEl.style.left = mouseX + 'px';
-      dotEl.style.top = mouseY + 'px';
+  // Render Loop for Shooting Stars & Stardust Sparks
+  function renderShootingStars() {
+    if (starCtx && starCanvas) {
+      starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
 
-      // Silky Spring / Lerp for Orbiting Nebula Aura Ring
-      auraX += (mouseX - auraX) * 0.19;
-      auraY += (mouseY - auraY) * 0.19;
-      auraEl.style.left = auraX + 'px';
-      auraEl.style.top = auraY + 'px';
-    }
+      // 1. Update and Render Active Shooting Stars
+      for (let i = activeMeteors.length - 1; i >= 0; i--) {
+        const m = activeMeteors[i];
+        m.x += m.vx;
+        m.y += m.vy;
+        m.alpha -= m.fadeRate;
 
-    // Render Stardust Canvas
-    if (trailCtx && trailCanvas) {
-      trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
-      for (let i = stardustParticles.length - 1; i >= 0; i--) {
-        const p = stardustParticles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= p.decay;
-
-        if (p.alpha <= 0) {
-          stardustParticles.splice(i, 1);
+        if (m.alpha <= 0 || m.x > starCanvas.width + 100 || m.y > starCanvas.height + 100) {
+          activeMeteors.splice(i, 1);
           continue;
         }
 
-        trailCtx.save();
-        trailCtx.beginPath();
-        trailCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        trailCtx.fillStyle = p.color + p.alpha + ')';
-        trailCtx.shadowBlur = 6;
-        trailCtx.shadowColor = p.color + '0.8)';
-        trailCtx.fill();
-        trailCtx.restore();
+        // Emit micro stardust sparks along the shooting star's path
+        m.sparkTimer++;
+        if (m.sparkTimer % 2 === 0 && starSparks.length < 35) {
+          starSparks.push({
+            x: m.x + (Math.random() - 0.5) * 4,
+            y: m.y + (Math.random() - 0.5) * 4,
+            vx: (Math.random() - 0.5) * 0.8 - m.vx * 0.08,
+            vy: (Math.random() - 0.5) * 0.8 - m.vy * 0.08,
+            alpha: m.alpha * 0.8,
+            decay: Math.random() * 0.04 + 0.03,
+            radius: Math.random() * 1.5 + 0.8
+          });
+        }
+
+        // Draw Shooting Star Tail
+        const tailX = m.x - (m.vx / Math.hypot(m.vx, m.vy)) * m.length;
+        const tailY = m.y - (m.vy / Math.hypot(m.vx, m.vy)) * m.length;
+
+        const grad = starCtx.createLinearGradient(tailX, tailY, m.x, m.y);
+        grad.addColorStop(0, 'rgba(168, 85, 247, 0)');
+        grad.addColorStop(0.35, `rgba(168, 85, 247, ${m.alpha * 0.35})`);
+        grad.addColorStop(0.75, `rgba(56, 189, 248, ${m.alpha * 0.85})`);
+        grad.addColorStop(1, `rgba(255, 255, 255, ${m.alpha})`);
+
+        starCtx.save();
+        starCtx.beginPath();
+        starCtx.moveTo(tailX, tailY);
+        starCtx.lineTo(m.x, m.y);
+        starCtx.strokeStyle = grad;
+        starCtx.lineWidth = m.thickness;
+        starCtx.lineCap = 'round';
+        starCtx.shadowBlur = 10;
+        starCtx.shadowColor = '#38bdf8';
+        starCtx.stroke();
+
+        // Draw Radiant Meteor Head
+        starCtx.beginPath();
+        starCtx.arc(m.x, m.y, m.thickness * 1.2, 0, Math.PI * 2);
+        starCtx.fillStyle = `rgba(255, 255, 255, ${m.alpha})`;
+        starCtx.shadowBlur = 14;
+        starCtx.shadowColor = '#ffffff';
+        starCtx.fill();
+        starCtx.restore();
+      }
+
+      // 2. Update and Render Trailing Stardust Sparks
+      for (let j = starSparks.length - 1; j >= 0; j--) {
+        const sp = starSparks[j];
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.alpha -= sp.decay;
+
+        if (sp.alpha <= 0) {
+          starSparks.splice(j, 1);
+          continue;
+        }
+
+        starCtx.save();
+        starCtx.beginPath();
+        starCtx.arc(sp.x, sp.y, sp.radius, 0, Math.PI * 2);
+        starCtx.fillStyle = `rgba(56, 189, 248, ${sp.alpha})`;
+        starCtx.shadowBlur = 5;
+        starCtx.shadowColor = 'rgba(168, 85, 247, 0.8)';
+        starCtx.fill();
+        starCtx.restore();
       }
     }
 
-    requestAnimationFrame(renderCursorPhysics);
+    requestAnimationFrame(renderShootingStars);
   }
 
 
@@ -234,6 +198,9 @@
 
     btn.appendChild(ripple);
 
+    // Also trigger a shooting star right from the click location!
+    shootCosmicStar(e.clientX, e.clientY);
+
     setTimeout(() => {
       ripple.remove();
     }, 600);
@@ -258,11 +225,11 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      initGalaxyCursor();
+      initShootingStarEngine();
       revealActiveTab();
     });
   } else {
-    initGalaxyCursor();
+    initShootingStarEngine();
     revealActiveTab();
   }
 
