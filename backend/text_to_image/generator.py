@@ -182,7 +182,11 @@ class TextToImageGenerator:
         Seamlessly removes bottom-corner watermark logos and text using OpenCV bi-directional inpainting.
         Produces pristine, unbranded, publication-grade imagery.
         """
-        import cv2
+        try:
+            import cv2
+        except ImportError:
+            return pil_img
+
         cv_img = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
         h, w = cv_img.shape[:2]
         mask = np.zeros((h, w), dtype=np.uint8)

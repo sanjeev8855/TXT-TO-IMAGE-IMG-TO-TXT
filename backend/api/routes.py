@@ -476,15 +476,18 @@ async def compare_bidirectional(req: BidirectionalCompareRequest):
     3. Resolution and aspect ratio parity.
     4. Combined multimodal consistency score.
     """
-    import cv2
+    try:
+        import cv2
+    except ImportError:
+        cv2 = None
     import numpy as np
     from backend.rag.embeddings import embedding_engine
 
     orig_path = _find_image_path(req.original_filename)
     gen_path = _find_image_path(req.generated_filename)
 
-    img1 = cv2.imread(str(orig_path))
-    img2 = cv2.imread(str(gen_path))
+    img1 = cv2.imread(str(orig_path)) if (cv2 and orig_path) else None
+    img2 = cv2.imread(str(gen_path)) if (cv2 and gen_path) else None
 
     color_similarity = 0.5
     dim_match = False

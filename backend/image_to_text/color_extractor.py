@@ -8,9 +8,22 @@ import warnings
 from typing import Dict, Any, List, Tuple
 from PIL import Image
 import numpy as np
-import cv2
-from sklearn.cluster import KMeans
-from sklearn.exceptions import ConvergenceWarning
+
+# OpenCV is optional here; provide safe fallback
+try:
+    import cv2
+except ImportError:
+    cv2 = None
+
+# Scikit-learn KMeans with safe PIL/NumPy adaptive fallback
+try:
+    from sklearn.cluster import KMeans
+    from sklearn.exceptions import ConvergenceWarning
+    HAS_SKLEARN = True
+except ImportError:
+    HAS_SKLEARN = False
+    KMeans = None
+    ConvergenceWarning = None
 
 # Standard named color anchors for semantic naming
 COLOR_NAMES_MAP = [
@@ -103,16 +116,27 @@ class CVColorExtractor:
         pixels_flat = np_pixels.reshape(-1, 3)
 
         # 2. Run KMeans clustering on actual pixels
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", category=ConvergenceWarning)
-            kmeans = KMeans(n_clusters=self.n_colors, random_state=42, n_init=10, max_iter=150)
-            labels = kmeans.fit_predict(pixels_flat)
-            centroids = kmeans.cluster_centers_
+        if HAS_SKLEARN and KMeans is not None:
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=ConvergenceWarning)
+                kmeans = KMeans(n_clusters=self.n_colors, random_state=42, n_init=10, max_iter=150)
+                labels = kmeans.fit_predict(pixels_flat)
+                centroids = kmeans.cluster_centers_
 
-        # 3. Calculate cluster percentages
-        total_pixels = len(labels)
-        counts = np.bincount(labels, minlength=self.n_colors)
-        percentages = (counts / total_pixels) * 100.0
+            # 3. Calculate cluster percentages
+            total_pixels = len(labels)
+            counts = np.bincount(labels, minlength=self.n_colors)
+            percentages = (counts / total_pixels) * 100.0
+        else:
+            # High-performance PIL adaptive palette quantization fallback
+            quantized = img_resized.quantize(colors=self.n_colors, method=Image.Quantize.MEDIANCUT)
+            raw_palette = quantized.getpalette() or []
+            padded_pal = raw_palette + [0] * max(0, (self.n_colors * 3 - len(raw_palette)))
+            centroids = np.array([padded_pal[i*3:(i+1)*3] for i in range(self.n_colors)], dtype=np.float32)
+            hist = quantized.histogram()[:self.n_colors]
+            hist += [0] * max(0, self.n_colors - len(hist))
+            total_pixels = sum(hist) or 1
+            percentages = np.array([(c / total_pixels) * 100.0 for c in hist])
 
         # Sort clusters by percentage descending
         sorted_indices = np.argsort(-percentages)
