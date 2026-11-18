@@ -568,12 +568,6 @@
        Rocket Launch Edition (Integrated from galaxy-auth-page-v3)
        ===================================================================== -->
   <div id="galaxy-auth-entry-screen">
-    <!-- Direct Studio Bypass Link -->
-    <button type="button" class="auth-skip-btn" onclick="enterStudioAsGuest()" title="Bypass to Multimodal Studio directly">
-      <span>Enter Studio directly</span>
-      <span>↗</span>
-    </button>
-
     <!-- Ambient Background Layers & Canvas -->
     <div class="ambient-bg bg-purple" aria-hidden="true"></div>
     <div class="ambient-bg bg-orange" aria-hidden="true"></div>
@@ -604,11 +598,11 @@
           <div class="header-stack">
             <div class="welcome-header header-login">
               <h1>Welcome Back <span class="wave-hand" role="img" aria-label="waving hand">👋</span></h1>
-              <p>Login to continue to Multimodal Studio</p>
+              <p>Login to continue to your account</p>
             </div>
             <div class="welcome-header header-signup">
-              <h1>Create Account <span class="wave-hand" role="img" aria-label="sparkles">✨</span></h1>
-              <p>Sign up to start your cosmic AI journey</p>
+              <h1>Create Account</h1>
+              <p>Sign up to start your cosmic journey</p>
             </div>
           </div>
 
@@ -680,7 +674,7 @@
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>
                 </span>
-                <input type="text" id="loginUsername" name="username" placeholder="Username or Email" autocomplete="username" required value="sanjeev@multimodal-ai.org" />
+                <input type="text" id="loginUsername" name="username" placeholder="Username or Email" autocomplete="username" required />
               </div>
 
               <div class="input-group stagger-item" style="--stagger: 2;">
@@ -690,7 +684,7 @@
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                   </svg>
                 </span>
-                <input type="password" id="loginPassword" name="password" placeholder="Password" autocomplete="current-password" required value="studio2026demo" />
+                <input type="password" id="loginPassword" name="password" placeholder="Password" autocomplete="current-password" required />
                 <button type="button" class="toggle-pass-btn" data-target="loginPassword" aria-label="Show password">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -717,7 +711,7 @@
               <button type="submit" class="primary-btn stagger-item" style="--stagger: 4;" id="loginBtn">
                 <span class="btn-bg btn-bg-purple" aria-hidden="true"></span>
                 <span class="btn-bg btn-bg-orange" aria-hidden="true"></span>
-                <span class="btn-label">Login to Studio</span>
+                <span class="btn-label">Login</span>
                 <span class="btn-arrow" aria-hidden="true">→</span>
                 <span class="btn-spinner" aria-hidden="true"></span>
               </button>
@@ -784,11 +778,6 @@
               </button>
             </form>
           </div>
-
-          <!-- 1-Click Demo Login as Dr. Sanjeev -->
-          <button type="button" class="demo-login-pill" onclick="demoLoginSanjeev()">
-            <span>👑 1-Click Demo Login as Dr. Sanjeev 🚀</span>
-          </button>
 
           <!-- Divider -->
           <div class="divider">
