@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/galaxy_auth.css">
   <link rel="stylesheet" href="/static/galaxy_effects.css">
+  <link rel="stylesheet" href="/static/neon_loader.css">
   <script>
     (function() {
       const saved = localStorage.getItem('research_lab_theme');
@@ -862,6 +863,238 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- =====================================================================
+       NEON BLUE & PURPLE PARCHMENT SCROLL IMAGE-TO-TEXT LOADING SCREEN
+       Integrated from neon-image-to-text-loader-v8
+       ===================================================================== -->
+  <div class="loader-container hidden" id="neonLoaderContainer" role="status" aria-live="polite">
+    <!-- Ambient Floating Particles & Cosmic Backdrop -->
+    <canvas id="neonParticleCanvas"></canvas>
+
+    <!-- Zoomed-out, responsive stage wrapper -->
+    <div class="stage-scaler">
+      <div class="stage" id="neonStage">
+        <!-- Neon Parchment Scroll (Electric Blue & Purple Neon, Curved Top Edge, Clean Surface) -->
+        <div class="neon-scroll-wrapper">
+          <svg class="neon-scroll-svg" viewBox="0 0 300 370" aria-hidden="true">
+            <defs>
+              <linearGradient id="neonScrollBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#07122c" stop-opacity="0.94" />
+                <stop offset="55%" stop-color="#0e163b" stop-opacity="0.92" />
+                <stop offset="100%" stop-color="#1a113b" stop-opacity="0.95" />
+              </linearGradient>
+              <linearGradient id="neonScrollRimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00d4ff" />
+                <stop offset="50%" stop-color="#6366f1" />
+                <stop offset="100%" stop-color="#c026d3" />
+              </linearGradient>
+              <linearGradient id="neonCurlPurpleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#c026d3" stop-opacity="0.38" />
+                <stop offset="50%" stop-color="#14133d" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#00d4ff" stop-opacity="0.45" />
+              </linearGradient>
+              <linearGradient id="neonBottomRollGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#0d2149" />
+                <stop offset="35%" stop-color="#221b54" />
+                <stop offset="75%" stop-color="#090e26" />
+                <stop offset="100%" stop-color="#2b1240" />
+              </linearGradient>
+              <filter id="neonScrollNeonGlow" x="-25%" y="-25%" width="150%" height="150%">
+                <feGaussianBlur stdDeviation="3.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Top-left layered parchment curl behind main scroll -->
+            <path
+              d="M 42 38 C 22 38, 15 50, 17 66 C 19 79, 29 84, 43 81 L 46 38 Z"
+              fill="url(#neonCurlPurpleGrad)"
+              stroke="#c026d3"
+              stroke-width="1.6"
+              filter="url(#neonScrollNeonGlow)"
+            />
+            <path
+              d="M 42 31 L 25 29 L 36 39 M 23 78 L 34 85 L 44 78"
+              fill="none"
+              stroke="#00d4ff"
+              stroke-width="1.3"
+              stroke-linecap="round"
+            />
+
+            <!-- Main Weathered Parchment Body with Gently Curved Top Edge -->
+            <path
+              d="M 42 22
+                 C 95 11, 200 11, 256 22
+                 C 262 38, 265 56, 263 73 L 260 75
+                 L 255 128 L 258 131 L 253 176 L 249 178
+                 L 246 248 L 250 252 L 247 296
+                 C 192 292, 102 292, 45 296
+                 L 42 246 L 38 242 L 42 185 L 39 181
+                 L 45 122 L 48 118 L 45 65
+                 C 44 46, 40 31, 42 22 Z"
+              fill="url(#neonScrollBodyGrad)"
+              stroke="url(#neonScrollRimGrad)"
+              stroke-width="2"
+              stroke-linejoin="round"
+              filter="url(#neonScrollNeonGlow)"
+            />
+
+            <!-- Subtle Top Inner Arch Highlight Following the Curved Paper Top -->
+            <path
+              d="M 48 27 C 100 17, 196 17, 250 27"
+              fill="none"
+              stroke="rgba(192, 38, 211, 0.35)"
+              stroke-width="1.2"
+              stroke-linecap="round"
+            />
+
+            <!-- Weathered Edge Notches / Torn Flaps along Left & Right Sides -->
+            <path
+              d="M 39 182 L 35 238 L 41 242 M 258 132 L 254 174 L 249 176 M 263 44 L 266 71 L 261 73"
+              fill="none"
+              stroke="#c026d3"
+              stroke-width="1.4"
+              stroke-linecap="round"
+              opacity="0.9"
+            />
+
+            <!-- Bottom Rolled Scroll Cylinder -->
+            <path
+              d="M 44 334 C 95 342, 205 342, 266 336 C 276 333, 281 316, 276 296 L 52 296 Z"
+              fill="#06081a"
+              stroke="#00d4ff"
+              stroke-width="1.5"
+            />
+            <path
+              d="M 55 290
+                 C 110 286, 212 286, 272 291
+                 C 282 294, 284 328, 271 336
+                 C 210 341, 105 339, 55 335
+                 C 46 332, 45 294, 55 290 Z"
+              fill="url(#neonBottomRollGrad)"
+              stroke="url(#neonScrollRimGrad)"
+              stroke-width="2"
+              filter="url(#neonScrollNeonGlow)"
+            />
+            <!-- Left Spiral Curl Opening of the Bottom Roll -->
+            <path
+              d="M 56 290
+                 C 47 292, 45 328, 55 335
+                 C 63 338, 67 324, 65 310
+                 C 63 300, 56 298, 54 307
+                 C 53 314, 57 320, 60 317"
+              fill="rgba(192, 38, 211, 0.18)"
+              stroke="#c026d3"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+
+          <!-- Content Area Inside the Parchment Scroll -->
+          <div class="scroll-content">
+            <div class="scan-beam"></div>
+
+            <!-- Glowing Image Silhouette Sketch on the Neon Scroll -->
+            <svg class="silhouette-svg" id="neonSilhouetteSvg" viewBox="0 0 220 96" aria-hidden="true">
+              <defs>
+                <filter id="neonGlowBlue" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="3" result="blur1" />
+                  <feGaussianBlur stdDeviation="7" result="blur2" />
+                  <feMerge>
+                    <feMergeNode in="blur2" />
+                    <feMergeNode in="blur1" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+                <linearGradient id="neonPortraitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00d4ff" />
+                  <stop offset="50%" stop-color="#8b5cf6" />
+                  <stop offset="100%" stop-color="#d946ef" />
+                </linearGradient>
+              </defs>
+              <rect x="28" y="6" width="164" height="84" rx="6" class="image-frame-path" />
+              <path
+                class="silhouette-path"
+                d="M 65 86 C 67 67, 83 61, 95 58 C 91 51, 90 42, 93 34 C 91 30, 93 24, 98 23 C 102 18, 114 17, 120 22 C 127 24, 129 32, 126 39 C 128 46, 125 54, 120 58 C 133 61, 149 67, 152 86"
+              />
+              <circle cx="155" cy="28" r="6" class="glyph-path" />
+              <path d="M 136 49 L 148 36 L 158 45 L 166 38 L 176 49" class="glyph-path" />
+            </svg>
+
+            <!-- Luminous Handwritten Prose Written onto the Neon Scroll -->
+            <div class="paper-text-lines" id="neonTextLines"></div>
+          </div>
+        </div>
+
+        <!-- Orbiting Neon Blue & Purple Light Trails -->
+        <svg class="orbit-svg" viewBox="0 0 460 460" aria-hidden="true">
+          <defs>
+            <linearGradient id="neonOrbitGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00d4ff" stop-opacity="0" />
+              <stop offset="50%" stop-color="#00d4ff" stop-opacity="0.95" />
+              <stop offset="100%" stop-color="#d946ef" stop-opacity="1" />
+            </linearGradient>
+            <linearGradient id="neonOrbitGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" stop-opacity="0" />
+              <stop offset="55%" stop-color="#a855f7" stop-opacity="0.95" />
+              <stop offset="100%" stop-color="#00d4ff" stop-opacity="1" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="230" cy="245" rx="198" ry="62" transform="rotate(-14 230 245)" class="orbit-ring ring-1" />
+          <ellipse cx="230" cy="245" rx="178" ry="50" transform="rotate(11 230 245)" class="orbit-ring ring-2" />
+        </svg>
+
+        <!-- Neon Blue & Purple Feather Quill Stylus (Nib tracks exact active text line & character!) -->
+        <div class="neon-quill" id="neonQuill" aria-hidden="true">
+          <svg viewBox="0 0 140 240" class="quill-svg">
+            <defs>
+              <linearGradient id="neonFeatherGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00d4ff" />
+                <stop offset="50%" stop-color="#7c3aed" />
+                <stop offset="100%" stop-color="#e879f9" />
+              </linearGradient>
+              <linearGradient id="neonNibGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="40%" stop-color="#00d4ff" />
+                <stop offset="100%" stop-color="#d946ef" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 28 175 C 38 115, 72 48, 128 12 C 122 54, 102 104, 65 148 L 54 143 L 61 154 C 48 166, 37 174, 28 175 Z"
+              fill="rgba(168, 85, 247, 0.16)"
+              stroke="url(#neonFeatherGrad)"
+              stroke-width="2.5"
+              stroke-linejoin="round"
+            />
+            <path d="M 22 192 Q 66 112 128 12" fill="none" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" />
+            <path d="M 55 122 L 78 114 M 70 95 L 95 86 M 86 68 L 110 59 M 44 144 L 64 138" stroke="#e879f9" stroke-width="1.6" stroke-linecap="round" opacity="0.92" />
+            <path d="M 19 188 L 31 195 L 24 209 L 13 202 Z" fill="#130b2e" stroke="#d946ef" stroke-width="2" />
+            <path d="M 13 202 L 24 209 L 8 232 Z" fill="url(#neonNibGrad)" />
+            <circle cx="8" cy="232" r="4.5" fill="#ffffff" class="nib-spark" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Status Readout & Progress Bar -->
+      <div class="status-panel">
+        <div class="status-badge">
+          <span class="pulse-dot"></span>
+          <span id="neonStatusText">SCANNING IMAGE DETAILS...</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="neonProgressFill"></div>
+        </div>
+        <div class="progress-meta">
+          <span>IMAGE TO TEXT CONVERTER</span>
+          <span id="neonProgressPercent">0%</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Ambient Film Noise Overlay (Signature WOWWW Texture) -->
@@ -2111,6 +2344,9 @@
 
   <!-- Galaxy Theme Visual Effects & Celestial Cursor Engine -->
   <script src="/static/galaxy_effects.js"></script>
+
+  <!-- Neon Image-to-Text Parchment Scroll Loading Engine -->
+  <script src="/static/neon_loader.js"></script>
 
   <!-- Application Logic -->
   <script src="/static/app.js?v=5.0"></script>

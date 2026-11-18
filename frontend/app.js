@@ -893,6 +893,11 @@ async function executeImageToTextPipeline() {
     btn.innerHTML = `Analyzing image...`;
   }
 
+  // Trigger Neon Image-to-Text Parchment Scroll Loading Screen
+  if (window.NeonOCRLoader) {
+    window.NeonOCRLoader.show("ANALYZING IMAGE & EXTRACTING TEXT...");
+  }
+
   try {
     const simulateFallback = document.getElementById("test-fallback-checkbox")?.checked || false;
 
@@ -971,6 +976,9 @@ async function executeImageToTextPipeline() {
     console.error("Pipeline error:", err);
     showToast(err.message || "Visual analysis encountered an error.", "error");
   } finally {
+    if (window.NeonOCRLoader) {
+      window.NeonOCRLoader.hide();
+    }
     if (btn) {
       btn.disabled = false;
       btn.innerHTML = `<span>Analyze Image</span>`;

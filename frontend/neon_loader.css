@@ -1,0 +1,352 @@
+/* =============================================================================
+   Neon Blue & Purple Parchment Scroll Image-to-Text Loader Styles
+   Integrated from neon-image-to-text-loader-v8 for Image Analysis loading state
+   ============================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
+
+:root {
+  --neon-bg-deep: #040714;
+  --neon-bg-nebula-1: rgba(0, 212, 255, 0.16);
+  --neon-bg-nebula-2: rgba(192, 38, 211, 0.16);
+  --neon-blue: #00d4ff;
+  --neon-royal: #6366f1;
+  --neon-purple: #c026d3;
+  --neon-violet: #a855f7;
+  --neon-font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --neon-font-handwriting: 'Caveat', 'Georgia', cursive;
+}
+
+#neonLoaderContainer.loader-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 22% 28%, var(--neon-bg-nebula-1), transparent 46%),
+    radial-gradient(circle at 78% 72%, var(--neon-bg-nebula-2), transparent 48%),
+    radial-gradient(circle at 50% 50%, #0b102b 0%, #03050e 100%);
+  z-index: 999999;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+  backdrop-filter: blur(10px);
+}
+
+#neonLoaderContainer.loader-container.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#neonParticleCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Zoomed-out wrapper with generous breathing room */
+#neonLoaderContainer .stage-scaler {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.85);
+  transform-origin: center center;
+}
+
+@media (max-width: 480px) {
+  #neonLoaderContainer .stage-scaler {
+    transform: scale(0.72);
+  }
+}
+
+#neonLoaderContainer .stage {
+  position: relative;
+  width: 420px;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Neon Parchment Scroll Container */
+#neonLoaderContainer .neon-scroll-wrapper {
+  position: relative;
+  width: 280px;
+  height: 348px;
+  transform: rotate(-5deg);
+  animation: neonScrollFloat 4.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(0, 212, 255, 0.25)) drop-shadow(0 0 32px rgba(192, 38, 211, 0.22));
+}
+
+@keyframes neonScrollFloat {
+  0%, 100% { transform: rotate(-5deg) translateY(0px); }
+  50% { transform: rotate(-3.5deg) translateY(-7px); }
+}
+
+#neonLoaderContainer .neon-scroll-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Inner Writing Area Positioned Inside the Scroll's Clean Surface */
+#neonLoaderContainer .scroll-content {
+  position: absolute;
+  top: 28px;
+  left: 50px;
+  right: 46px;
+  bottom: 74px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Blue & Purple Optical Scan Beam across the Scroll */
+#neonLoaderContainer .scan-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon-blue), #ffffff, var(--neon-purple), transparent);
+  box-shadow: 0 0 12px var(--neon-blue), 0 0 22px var(--neon-purple);
+  opacity: 0.85;
+  animation: neonScanSweep 3.4s linear infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+@keyframes neonScanSweep {
+  0% { top: 4%; opacity: 0; }
+  12% { opacity: 0.9; }
+  88% { opacity: 0.9; }
+  100% { top: 96%; opacity: 0; }
+}
+
+/* Glowing Image Silhouette Wireframe Sketched on the Neon Scroll */
+#neonLoaderContainer .silhouette-svg {
+  width: 100%;
+  height: 82px;
+  margin-bottom: 6px;
+  background: rgba(0, 212, 255, 0.04);
+  border-radius: 6px;
+  transition: opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease;
+}
+
+#neonLoaderContainer .silhouette-svg.dissolved {
+  opacity: 0.16;
+  transform: translateY(-4px) scale(0.97);
+  filter: blur(1.5px);
+}
+
+#neonLoaderContainer .image-frame-path {
+  fill: rgba(0, 212, 255, 0.03);
+  stroke: rgba(0, 212, 255, 0.42);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 4;
+}
+
+#neonLoaderContainer .silhouette-path {
+  fill: none;
+  stroke: url(#neonPortraitGrad);
+  stroke-width: 3;
+  stroke-linecap: round;
+  filter: url(#neonGlowBlue);
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: neonDrawSilhouette 2.4s ease forwards;
+}
+
+#neonLoaderContainer .glyph-path {
+  fill: none;
+  stroke: var(--neon-purple);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 5px var(--neon-purple));
+}
+
+@keyframes neonDrawSilhouette {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Glowing Handwritten Prose Text Lines on the Clean Neon Scroll */
+#neonLoaderContainer .paper-text-lines {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: var(--neon-font-handwriting);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+#neonLoaderContainer .text-row {
+  min-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #8ceeff;
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.85);
+  opacity: 0;
+  transform: translateX(-3px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#neonLoaderContainer .text-row.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+#neonLoaderContainer .text-row.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 0 10px var(--neon-blue), 0 0 18px rgba(192, 38, 211, 0.65);
+}
+
+#neonLoaderContainer .text-row.purple-ink {
+  color: #f0abfc;
+  text-shadow: 0 0 9px rgba(217, 70, 239, 0.9);
+}
+
+/* Orbiting Neon Blue & Purple Light Rings */
+#neonLoaderContainer .orbit-svg {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+#neonLoaderContainer .orbit-ring {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px var(--neon-blue)) drop-shadow(0 0 12px rgba(192, 38, 211, 0.5));
+}
+
+#neonLoaderContainer .ring-1 {
+  stroke: url(#neonOrbitGrad1);
+  stroke-dasharray: 380 520;
+  animation: neonOrbitSpin1 3.4s linear infinite;
+}
+
+#neonLoaderContainer .ring-2 {
+  stroke: url(#neonOrbitGrad2);
+  stroke-dasharray: 290 540;
+  animation: neonOrbitSpin2 4.2s linear infinite reverse;
+}
+
+@keyframes neonOrbitSpin1 {
+  0% { stroke-dashoffset: 900; opacity: 0.35; }
+  50% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0.35; }
+}
+
+@keyframes neonOrbitSpin2 {
+  0% { stroke-dashoffset: 0; opacity: 0.3; }
+  50% { opacity: 0.95; }
+  100% { stroke-dashoffset: 830; opacity: 0.3; }
+}
+
+/* Neon Blue & Purple Cyber-Quill Stylus */
+#neonLoaderContainer .neon-quill {
+  position: absolute;
+  width: 114px;
+  height: 196px;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  transform-origin: 0px 0px;
+  filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.7)) drop-shadow(0 0 22px rgba(192, 38, 211, 0.55));
+  transition: transform 0.08s linear;
+  pointer-events: none;
+  will-change: transform;
+}
+
+#neonLoaderContainer .quill-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+#neonLoaderContainer .nib-spark {
+  filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 16px var(--neon-blue)) drop-shadow(0 0 24px var(--neon-purple));
+  animation: neonSparkPulse 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes neonSparkPulse {
+  from { r: 3.5; opacity: 0.8; }
+  to { r: 6; opacity: 1; }
+}
+
+/* Status Readout & Progress Bar */
+#neonLoaderContainer .status-panel {
+  position: relative;
+  z-index: 5;
+  width: 320px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--neon-font-ui);
+}
+
+#neonLoaderContainer .status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  color: #ffffff;
+  text-shadow: 0 0 10px var(--neon-blue);
+}
+
+#neonLoaderContainer .pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon-purple);
+  box-shadow: 0 0 10px var(--neon-purple), 0 0 18px var(--neon-blue);
+  animation: neonDotBlink 0.9s infinite alternate;
+}
+
+@keyframes neonDotBlink {
+  from { opacity: 0.4; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.2); }
+}
+
+#neonLoaderContainer .progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 212, 255, 0.35);
+}
+
+#neonLoaderContainer .progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-royal), var(--neon-purple));
+  box-shadow: 0 0 12px var(--neon-purple);
+  transition: width 0.25s ease;
+}
+
+#neonLoaderContainer .progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: rgba(230, 247, 255, 0.65);
+}
