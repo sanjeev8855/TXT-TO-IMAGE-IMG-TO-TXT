@@ -133,20 +133,59 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
     }
 
-    /* Custom Scrollbar */
+    /* =========================================================================
+       PREMIUM COSMIC SCROLLBAR ("SLIDEBAR") - HIGH VISIBILITY & SLEEK FINISH
+       ========================================================================= */
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: #0284c7 rgba(8, 11, 17, 0.85);
+    }
+
     ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+      width: 10px;
+      height: 10px;
     }
+
     ::-webkit-scrollbar-track {
-      background: var(--bg);
+      background: rgba(8, 11, 17, 0.85);
+      border-left: 1px solid rgba(56, 189, 248, 0.14);
     }
+
     ::-webkit-scrollbar-thumb {
-      background: var(--line);
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 60%, #0369a1 100%);
       border-radius: 9999px;
+      border: 2px solid rgba(8, 11, 17, 0.9);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
     }
+
     ::-webkit-scrollbar-thumb:hover {
-      background: var(--muted);
+      background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 55%, #0284c7 100%);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.75);
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background: #7dd3fc;
+      box-shadow: 0 0 22px rgba(56, 189, 248, 0.95);
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: rgba(8, 11, 17, 0.95);
+    }
+
+    html:not(.dark) {
+      scrollbar-color: #0284c7 #e6eef8;
+    }
+
+    html:not(.dark) ::-webkit-scrollbar-track {
+      background: #e6eef8;
+      border-left: 1px solid rgba(2, 132, 199, 0.18);
+    }
+
+    html:not(.dark) ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+      border: 2px solid #e6eef8;
+      box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
     }
 
     /* Floating Glass Pill Navigation Bar */
@@ -203,10 +242,21 @@
       align-items: center;
       gap: 4px;
       overflow-x: auto;
-      scrollbar-width: none;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(56, 189, 248, 0.4) transparent;
     }
     .navlinks::-webkit-scrollbar {
-      display: none;
+      height: 4px;
+    }
+    .navlinks::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .navlinks::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.4);
+      border-radius: 9999px;
+    }
+    .navlinks::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
     }
 
     .nav-tab {
@@ -585,9 +635,12 @@
         left: 12px;
         right: 12px;
         padding: 16px;
-        background: rgba(22, 24, 26, 0.96);
-        border: 1px solid var(--line);
+        background: rgba(11, 16, 28, 0.96);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(56, 189, 248, 0.35);
         border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.2);
         flex-direction: column;
         align-items: stretch;
         gap: 6px;
@@ -1175,16 +1228,15 @@
           Architecture
         </button>
         <button onclick="openGalaxyAuthScreen('login')" class="nav-tab border-transparent text-app-muted flex items-center space-x-1" data-tab="auth-portal">
-          <span>🚀 Portal</span>
+          <span>Portal</span>
         </button>
       </div>
 
       <!-- Right Actions: Theme Toggle & Launch CTA -->
       <div class="flex items-center space-x-2">
         <!-- Galaxy Auth Entry Screen Trigger Pill -->
-        <button id="btn-galaxy-auth-trigger" onclick="openGalaxyAuthScreen('login')" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 hover:bg-sky-500/20 hover:border-sky-400 hover:text-sky-300 transition font-mono text-[11px] cursor-pointer select-none" title="Open Galaxy Auth Entry Screen">
-          <span class="text-xs">🚀</span>
-          <span id="auth-nav-label">Sign In / Portal</span>
+        <button id="btn-galaxy-auth-trigger" onclick="openGalaxyAuthScreen('login')" class="flex items-center px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 hover:bg-sky-500/20 hover:border-sky-400 hover:text-sky-300 transition font-mono text-[11px] cursor-pointer select-none" title="Sign Out">
+          <span id="auth-nav-label">Sign Out</span>
         </button>
 
         <button id="theme-toggle-btn" onclick="toggleTheme()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-surface-muted border border-app-border text-app-text hover:bg-surface transition font-mono text-[11px] cursor-pointer select-none" title="Toggle Dark / Light Theme" aria-label="Toggle theme">

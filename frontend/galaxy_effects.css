@@ -185,21 +185,11 @@ button:not(:disabled):active,
   box-shadow: 0 0 14px rgba(255, 82, 82, 0.35);
 }
 
-/* Rocket Launch / Portal Trigger Quirky Hover Jump */
+/* Portal / Auth Action Trigger Hover */
 #btn-galaxy-auth-trigger:hover {
   transform: translateY(-2.5px) scale(1.04);
   border-color: #38bdf8 !important;
   box-shadow: 0 0 20px rgba(56, 189, 248, 0.45), 0 0 35px rgba(2, 132, 199, 0.25) !important;
-}
-
-#btn-galaxy-auth-trigger:hover span:first-child {
-  display: inline-block;
-  animation: rocketWiggle 0.6s ease-in-out infinite alternate;
-}
-
-@keyframes rocketWiggle {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-3px) rotate(-12deg) scale(1.15); }
 }
 
 /* Universal Supernova Ripple on Click */

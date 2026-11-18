@@ -2838,10 +2838,10 @@ function updateStudioAuthNav() {
     try {
       const u = JSON.parse(savedUser);
       if (navLabel) {
-        navLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>${u.name} (Sign Out)`;
+        navLabel.textContent = 'Sign Out';
       }
       if (triggerBtn) {
-        triggerBtn.title = `Logged in as ${u.name}. Click to open Entry Screen / Sign Out.`;
+        triggerBtn.title = `Currently signed in as ${u.name}. Click to Sign Out.`;
         triggerBtn.onclick = function() {
           if (confirm(`Currently signed in as ${u.name}. Do you want to sign out and return to the Galaxy Entry Screen?`)) {
             localStorage.removeItem('multimodal_auth_user');
@@ -2858,7 +2858,7 @@ function updateStudioAuthNav() {
       console.warn('Failed to parse auth user', e);
     }
   } else {
-    if (navLabel) navLabel.textContent = 'Sign In / Portal';
+    if (navLabel) navLabel.textContent = 'Sign In';
     if (triggerBtn) {
       triggerBtn.title = 'Open Galaxy Auth Entry Screen';
       triggerBtn.onclick = function() {
