@@ -895,13 +895,16 @@ async function executeImageToTextPipeline() {
 
   // Trigger Neon Image-to-Text Parchment Scroll Loading Screen
   if (window.NeonOCRLoader) {
-    window.NeonOCRLoader.show("ANALYZING IMAGE & EXTRACTING TEXT...");
+    window.NeonOCRLoader.show("SCANNING IMAGE DETAILS...");
   }
 
   try {
     const simulateFallback = document.getElementById("test-fallback-checkbox")?.checked || false;
 
     // 1. Run VLM with Model Routing (Gemini Vision -> Llama 3.2 90B -> Kimi K3 Fallback)
+    if (window.NeonOCRLoader) {
+      window.NeonOCRLoader.setProgress(15, "ANALYZING IMAGE & EXTRACTING VISUAL FEATURES...", 58, 8.5);
+    }
     const vlmRes = await fetch("/api/image-to-text", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -919,6 +922,9 @@ async function executeImageToTextPipeline() {
     renderVLMResults(vlmData);
 
     // 2. Run RAG Retrieval
+    if (window.NeonOCRLoader) {
+      window.NeonOCRLoader.setProgress(60, "QUERYING VECTOR RAG KNOWLEDGE BASE...", 75, 12.0);
+    }
     const topK = parseInt(document.getElementById("i2t-topk")?.value, 10) || 5;
     const subjectsStr = Array.isArray(vlmData.subjects) 
       ? vlmData.subjects.join(' ') 
@@ -943,6 +949,9 @@ async function executeImageToTextPipeline() {
     renderRAGResults(ragDocs);
 
     // 3. Run LLM Prompt Builder & Boundary Validation
+    if (window.NeonOCRLoader) {
+      window.NeonOCRLoader.setProgress(78, "SYNTHESIZING PROMPT & COMPOSITION BOUNDARIES...", 96, 3.5);
+    }
     const userInst = document.getElementById("user-instructions")?.value || "";
     let promptData = null;
     try {
@@ -969,6 +978,11 @@ async function executeImageToTextPipeline() {
       if (t2iPromptEl && promptData.sanitized_prompt) {
         t2iPromptEl.value = promptData.sanitized_prompt;
       }
+    }
+
+    // Complete loading sequence cleanly to 100%
+    if (window.NeonOCRLoader) {
+      await window.NeonOCRLoader.complete("VISUAL ANALYSIS & SYNTHESIS COMPLETE (100%)");
     }
 
     showToast("Visual understanding & RAG synthesis complete.", "success");

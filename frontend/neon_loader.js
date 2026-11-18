@@ -2,8 +2,10 @@
  * Neon Blue & Purple Parchment Scroll Image-to-Text Loading Screen Controller
  * Integrated from neon-image-to-text-loader-v8 for Image Analysis loading state
  *
- * Exact nib-to-line tracking: measures rendered text width & row baseline in real time
- * so the glowing nib stays pinned right on the active line and character it writes.
+ * Synchronized Progress Engine:
+ * - Accurately reflects analysis progression from 1% to 100% matching real backend execution
+ * - Exact nib-to-line tracking: measures rendered text width & row baseline in real time
+ * - Never resets or loops mid-analysis; smoothly reaches 100% upon completion
  */
 (function () {
   'use strict';
@@ -19,10 +21,10 @@
 
   const STATUS_PHASES = [
     { threshold: 0, label: 'SCANNING IMAGE DETAILS...' },
-    { threshold: 25, label: 'RECOGNIZING OBJECTS & COMPOSITION...' },
-    { threshold: 55, label: 'EXTRACTING COLOR & LIGHTING...' },
-    { threshold: 80, label: 'TRANSCRIBING MULTIMODAL PROSE...' },
-    { threshold: 95, label: 'FINALIZING ANALYSIS...' }
+    { threshold: 20, label: 'ANALYZING IMAGE & EXTRACTING VISUAL FEATURES...' },
+    { threshold: 58, label: 'QUERYING VECTOR RAG KNOWLEDGE BASE...' },
+    { threshold: 75, label: 'SYNTHESIZING PROMPT & COMPOSITION BOUNDARIES...' },
+    { threshold: 96, label: 'FINALIZING VISION TRANSCRIPTION (100%)...' }
   ];
 
   let loaderContainer = null;
@@ -42,13 +44,25 @@
 
   let particles = [];
   let isRunning = false;
-  let animationTimer = null;
+  let renderLoopId = null;
   let particleAnimationId = null;
   let currentNibScreenPos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
   const NIB_OFFSET_X = (8 / 140) * 114;   // ~6.5px
   const NIB_OFFSET_Y = (232 / 240) * 196; // ~189.5px
   const NEON_COLORS = ['#00d4ff', '#c026d3', '#6366f1', '#e879f9', '#ffffff'];
+
+  // Total character count across all manuscript lines
+  const TOTAL_CHARS = SAMPLE_PAPER_TEXT.reduce((acc, l) => acc + l.text.length, 0);
+
+  // Dynamic Progress Engine State
+  let currentPercent = 1;
+  let targetPercent = 5;
+  let stageCeiling = 18;
+  let creepSpeedPerSec = 4.5;
+  let lastFrameTime = performance.now();
+  let renderedChars = 0;
+  let rowEls = [];
 
   function initElements() {
     loaderContainer = document.getElementById('neonLoaderContainer');
@@ -173,109 +187,235 @@
     neonQuill.style.transform = `translate(${quillX.toFixed(1)}px, ${quillY.toFixed(1)}px) rotate(${angleDeg.toFixed(2)}deg)`;
   }
 
-  function runSequence() {
-    if (!textLinesEl || !silhouetteSvg) return;
-    textLinesEl.innerHTML = '';
-    silhouetteSvg.classList.remove('dissolved');
-    let lineIdx = 0;
-    let charIdx = 0;
+  /**
+   * Updates parchment manuscript text rows and quill position to match current character count
+   */
+  function syncManuscriptToChars(targetChars) {
+    if (!rowEls || !rowEls.length) return;
 
-    const rowEls = SAMPLE_PAPER_TEXT.map((item) => {
+    let accumulated = 0;
+    let activeRowEl = rowEls[0];
+    let activeSlice = '';
+    let activeLineIdx = 0;
+
+    for (let i = 0; i < SAMPLE_PAPER_TEXT.length; i++) {
+      const lineText = SAMPLE_PAPER_TEXT[i].text;
+      const rowEl = rowEls[i];
+      const prevTotal = accumulated;
+      accumulated += lineText.length;
+
+      if (targetChars <= prevTotal) {
+        rowEl.textContent = '';
+        rowEl.classList.remove('active');
+      } else if (targetChars >= accumulated) {
+        rowEl.textContent = lineText;
+        rowEl.classList.remove('active');
+        activeRowEl = rowEl;
+        activeSlice = lineText;
+        activeLineIdx = i;
+      } else {
+        const sliceLen = targetChars - prevTotal;
+        const slice = lineText.slice(0, sliceLen);
+        rowEl.textContent = slice;
+        rowEl.classList.add('active');
+        activeRowEl = rowEl;
+        activeSlice = slice;
+        activeLineIdx = i;
+      }
+    }
+
+    if (silhouetteSvg) {
+      if (activeLineIdx >= 2) {
+        silhouetteSvg.classList.add('dissolved');
+      } else {
+        silhouetteSvg.classList.remove('dissolved');
+      }
+    }
+
+    const wobble = Math.sin(targetChars * 0.95) * 1.5;
+    positionQuillOnRow(activeRowEl, activeSlice, wobble);
+
+    if (targetChars > renderedChars) {
+      spawnQuillSparks(2);
+    }
+    renderedChars = targetChars;
+  }
+
+  /**
+   * Main 60fps Animation Loop:
+   * Smoothly eases currentPercent toward targetPercent while pacing steadily,
+   * keeping the quill, manuscript lines, and 1% - 100% progress bar in exact sync.
+   */
+  function animationStep(now) {
+    if (!isRunning) return;
+
+    const dt = Math.min(0.1, (now - lastFrameTime) / 1000);
+    lastFrameTime = now;
+
+    // Smooth asymptotic creep towards stageCeiling while waiting for backend response
+    if (targetPercent < stageCeiling) {
+      targetPercent = Math.min(stageCeiling, targetPercent + creepSpeedPerSec * dt);
+    }
+
+    // Smooth lerp of current percentage towards target percentage
+    const diff = targetPercent - currentPercent;
+    if (Math.abs(diff) > 0.05) {
+      const lerpFactor = diff > 0 ? Math.min(1, dt * 7.5) : Math.min(1, dt * 10);
+      currentPercent += diff * lerpFactor;
+    } else {
+      currentPercent = targetPercent;
+    }
+
+    const clampedPercent = Math.max(1, Math.min(100, currentPercent));
+    const intPercent = Math.round(clampedPercent);
+
+    // Update Progress UI
+    if (progressFill) {
+      progressFill.style.width = `${clampedPercent.toFixed(1)}%`;
+    }
+    if (progressPercent) {
+      progressPercent.textContent = `${intPercent}%`;
+    }
+
+    // Update Status Phase Label
+    if (statusText && !statusText.dataset.manual) {
+      for (let i = STATUS_PHASES.length - 1; i >= 0; i--) {
+        if (intPercent >= STATUS_PHASES[i].threshold) {
+          statusText.textContent = STATUS_PHASES[i].label;
+          break;
+        }
+      }
+    }
+
+    // Sync manuscript text and cyber-quill nib to current progress
+    const targetCharCount = Math.min(TOTAL_CHARS, Math.floor((clampedPercent / 100) * TOTAL_CHARS));
+    syncManuscriptToChars(targetCharCount);
+
+    renderLoopId = requestAnimationFrame(animationStep);
+  }
+
+  function setupManuscriptDOM() {
+    if (!textLinesEl) return;
+    textLinesEl.innerHTML = '';
+    rowEls = SAMPLE_PAPER_TEXT.map((item) => {
       const div = document.createElement('div');
       div.className = `text-row ${item.cls}`;
       textLinesEl.appendChild(div);
       return div;
     });
 
-    requestAnimationFrame(() => {
-      if (rowEls[0]) positionQuillOnRow(rowEls[0], '', 0);
-    });
-
-    const totalChars = SAMPLE_PAPER_TEXT.reduce((acc, l) => acc + l.text.length, 0);
-    let typedChars = 0;
-
-    clearInterval(animationTimer);
-    animationTimer = setInterval(() => {
-      if (!isRunning) {
-        clearInterval(animationTimer);
-        return;
-      }
-
-      if (lineIdx >= SAMPLE_PAPER_TEXT.length) {
-        const lastRow = rowEls[rowEls.length - 1];
-        if (lastRow) positionQuillOnRow(lastRow, SAMPLE_PAPER_TEXT[SAMPLE_PAPER_TEXT.length - 1].text, 0);
-        clearInterval(animationTimer);
-        // Loop sequence gently if still running
-        setTimeout(() => {
-          if (isRunning) runSequence();
-        }, 1600);
-        return;
-      }
-
-      const currentLine = SAMPLE_PAPER_TEXT[lineIdx].text;
-      const rowEl = rowEls[lineIdx];
-      rowEl.classList.add('active');
-
-      if (lineIdx >= 2) {
-        silhouetteSvg.classList.add('dissolved');
-      }
-
-      charIdx++;
-      typedChars++;
-      const typedSlice = currentLine.slice(0, charIdx);
-      rowEl.textContent = typedSlice;
-
-      const wobble = Math.sin(typedChars * 0.95) * 1.6;
-      positionQuillOnRow(rowEl, typedSlice, wobble);
-
-      if (typedChars % 2 === 0) spawnQuillSparks(3);
-
-      const pct = Math.min(100, Math.round((typedChars / totalChars) * 100));
-      if (progressFill) progressFill.style.width = `${pct}%`;
-      if (progressPercent) progressPercent.textContent = `${pct}%`;
-
-      if (statusText) {
-        for (let i = STATUS_PHASES.length - 1; i >= 0; i--) {
-          if (pct >= STATUS_PHASES[i].threshold) {
-            statusText.textContent = STATUS_PHASES[i].label;
-            break;
-          }
-        }
-      }
-
-      if (charIdx >= currentLine.length) {
-        lineIdx++;
-        charIdx = 0;
-      }
-    }, 48);
+    if (rowEls[0]) {
+      positionQuillOnRow(rowEls[0], '', 0);
+    }
   }
 
   // --- Public API for Image-to-Text Pipeline Integration ---
   window.NeonOCRLoader = {
+    /**
+     * Shows loader and starts synchronized progression from 1%
+     */
     show(customMessage) {
       if (!loaderContainer) initElements();
       if (!loaderContainer) return;
 
       isRunning = true;
-      loaderContainer.classList.remove('hidden');
-      if (statusText && customMessage) {
-        statusText.textContent = customMessage;
-      }
-      if (progressFill) progressFill.style.width = '0%';
-      if (progressPercent) progressPercent.textContent = '0%';
+      currentPercent = 1;
+      targetPercent = 6;
+      stageCeiling = 16;
+      creepSpeedPerSec = 4.0;
+      renderedChars = 0;
+      lastFrameTime = performance.now();
 
+      loaderContainer.classList.remove('hidden');
+
+      if (statusText) {
+        statusText.dataset.manual = customMessage ? '1' : '';
+        statusText.textContent = customMessage || STATUS_PHASES[0].label;
+      }
+      if (progressFill) progressFill.style.width = '1%';
+      if (progressPercent) progressPercent.textContent = '1%';
+
+      setupManuscriptDOM();
       initParticles();
+
       cancelAnimationFrame(particleAnimationId);
+      cancelAnimationFrame(renderLoopId);
+
       animateParticles();
-      runSequence();
+      renderLoopId = requestAnimationFrame(animationStep);
     },
 
+    /**
+     * Sets a milestone progress percentage and status message corresponding to real backend phases
+     * @param {number} percent Target percentage (e.g. 15, 60, 78)
+     * @param {string} [message] Status description
+     * @param {number} [ceiling] Upper bound while waiting for the next response
+     * @param {number} [speed] Creep rate in percent per second
+     */
+    setProgress(percent, message, ceiling = null, speed = null) {
+      if (!isRunning) return;
+      targetPercent = Math.max(targetPercent, percent);
+      if (ceiling !== null) stageCeiling = ceiling;
+      if (speed !== null) creepSpeedPerSec = speed;
+      if (statusText && message) {
+        statusText.dataset.manual = '1';
+        statusText.textContent = message;
+      }
+    },
+
+    /**
+     * Smoothly finishes progress to 100%, displays final manuscript line and holds briefly
+     * @param {string} [finalMessage] Optional completion message
+     * @returns {Promise<void>}
+     */
+    complete(finalMessage = 'VISUAL ANALYSIS & SYNTHESIS COMPLETE (100%)') {
+      if (!isRunning) return Promise.resolve();
+
+      targetPercent = 100;
+      stageCeiling = 100;
+      creepSpeedPerSec = 40.0;
+
+      if (statusText) {
+        statusText.dataset.manual = '1';
+        statusText.textContent = finalMessage;
+      }
+
+      return new Promise((resolve) => {
+        const checkDone = () => {
+          if (!isRunning) {
+            resolve();
+            return;
+          }
+          if (currentPercent >= 99.5) {
+            currentPercent = 100;
+            if (progressFill) progressFill.style.width = '100%';
+            if (progressPercent) progressPercent.textContent = '100%';
+            syncManuscriptToChars(TOTAL_CHARS);
+
+            // Brief satisfying pause at 100% so user registers completion
+            setTimeout(() => {
+              resolve();
+            }, 450);
+          } else {
+            setTimeout(checkDone, 50);
+          }
+        };
+        checkDone();
+      });
+    },
+
+    /**
+     * Hides the loading screen
+     */
     hide() {
       isRunning = false;
-      clearInterval(animationTimer);
+      cancelAnimationFrame(renderLoopId);
       cancelAnimationFrame(particleAnimationId);
       if (loaderContainer) {
         loaderContainer.classList.add('hidden');
+      }
+      if (statusText) {
+        delete statusText.dataset.manual;
       }
     }
   };
