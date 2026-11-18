@@ -454,6 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadExperimentLogs();
   loadReportsList();
   init3DBackground();
+  updateStudioAuthNav();
 });
 
 // Theme Management (Dark / Light Mode)
@@ -2788,3 +2789,67 @@ function init3DBackground() {
 
   animationFrameId = requestAnimationFrame(render);
 }
+
+// =========================================================================
+// Galaxy Auth System Studio Navigation Linkage & Toast Notifications
+// =========================================================================
+function updateStudioAuthNav() {
+  const savedUser = localStorage.getItem('multimodal_auth_user');
+  const navLabel = document.getElementById('auth-nav-label');
+  const triggerBtn = document.getElementById('btn-galaxy-auth-trigger');
+
+  if (savedUser) {
+    try {
+      const u = JSON.parse(savedUser);
+      if (navLabel) {
+        navLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>${u.name} (Sign Out)`;
+      }
+      if (triggerBtn) {
+        triggerBtn.title = `Logged in as ${u.name}. Click to open Entry Screen / Sign Out.`;
+        triggerBtn.onclick = function() {
+          if (confirm(`Currently signed in as ${u.name}. Do you want to sign out and return to the Galaxy Entry Screen?`)) {
+            localStorage.removeItem('multimodal_auth_user');
+            if (window.GalaxyAuth && window.GalaxyAuth.open) {
+              window.GalaxyAuth.open('login');
+            } else if (window.openGalaxyAuthScreen) {
+              window.openGalaxyAuthScreen('login');
+            }
+            updateStudioAuthNav();
+          }
+        };
+      }
+    } catch (e) {
+      console.warn('Failed to parse auth user', e);
+    }
+  } else {
+    if (navLabel) navLabel.textContent = 'Sign In / Portal';
+    if (triggerBtn) {
+      triggerBtn.title = 'Open Galaxy Auth Entry Screen';
+      triggerBtn.onclick = function() {
+        if (window.GalaxyAuth && window.GalaxyAuth.open) {
+          window.GalaxyAuth.open('login');
+        } else if (window.openGalaxyAuthScreen) {
+          window.openGalaxyAuthScreen('login');
+        }
+      };
+    }
+  }
+}
+
+function showStudioToast(msg) {
+  let toast = document.getElementById('studio-auth-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'studio-auth-toast';
+    toast.className = 'fixed bottom-6 right-6 z-50 bg-[#0c0d1c]/95 border border-purple-500/40 text-white text-xs px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center space-x-3 transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none font-mono';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc]"></span><span>${msg}</span>`;
+  toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+  setTimeout(() => {
+    toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+  }, 4200);
+}
+
+window.updateStudioAuthNav = updateStudioAuthNav;
+window.showStudioToast = showStudioToast;
